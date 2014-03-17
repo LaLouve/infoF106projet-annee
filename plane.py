@@ -7,59 +7,74 @@ Partie 3
 fichier: plane.py
 '''
 
-class Plane:
-	def __init__ (self, ID, company, passengers, fuel, consumption, time, statut):
-		self.ID = ID
-		self.company = company
-		self.passengers = int(passengers)
-		self.fuel = int(fuel)
-		self.consumption = int(consumption)
-		self.time = time
-		self.statut = statut #statut= Landed, Crashed, Take Off, Delayed, Deleted or None
-		
-	def getID(self):
-		return self.ID
-	def getCompany(self):
-		return self.company
-	def getPassengers(self):
-		return self.passengers	
-	def getFuel(self):
-		return self.fuel
-	def getConsumption(self):
-		return self.consumption
-	def getTime(self):
-		return self.time	
-	def getStatut(self):
-		return self.statut
-		
-	def setStatut(self, valStatut):
-		self.statut = valStatut
-				
-	def companyID(self):
-		return self.ID[:-4]
-	
-	def ratio(self):
-		return self.getFuel()//self.getConsumption()
-	
-	def update(self):
-		self.fuel -= self.consumption
-		
-	def isCrashed(self):
-		# retourne True si l'avion s'est crashé 
-		return self.fuel <= 0
-	
-	
-	def isDelayed (self, tick): # L'avion est-il retardé?
-		if ((self.time[0]*60)+(self.time[1])) < tick:
-			return True 
-		else: 
-			return False 	
-		
-							
-	def __str__(self):
-		res= ((str(self.ID).ljust(9,' ')) + (str(self.company).ljust(20, ' ')) +\
-		(str(self.passengers).ljust(5,' ')) + (str(self.fuel).ljust(6,' ')) +\
-		(str(self.consumption).ljust(5,' ')))
-		return res
-		 
 
+class Plane:
+
+    def __init__(
+            self,
+            ID,
+            company,
+            passengers,
+            fuel,
+            consumption,
+            time,
+            statut):
+        self.ID = ID
+        self.company = company
+        self.passengers = int(passengers)
+        self.fuel = int(fuel)
+        self.consumption = int(consumption)
+        self.time = time
+        # statut= Landed, Crashed, Take Off, Delayed, Deleted or None
+        self.statut = statut
+
+    def getID(self):
+        return self.ID
+
+    def getCompany(self):
+        return self.company
+
+    def getPassengers(self):
+        return self.passengers
+
+    def getFuel(self):
+        return self.fuel
+
+    def getConsumption(self):
+        return self.consumption
+
+    def getTime(self):
+        return self.time
+
+    def getStatut(self):
+        return self.statut
+
+    def setStatut(self, valStatut):
+        self.statut = valStatut
+
+    def companyID(self):
+        return self.ID[:-4]
+
+    def ratio(self):
+        return self.getFuel() // self.getConsumption()
+
+    def update(self):
+        self.fuel -= self.consumption
+
+    def isCrashed(self):
+        # retourne True si l'avion s'est crashé
+        return self.fuel <= 0
+
+    def isDelayed(self, tick):  # L'avion est-il retardé?
+        if ((self.time[0] * 60) + (self.time[1])) < tick:
+            return True
+        else:
+            return False
+
+    def __str__(self):
+        res = ((str(self.ID).ljust(9, ' ')) +
+               (str(self.company).ljust(20, ' ')) +
+               (str(self.passengers).ljust(5, ' ')) +
+               (str(self.fuel).ljust(6, ' ')) +
+               (str(self.consumption).ljust(5, ' ')))
+        return res

@@ -7,27 +7,27 @@ Partie 3
 fichier: airport.py
 '''
 
-import airportFunctions 
+import airportFunctions
 
 
-def main_loop ():
-	airport = airportFunctions.Airport()
-	
-	airport.ask_for_runway()
-		
-	while True:
-		nbrTick = airport.user_menu()
-		for i in range (nbrTick):
-			for j in range (airport.departure_runway):
-				airport.next_departure()
-			for k in range (airport.arrival_runway):
-				airport.next_arrival()
-			for l in range (airport.mixte_runway):
-				airport.next_event() 
-			airport.update_status()
-			if airport.tick == 1440:
-				airport.new_day()
+def main_loop():
+    airport = airportFunctions.Airport()
+
+    airport.ask_for_runway()
+
+    while True:
+        nbrTick = airport.user_menu()
+        for i in range(nbrTick):
+            for j in range(airport.departure_runway):
+                airport.next_departure()
+            for k in range(airport.arrival_runway):
+                airport.next_arrival()
+            for l in range(airport.mixte_runway):
+                airport.next_event()
+            airport.update_status()
+            if airport.tick == 1440:
+                airport.new_day()
 
 
 if __name__ == "__main__":
-	main_loop ()
+    main_loop()
