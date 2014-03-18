@@ -522,7 +522,7 @@ class Airport:
                   "\nAfficher les compagnies: (J)"
                   "\nAfficher les pistes: (K)"
                   "\nAjouter des pistes: (L)"
-                  "\nSupprimer une piste: (M)"
+                  "\nSupprimer des pistes: (M)"
                   "\nQuitter le menu: (Q)"
                   "\n---------------------------------------------------------"
                   "\n(Entrez la lettre correpsondant à l'action)")
