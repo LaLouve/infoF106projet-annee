@@ -13,7 +13,7 @@ import airportFunctions
 def main_loop():
     airport = airportFunctions.Airport()
 
-    airport.ask_for_runway()
+    airport.add_runway()
 
     while True:
         nbrTick = airport.user_menu()

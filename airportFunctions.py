@@ -338,19 +338,15 @@ class Airport:
         while not ok:
             try:
                 print("\nEntrez le nombre de pistes souhaitées:")
-                nbr_departure_runway = int(input("Pistes pour le décollage:"))
-                nbr_arrival_runway = int(input("Pistes pour l'atterissage:"))
-                nbr_mixte_runway = int(
+                self.nbr_departure_runway = int(input("Pistes pour le décollage:"))
+                self.nbr_arrival_runway = int(input("Pistes pour l'atterissage:"))
+                self.nbr_mixte_runway = int(
                     input("Pistes pour l'atterisssage et le décollage:"))
                 ok = True
             except:
                 print("\nVous n'avez pas indiqué des valeurs correcte!")
 
-        self.departure_runway += nbr_departure_runway
-        self.arrival_runway += nbr_arrival_runway
-        self.mixte_runway += nbr_mixte_runway
-
-        return (self.departure_runway, self.arrival_runway, self.mixte_runway)
+        return (self.nbr_departure_runway, self.nbr_arrival_runway, self.nbr_mixte_runway)
 
     def show_runway(self):
         print("\nListe des pistes:")
@@ -358,26 +354,21 @@ class Airport:
         print("Pistes pour l'atterissage:", self.arrival_runway)
         print("Pistes mixtes:", self.mixte_runway)
 
+    def add_runway(self):
+        self.ask_for_runway()
+
+        self.departure_runway += self.nbr_departure_runway
+        self.arrival_runway += self.nbr_arrival_runway
+        self.mixte_runway += self.nbr_mixte_runway
+
+        return (self.departure_runway, self.arrival_runway, self.mixte_runway)
+
     def del_runway(self):
-        #departure_runway = self.departure_runway
-        #arrival_runway = self.arrival_runway
-        #mixte_runway = self.mixte_runway
+        self.ask_for_runway()
 
-        ok = False
-        while not ok:
-            try:
-                print("\nEntrez le nombre de pistes à supprimer:")
-                nbr_departure_runway = int(input("Pistes pour le décollage:"))
-                nbr_arrival_runway = int(input("Pistes pour l'atterissage:"))
-                nbr_mixte_runway = int(
-                    input("Pistes pour l'atterisssage et le décollage:"))
-                ok = True
-            except:
-                print("\nVous n'avez pas indiqué des valeurs correcte!")
-
-        self.departure_runway -= nbr_departure_runway
-        self.arrival_runway -= nbr_arrival_runway
-        self.mixte_runway -= nbr_mixte_runway
+        self.departure_runway -= self.nbr_departure_runway
+        self.arrival_runway -= self.nbr_arrival_runway
+        self.mixte_runway -= self.nbr_mixte_runway
 
         if self.departure_runway < 0:
             self.departure_runway = 0
@@ -676,7 +667,7 @@ class Airport:
                 self.show_runway()
 
             elif answer == 'l':
-                self.ask_for_runway()
+                self.add_runway()
 
             elif answer == 'm':
                 self.del_runway()
