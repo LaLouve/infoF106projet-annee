@@ -28,18 +28,7 @@ class Airport:
         self.departure_runway = 0  # nbr de pistes de décollage
         self.arrival_runway = 0  # nbr de pistes d'atterissage
         self.mixte_runway = 0  # nbr de piste d'atterissage et de décollage
-
-    def getDepartureList(self):
-        return self.departure_list
-
-    def getArrivalList(self):
-        return self.arrival_list
-
-    def getHistoryList(self):
-        return self.history_list
-
-    def getAirlines(self):
-        return self.airlines
+        self.dico_model = {} #dico des différents modèles d'avions
 
     def create_plane(
             self,
@@ -48,6 +37,7 @@ class Airport:
             passengers,
             fuel,
             consumption,
+            model,
             time,
             statut):
         '''
@@ -59,6 +49,7 @@ class Airport:
             passengers,
             fuel,
             consumption,
+            model,
             time,
             statut)
         ID_letter = ID[:-4]
@@ -94,17 +85,19 @@ class Airport:
         while not ok:
             company = (
                 str(input("\nEntrez le nom complet de la compagnie que vous voulez ajouter: "))).lower()
-            company_ID = (
+            ID_letter = (
                 str(input("Entrez l'ID de la compagnie (2 ou 3 lettres) :"))).upper()
-            if company_ID not in self. airlines:
+            if ID_letter not in self. airlines:
                 ok = True
             else:
                 print('Cet ID est déjà utilisé par une autre compangnie.')
 
             if (company) not in self.airlines:
-                self.airlines[company_ID] = company
+                self.airlines[ID_letter] = company
             else:
                 print('Cette compangie existe déjà')
+
+        return company, ID_letter
 
     def del_company(self, company_ID):
         print("\nLa compagnie", self.airlines[company_ID], "a été supprimée.")
@@ -387,26 +380,73 @@ class Airport:
 
         return (self.departure_runway, self.arrival_runway, self.mixte_runway)
 
+    def add_model(self):
+        '''
+        permet d'ajouter un nouveau modèle d'avion
+        '''
+        ok = False
+        print ("\nAjout d'un nouvel d'un nouveau modèle d'avion:")
+
+        while not ok:
+            try:
+                model = str(input("Entrez le nom du modèle:"))
+                modFuel = int(input("Fuel:"))
+                modConso = int(input("Consommation:"))
+                modPass = int(input("Nombre maximum de passagers:"))
+                ok = True
+            except:
+                print ("Vous avez entré une donnée incorrecte, veuillez rééssayez.")
+
+        modCar = [modFuel, modConso, modPass] #liste des caractéristique du modèle
+        self.dico_model[model] = modCar
+
+        return model, modFuel, modConso, modPass
+
+    def del_model(self):
+        pass
+
+    def show_model(self):
+        if len(self.dico_model) == 0:
+            print("\nIl n'y a aucun modèle enregistré")
+        else:
+            print('\nListe des modèles enregistrés:')
+            count = 1
+            print ("      {:^11} {:^6} {:^6} {:^10}".format("Model", "Fuel", "Cons.", "Passengers"))
+            list_keys = self.dico_model.keys()
+            for model in list_keys:
+                fuel = str(self.dico_model[model][0])
+                consumption = str(self.dico_model[model][1])
+                passengers = str(self.dico_model[model][2])
+                print('n°' + (str(count)).ljust(2, ' ') + ': ', end=' ')
+                print(model.center(9, ' '), fuel.center(6, ' '), consumption.center(6, ' '), passengers.center(10, ' '))
+                count += 1
+
     def add_random_departure_plane(self):
         '''
         Permet la création d'un avion au départ avec des données aléatoires.
         Si il n'y a aucune compagnie aérienne enregistrée, des informations
         sont demandées à l'utilisateur afin d'en créer une nouvelle.
         '''
+        if len(self.dico_model) == 0:
+            print("\nIl n'y a aucun modèle d'avion enregistré, veuillez en entrer un manuellement")
+
+            model, fuel, consumption, maxPass = self.add_model()
+            passengers = randint(1, maxPass)
+
+        else:
+            list_key_model = self.dico_model.keys()
+            model = choice(list(list_key_model))
+            
+            modMaxPass = self.dico_model[model][2]
+            passengers = randint(1, modMaxPass)
+            fuel = self.dico_model[model][0]
+            consumption = self.dico_model[model][1]
+
         if len(self.airlines) == 0:
             print(
-                "\nIl n'y a aucune compagnie enregistrée, veillez en entrer une manuellement")
+                "\nIl n'y a aucune compagnie enregistrée, veuillez en entrer une manuellement")
 
-            ok = False
-            while not ok:
-                try:
-                    company = (
-                        str(input('Nom complet de la compgnie:'))).lower()
-                    ID_letter = (
-                        str(input('ID de la compagnie (2 ou 3 lettres):'))).upper()
-                    ok = True
-                except:
-                    print('Vous avez entré une donnée incorrecte.')
+            company, ID_letter = self.add_company()
 
             number = str(randint(1, 9999))
             ID_number = number.rjust(4, '0')
@@ -414,15 +454,12 @@ class Airport:
 
         else:
             list_key_airline = self.airlines.keys()
-            key = choice(list(list_key_airline))
-            company = self.airlines[key]
+            airlines_key = choice(list(list_key_airline))
+            company = self.airlines[airlines_key]
             number = str(randint(1, 9999))
             ID_number = number.rjust(4, '0')
-            ID = (key + ID_number)
+            ID = (airlines_key + ID_number)
 
-        passengers = randint(1, 500)
-        fuel = randint(1, 10000)
-        consumption = randint(1, 100)
         time = (randint(0, 23), randint(0, 59))
         statut = None
         newPlane = self.create_plane(
@@ -431,6 +468,7 @@ class Airport:
             passengers,
             fuel,
             consumption,
+            model,
             time,
             statut)
         self.add_plane(newPlane)
@@ -442,20 +480,26 @@ class Airport:
         Si il n'y a aucune compagnie aérienne enregistrée, des informations
         sont demandées à l'utilisateur afin d'en créer une nouvelle.
         '''
+        if len(self.dico_model) == 0:
+            print("\nIl n'y a aucun modèle d'avion enregistré, veuillez en entrer un manuellement")
+
+            model, fuel, consumption, maxPass = self.add_model()
+            passengers = randint(1, maxPass)
+
+        else:
+            list_key_model = self.dico_model.keys()
+            model = choice(list(list_key_model))
+            
+            modMaxPass = self.dico_model[model][2]
+            passengers = randint(1, modMaxPass)
+            fuel = self.dico_model[model][0]
+            consumption = self.dico_model[model][1]
+
         if len(self.airlines) == 0:
             print(
-                "\nIl n'y a aucune compagnie enregistrée, veillez en entrer une manuellement")
+                "\nIl n'y a aucune compagnie enregistrée, veuillez en entrer une manuellement")
 
-            ok = False
-            while not ok:
-                try:
-                    company = (
-                        str(input('Nom complet de la compgnie:'))).lower()
-                    ID_letter = (
-                        str(input('ID de la compagnie (2 ou 3 lettres):'))).upper()
-                    ok = True
-                except:
-                    print('Vous avez entré une donnée incorrecte.')
+            company, ID_letter = self.add_company()
 
             number = str(randint(1, 9999))
             ID_number = number.rjust(4, '0')
@@ -463,15 +507,12 @@ class Airport:
 
         else:
             list_key_airline = self.airlines.keys()
-            key = choice(list(list_key_airline))
-            company = self.airlines[key]
+            airlines_key = choice(list(list_key_airline))
+            company = self.airlines[airlines_key]
             number = str(randint(1, 9999))
             ID_number = number.rjust(4, '0')
-            ID = (key + ID_number)
+            ID = (airlines_key + ID_number)
 
-        passengers = randint(1, 500)
-        fuel = randint(1, 10000)
-        consumption = randint(1, 100)
         time = None
         statut = None
         newPlane = self.create_plane(
@@ -480,6 +521,7 @@ class Airport:
             passengers,
             fuel,
             consumption,
+            model,
             time,
             statut)
         self.add_plane(newPlane)
@@ -523,12 +565,15 @@ class Airport:
                   "\nAfficher les informations d'une compagnie: (E)"
                   "\nGénérer aléatoirement un avion au décollage (F) ou à "
                   "l'atterissage: (G)"
-                  "\nAjouter une compagnie: (H)"
-                  "\nSupprimer une compagnie: (I)"
-                  "\nAfficher les compagnies: (J)"
+                  "\nAfficher les compagnies: (H)"
+                  "\nAjouter une compagnie: (I)"
+                  "\nSupprimer une compagnie: (J)"
                   "\nAfficher les pistes: (K)"
                   "\nAjouter des pistes: (L)"
                   "\nSupprimer des pistes: (M)"
+                  "\nAfficher les modèles d'avions: (N)"
+                  "\nAjouter un modèle d'avion: (O)"
+                  "\nSupprimer un modèle d'avion: (P)"
                   "\nQuitter le menu: (Q)"
                   "\n---------------------------------------------------------"
                   "\n(Entrez la lettre correpsondant à l'action)")
@@ -652,9 +697,12 @@ class Airport:
                     "a été ajouté à la liste des avions à l'atterissage")
 
             elif answer == 'h':
-                self.add_company()
+                self.show_airlines()
 
             elif answer == 'i':
+                self.add_company()
+
+            elif answer == 'j':
                 self.show_airlines()
                 print(
                     "\nEntrez l'ID de la compagnie que vous voulez supprimer:",
@@ -666,9 +714,6 @@ class Airport:
                 else:
                     print("Vous n'avez pas entré un ID correct")
 
-            elif answer == 'j':
-                self.show_airlines()
-
             elif answer == 'k':
                 self.show_runway()
 
@@ -677,6 +722,15 @@ class Airport:
 
             elif answer == 'm':
                 self.del_runway()
+
+            elif answer == 'n':
+                self.show_model()
+
+            elif answer == 'o':
+                self.add_model()
+
+            elif answer == 'p':
+                self.del_model()
 
             elif answer != 'q':
                 print("\nVous n'avez pas entré une lettre correcte, rééssayez")

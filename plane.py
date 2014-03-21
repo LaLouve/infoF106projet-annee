@@ -17,12 +17,15 @@ class Plane:
             passengers,
             fuel,
             consumption,
+            model,
             time,
             statut):
         self.ID = ID
         self.company = company
         self.passengers = int(passengers)
         self.fuel = int(fuel)
+        self.model = model
+        # modèle de l'avion, définit le fuel, la consommation et le nbr max de passagers
         self.consumption = int(consumption)
         self.time = time
         # statut= Landed, Crashed, Take Off, Delayed, Deleted, In Time or None
@@ -40,6 +43,9 @@ class Plane:
     def getFuel(self):
         return self.fuel
 
+    def getModel(self):
+        return self.model
+
     def getConsumption(self):
         return self.consumption
 
@@ -54,10 +60,11 @@ class Plane:
 
     def companyID(self):
         return self.ID[:-4]
-
+    
     def ratio(self):
         return int(self.getFuel() // self.getConsumption())
 
+    
     def update(self):
         self.fuel -= self.consumption
 
@@ -76,5 +83,7 @@ class Plane:
                (str(self.company).ljust(20, ' ')) +
                (str(self.passengers).ljust(5, ' ')) +
                (str(self.fuel).ljust(6, ' ')) +
-               (str(self.consumption).ljust(5, ' ')))
+               (str(self.consumption).ljust(5, ' '))+
+               (str(self.model).ljust(10, ' '))
+               )
         return res

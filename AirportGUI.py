@@ -17,7 +17,7 @@ from tkinter import messagebox as tkm
 
 airport = airportFunctions.Airport()
 plane1 = Plane('EX1234', 'Exemple Airline', 100, 2000, 15, None, None)
-plane2 = Plane('EX2345', 'Exemple Airline', 150, 1500, 10, (00, 1), 'In Time')
+plane2 = Plane('EX2345', 'Exemple Airline', 150, 1500, 10, (10, 20), 'In Time')
 plane3 = Plane('EX3456', 'Exemple Airline', 200, 2500, 20, None, 'Take Off')
 airport.arrival_list = [plane1]
 airport.departure_list = [plane2]
