@@ -404,16 +404,16 @@ class Airport:
 
     def del_model(self):
         self.show_model()
-                print(
-                    "\nEntrez le nom du modèle que vous voulez supprimer:",
-                    end=' ')
-                model = (str(input())).upper()
+        print(
+            "\nEntrez le nom du modèle que vous voulez supprimer:",
+            end=' ')
+        model = (str(input())).upper()
 
-                if model in self.dico_model:
-                    del self.dico_model[model]
-                    print ("Le modèle à été supprimé.")
-                else:
-                    print("Vous n'avez pas entré un ID correct")
+        if model in self.dico_model:
+            del self.dico_model[model]
+            print ("Le modèle à été supprimé.")
+        else:
+            print("Vous n'avez pas entré un ID correct")
     
     def show_model(self):
         if len(self.dico_model) == 0:
