@@ -411,14 +411,13 @@ class Airport:
         else:
             print('\nListe des modèles enregistrés:')
             count = 1
-            print ("      {:^11} {:^6} {:^6} {:^10}".format("Model", "Fuel", "Cons.", "Passengers"))
+            print ("      {:^10} {:^6} {:^6} {:^10}".format("Model", "Fuel", "Cons.", "Passengers"))
             list_keys = self.dico_model.keys()
             for model in list_keys:
                 fuel = str(self.dico_model[model][0])
                 consumption = str(self.dico_model[model][1])
                 passengers = str(self.dico_model[model][2])
-                print('n°' + (str(count)).ljust(2, ' ') + ': ', end=' ')
-                print(model.center(9, ' '), fuel.center(6, ' '), consumption.center(6, ' '), passengers.center(10, ' '))
+                print("n°{:2}: {:^10} {:^6} {:^6} {:^10}".format(count, model, fuel, consumption, passengers))
                 count += 1
 
     def add_random_departure_plane(self):
@@ -436,7 +435,7 @@ class Airport:
         else:
             list_key_model = self.dico_model.keys()
             model = choice(list(list_key_model))
-            
+
             modMaxPass = self.dico_model[model][2]
             passengers = randint(1, modMaxPass)
             fuel = self.dico_model[model][0]
@@ -489,7 +488,7 @@ class Airport:
         else:
             list_key_model = self.dico_model.keys()
             model = choice(list(list_key_model))
-            
+
             modMaxPass = self.dico_model[model][2]
             passengers = randint(1, modMaxPass)
             fuel = self.dico_model[model][0]
