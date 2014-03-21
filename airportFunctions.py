@@ -389,7 +389,7 @@ class Airport:
 
         while not ok:
             try:
-                model = str(input("Entrez le nom du modèle:"))
+                model = (str(input("Entrez le nom du modèle:"))).upper()
                 modFuel = int(input("Fuel:"))
                 modConso = int(input("Consommation:"))
                 modPass = int(input("Nombre maximum de passagers:"))
@@ -403,8 +403,18 @@ class Airport:
         return model, modFuel, modConso, modPass
 
     def del_model(self):
-        pass
+        self.show_model()
+                print(
+                    "\nEntrez le nom du modèle que vous voulez supprimer:",
+                    end=' ')
+                model = (str(input())).upper()
 
+                if model in self.dico_model:
+                    del self.dico_model[model]
+                    print ("Le modèle à été supprimé.")
+                else:
+                    print("Vous n'avez pas entré un ID correct")
+    
     def show_model(self):
         if len(self.dico_model) == 0:
             print("\nIl n'y a aucun modèle enregistré")
