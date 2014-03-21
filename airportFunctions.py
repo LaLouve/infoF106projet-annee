@@ -123,10 +123,10 @@ class Airport:
         else:
             most_prior_plane = self.departure_list[0]
             for plane in self.departure_list[1:]:
-                if plane.getTime() < most_prior_plane.getTime():
+                if int(plane.getTime()) < most_prior_plane.getTime():
                     most_prior_plane = plane
-                if plane.getTime() == most_prior_plane.getTime():
-                    if plane.getPassengers() > most_prior_plane.getPassengers():
+                if int(plane.getTime()) == most_prior_plane.getTime():
+                    if int(plane.getPassengers()) > most_prior_plane.getPassengers():
                         most_prior_plane = plane
         return most_prior_plane
 
@@ -239,6 +239,8 @@ class Airport:
         la consomation. Les avions au décollage dont l'heure de départ est
         plus petite que le tick actuel sont notés comme en retard.
         '''
+        crashedPlane = []
+        delayedPlane = []
         for plane in self.arrival_list:
             # diminution du carburant en fonction de la consomation/tour
             plane.update()
@@ -247,18 +249,22 @@ class Airport:
                 print(
                     "\nL'avion",
                     plane.getID(),
-                    "n'a malheureusement pas pu attérire à temps. \nVous avez tué",
+                    "n'a malheureusement pas pu atterire à temps. \nVous avez tué",
                     plane.getPassengers(),
                     'passagers./o\\')
                 plane.setStatut('Crashed')
                 self.arrival_list.remove(plane)
                 self.history_list.append(plane)
+                crashedPlane.append(plane)
 
         for plane in self.departure_list:
             if plane.isDelayed(self.tick):
                 print("\nL'avion", plane.getID(), "Est en retard.")
                 plane.setStatut('Delayed')
+                delayedPlane.append(plane)
         self.tick += 1
+
+        return crashedPlane, delayedPlane
 
     def next_event(self):
         '''

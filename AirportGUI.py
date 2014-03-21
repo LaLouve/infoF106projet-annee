@@ -17,7 +17,7 @@ from tkinter import messagebox as tkm
 
 airport = airportFunctions.Airport()
 plane1 = Plane('EX1234', 'Exemple Airline', 100, 2000, 15, None, None)
-plane2 = Plane('EX2345', 'Exemple Airline', 150, 1500, 10, (10, 20), None)
+plane2 = Plane('EX2345', 'Exemple Airline', 150, 1500, 10, (00, 1), 'In Time')
 plane3 = Plane('EX3456', 'Exemple Airline', 200, 2500, 20, None, 'Take Off')
 airport.arrival_list = [plane1]
 airport.departure_list = [plane2]
@@ -160,7 +160,7 @@ class AirportGUI:
 
         # partie haute de la troisième colonne, contient l'heure et le bouton
         # step
-        column3_partTOP = Frame(column3, bg='white')
+        column3_partTOP = Frame(column3, height=220, bg='white')
         column3_partTOP.pack(side=TOP)
         self.general_time = self.time(airport.tick)
         self.clock = Label(
@@ -196,11 +196,62 @@ class AirportGUI:
                 self.nbr_min.get())).pack(
             side=BOTTOM)
 
-        column3_partCENTER = Frame(column3, height=220, bg='white').pack()
+        #partie centrale de la troisième colonne, contient les informations
+        #des pistes 
+        frame_adjust = Frame(column3, height=50, bg='white').pack()
+        column3_partCENTER = Frame(column3, height=220, bg='white')
+        column3_partCENTER.pack(side=TOP)
+
+        label_principal = LabelFrame(
+            column3_partCENTER,
+            bd=4,
+            relief=RIDGE,
+            bg='white',
+            text='Runways',
+            font=tkFont.Font(
+                size=10))
+        label_principal.pack()
+
+        departure_frame = Frame(label_principal, bd=6, bg='white')
+        departure_frame.pack(side=TOP)
+        text_departure_label = "Departure runways: {}".format(
+            airport.departure_runway)
+        self.departure_label = Label(
+            departure_frame,
+            bd=3,
+            bg='white',
+            text=text_departure_label)
+        self.departure_label.pack(side=RIGHT)
+        self.departure_label.bind("<Double-Button-1>", self.mod_depRunway_button)
+
+        arrival_frame = Frame(label_principal, bd=6, bg='white')
+        arrival_frame.pack(side=TOP)
+        text_arrival_label = "Arrival runways: {}".format(
+            airport.arrival_runway)
+        self.arrival_label = Label(
+            arrival_frame,
+            bd=3,
+            bg='white',
+            text=text_arrival_label)
+        self.arrival_label.pack(side=RIGHT)
+        self.arrival_label.bind("<Double-Button-1>", self.mod_arrRunway_button)
+
+        mixte_frame = Frame(label_principal, bd=6, bg='white')
+        mixte_frame.pack(side=TOP)
+        text_mixte_label = "Mixte runways: {}".format(airport.mixte_runway)
+        self.mixte_label = Label(
+            mixte_frame,
+            bd=3,
+            bg='white',
+            text=text_mixte_label)
+        self.mixte_label.pack(side=RIGHT)
+        self.mixte_label.bind("<Double-Button-1>", self.mod_mixRunway_button)
+
+        frame_adjust2 = Frame(column3, height=50, bg='white').pack()
 
         # partie basse de la troisième colonne, contient les boutons "history",
         # "companies" et "help"
-        column3_partBOTTOM = Frame(column3, bd=20, bg='white')
+        column3_partBOTTOM = Frame(column3, height=220, bd=20, bg='white')
         column3_partBOTTOM.pack(side=BOTTOM)
         Button(
             column3_partBOTTOM,
@@ -226,14 +277,14 @@ class AirportGUI:
             bg='#C0C0C0',
             command=self.companiesButton).pack(
             side=BOTTOM)
-        Button(
-            column3_partBOTTOM,
-            text='Runway',
-            relief=GROOVE,
-            width=12,
-            bg='#C0C0C0',
-            command=self.runwayButton).pack(
-            side=BOTTOM)
+        #Button(
+        #   column3_partBOTTOM,
+        #    text='Runway',
+        #    relief=GROOVE,
+        #    width=12,
+        #    bg='#C0C0C0',
+        #    command=self.runwayButton).pack(
+        #    side=BOTTOM)
 
     ### Fonctions d'ajout et de suppression d'avions ###
     def addButton(self, title, list_plane, list_box):
@@ -990,12 +1041,12 @@ class AirportGUI:
                 row=1,
                 column=0)
 
-        if plane_list == airport.history_list:
+        if plane_list == airport.history_list or plane_list == airport.departure_list:
             frame_statut = Frame(
                 principal,
                 bd=5,
                 bg='white')  # frame secondaire, contient le statut
-            frame_statut.grid(row=0, column=5)
+            frame_statut.grid(row=0, column=6)
             label_statut = Label(
                 frame_statut,
                 bd=3,
@@ -1014,7 +1065,7 @@ class AirportGUI:
                 column=0)
 
         frame_button = Frame(principal, bd=5, bg='white')
-        frame_button.grid(row=1, column=2)
+        frame_button.grid(row=1, column=3)
         button_OK = Button(
             frame_button,
             text='OK',
@@ -1107,6 +1158,18 @@ class AirportGUI:
                 str(tick %
                     60).rjust(2, '0'))
 
+    def execute_plane(self, plane):
+        if plane is not None:
+            list_plane = self.list_box_departures.get(0, END)
+            if plane.getID() in list_plane:
+                item = list_plane.index(plane.getID())
+                self.list_box_departures.delete(item)
+            else:
+                list_plane = self.list_box_arrivals.get(0, END)
+                item = list_plane.index(plane.getID())
+                self.list_box_arrivals.delete(item)
+
+            
     def stepButton(self, nbr_min):
         self.nbr_min.delete(0, last=END)
 
@@ -1117,142 +1180,164 @@ class AirportGUI:
         elif nbr_min == '':
             nbr_min = 1
             ok = True
-
+       
+        if airport.departure_runway == 0 and airport.arrival_runway == 0 and airport.mixte_runway == 0:
+            text = "\nVotre aéroport n'a aucune piste pour faire décoller ou atterrire des avions."\
+                   "\nVeuillez en ajouter."
+            message = tkm.showwarning('No runway', text)
+        elif airport.departure_runway == 0 and airport.mixte_runway == 0:
+            text = "\nVotre aéroport n'a aucune piste pour faire décoller des avions."\
+                   "\nVeuillez en ajouter."
+            message = tkm.showwarning('No runway', text)
+        elif airport.arrival_runway == 0 and airport.mixte_runway == 0:
+            text = "\nVotre aéroport n'a aucune piste pour faire atterrire des avions."\
+                   "\nVeuillez en ajouter."
+            message = tkm.showwarning('No runway', text)
+        
         if ok:
+            plane = None
             for i in range(int(nbr_min)):
-                plane = airport.next_event()
-                airport.update_status()
+                for j in range(airport.departure_runway):
+                    plane = airport.next_departure()
+                    self.execute_plane(plane)
+                for k in range(airport.arrival_runway):
+                    plane = airport.next_arrival()
+                    self.execute_plane(plane)
+                for l in range(airport.mixte_runway):
+                    plane = airport.next_event()
+                    self.execute_plane(plane)
+                
+                crashedPlane, delayedPlane = airport.update_status()
+                for plane in crashedPlane:
+                    text = "L'avion {} n'a malheureusement pas pu atterrire à temps."\
+                        " \nVous avez tué {} passagers. /o\\".format(
+                        plane.getID(),
+                        plane.getPassengers())
+                    message = tkm.showinfo('Plane Crashed', text)
+                    list_plane = self.list_box_arrivals.get(0, END)
+                    item = list_plane.index(plane.getID())
+                    self.list_box_arrivals.delete(item)
 
-                if plane is not None:
-                    list_plane = self.list_box_departures.get(0, END)
-                    if plane.getID() in list_plane:
-                        item = list_plane.index(plane.getID())
-                        self.list_box_departures.delete(item)
-                    else:
-                        list_plane = self.list_box_arrivals.get(0, END)
-                        item = list_plane.index(plane.getID())
-                        self.list_box_arrivals.delete(item)
-
-                    if plane.isCrashed():
-                        text = "L'avion {} n'a malheureusement pas pu attérire à temps. \nVous avez tué {} passagers. /o\\".format(
-                            plane.getID(),
-                            plane.getPassengers())
-                        message = tkm.showinfo('Plane Crashed', text)
+                for plane in delayedPlane:
+                    text = "L'avion {} est en retard.".format(plane.getID())
+                    message = tkm.showinfo('Plane Delayed', text)
+                
                 if airport.tick == 1440:
                     airport.new_day()
                     text = '{:^20}'.format('New Day')
                     message = tkm.showinfo('New Day', text)
-            self.clock.configure(text=self.time(airport.tick))
+                self.clock.configure(text=self.time(airport.tick))
 
         else:
             text = "La valeur entrée n'est pas correcte. Veuillez la vérifier."
             message = tkm.showwarning("Valeur Incorecte", text)
 
     ### Fonctions relatives aux pistes ###
-    def runwayButton(self):
-        self.runway_window = Tk()
-        self.runway_window.title("Runway")
-        self.runway_window.configure(background='white')
-        self.runway_window.resizable(width=FALSE, height=FALSE)
+    def mod_depRunway_button(self, event=None):
+        self.modifiy_nbrRunway('departures')
+        
+    def mod_arrRunway_button(self, event=None):
+        self.modifiy_nbrRunway('arrivals')
 
-        principal = Frame(self.runway_window, bd=5, bg='white')
-        principal.pack()
+    def mod_mixRunway_button(self, event=None):
+        self.modifiy_nbrRunway('mixtes')
 
-        label_principal = LabelFrame(
-            self.runway_window,
+    def modifiy_nbrRunway(self, name_runway):
+        self.modify_nbrRunway_window = Tk()
+        self.modify_nbrRunway_window.title("Modify runway")
+        self.modify_nbrRunway_window.configure(background='white')
+        self.modify_nbrRunway_window.resizable(width=FALSE, height=FALSE)
+
+        principal = Frame(
+            self.modify_nbrRunway_window,
             bd=4,
-            relief=RIDGE,
+            bg='white')
+        principal.pack()
+        text_label = "Modify {} runways".format(name_runway)
+        label_principal = Label(
+            principal,
+            bd=3,
             bg='white',
-            text='Runways',
+            text=text_label,
             font=tkFont.Font(
-                size=10))
+            size=5))
         label_principal.pack()
 
-        departure_frame = Frame(label_principal, bd=6, bg='white')
-        departure_frame.pack(side=TOP)
-        text_departure_label = "Departure runways: {}".format(
-            airport.departure_runway)
-        departure_label = Label(
-            departure_frame,
+        button_frame = Frame(
+            principal,
             bd=3,
-            bg='white',
-            text=text_departure_label).pack(
-            side=RIGHT)
-
-        arrival_frame = Frame(label_principal, bd=6, bg='white')
-        arrival_frame.pack(side=TOP)
-        text_arrival_label = "Arrival runways: {}".format(
-            airport.arrival_runway)
-        arrival_label = Label(
-            arrival_frame,
-            bd=3,
-            bg='white',
-            text=text_arrival_label).pack(
-            side=RIGHT)
-
-        mixte_frame = Frame(label_principal, bd=6, bg='white')
-        mixte_frame.pack(side=TOP)
-        text_mixte_label = "Mixte runways: {}".format(airport.mixte_runway)
-        mixte_label = Label(
-            mixte_frame,
-            bd=3,
-            bg='white',
-            text=text_mixte_label).pack(
-            side=RIGHT)
-
-        button_frame = Frame(label_principal, bd=5, bg='white')
+            bg='white')
         button_frame.pack(side=BOTTOM)
-        add_button = Button(
+
+        button_plus = Button(
             button_frame,
-            text='Add',
+            text='+1',
             relief=GROOVE,
-            width=6,
+            width=2,
             bg='#C0C0C0',
-            command=self.addRunwayButton)
-        add_button.pack(side=LEFT)
-        del_button = Button(
+            command=lambda:self.incr_nbr_runway(name_runway))
+        button_plus.pack(side=LEFT)
+
+        button_moins = Button(
             button_frame,
-            text='Delete',
+            text='-1',
             relief=GROOVE,
-            width=6,
+            width=2,
             bg='#C0C0C0',
-            command=self.delRunwayButton)
-        del_button.pack(side=RIGHT)
+            command=lambda:self.decr_nbr_runway(name_runway))
+        button_moins.pack(side=RIGHT)
 
-    def addRunwayButton(self):
-        self.add_runway_window = Tk()
-        self.add_runway_window.title("Add Runway")
-        self.add_runway_window.configure(background='white')
-        self.add_runway_window.resizable(width=FALSE, height=FALSE)
 
-        principal = Frame(self.add_runway_window, bd=5, bg='white')
-        principal.pack()
+    def incr_nbr_runway(self, name_runway):
+        if name_runway == 'departures':
+            airport.departure_runway += 1
+            text_departure_label = "Departure runways: {}".format(
+                airport.departure_runway)
+            self.departure_label.configure(text=text_departure_label)
 
-        label_principal = LabelFrame(
-            self.add_runway_window,
-            bd=4,
-            relief=RIDGE,
-            bg='white',
-            text='Add Runways',
-            font=tkFont.Font(
-                size=10))
-        label_principal.pack()
+        elif name_runway == 'arrivals':
+            airport.arrival_runway += 1
+            text_arrival_label = "Arrival runways: {}".format(
+                airport.arrival_runway)
+            self.arrival_label.configure(text=text_arrival_label)
+        
+        elif name_runway == 'mixtes':
+            airport.mixte_runway += 1
+            text_mixte_label = "Mixte runways: {}".format(
+                airport.mixte_runway)
+            self.mixte_label.configure(text=text_mixte_label)
 
-        departure_frame = Frame(principal, bd=5, bg='white')
-        departure_frame.pack()
-        text_departure_label = "Departure runway :"
-        departure_label = Label(
-            departure_frame,
-            bd=3,
-            bg='white',
-            text=text_departure_label).pack(
-            side=RIGHT)
+        self.modify_nbrRunway_window.destroy()
 
-    def delRunwayButton(self):
-        self.del_runway_window = Tk()
-        self.del_runway_window.title("Delete Runway")
-        self.del_runway_window.configure(background='white')
-        self.del_runway_window.resizable(width=FALSE, height=FALSE)
+
+
+    def decr_nbr_runway(self, name_runway):
+        if name_runway == 'departures':
+            airport.departure_runway -= 1
+            if airport.departure_runway < 0:
+                airport.departure_runway = 0
+            text_departure_label = "Departure runways: {}".format(
+                airport.departure_runway)
+            self.departure_label.configure(text=text_departure_label)
+
+        elif name_runway == 'arrivals':
+            airport.arrival_runway -= 1
+            if airport.arrival_runway < 0:
+                airport.arrival_runway = 0
+            text_arrival_label = "Arrival runways: {}".format(
+                airport.arrival_runway)
+            self.arrival_label.configure(text=text_arrival_label)
+        
+        elif name_runway == 'mixtes':
+            airport.mixte_runway -= 1
+            if airport.mixte_runway < 0:
+                airport.mixte_runway = 0
+            text_mixte_label = "Mixte runways: {}".format(
+                airport.mixte_runway)
+            self.mixte_label.configure(text=text_mixte_label)
+
+        self.modify_nbrRunway_window.destroy()
+
 
 
 if __name__ == "__main__":

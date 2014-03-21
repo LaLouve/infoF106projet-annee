@@ -25,7 +25,7 @@ class Plane:
         self.fuel = int(fuel)
         self.consumption = int(consumption)
         self.time = time
-        # statut= Landed, Crashed, Take Off, Delayed, Deleted or None
+        # statut= Landed, Crashed, Take Off, Delayed, Deleted, In Time or None
         self.statut = statut
 
     def getID(self):
@@ -56,7 +56,7 @@ class Plane:
         return self.ID[:-4]
 
     def ratio(self):
-        return self.getFuel() // self.getConsumption()
+        return int(self.getFuel() // self.getConsumption())
 
     def update(self):
         self.fuel -= self.consumption
@@ -66,7 +66,7 @@ class Plane:
         return self.fuel <= 0
 
     def isDelayed(self, tick):  # L'avion est-il retardé?
-        if ((self.time[0] * 60) + (self.time[1])) < tick:
+        if (int((self.time[0] * 60) + (self.time[1]))) < tick:
             return True
         else:
             return False
