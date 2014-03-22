@@ -296,7 +296,7 @@ class Airport:
         if most_prior_plane is not None:
             self.history_list.append(most_prior_plane)
 
-        return (most_prior_plane)
+        return most_prior_plane
 
     def next_departure(self):
         departure_plane = self.departure_priority_plane()
@@ -312,7 +312,7 @@ class Airport:
         if most_prior_plane is not None:
             self.history_list.append(most_prior_plane)
 
-        return (most_prior_plane)
+        return most_prior_plane
 
     def next_arrival(self):
         self.departure_priority_plane()
@@ -335,7 +335,7 @@ class Airport:
         if most_prior_plane is not None:
             self.history_list.append(most_prior_plane)
 
-        return (most_prior_plane)
+        return most_prior_plane
 
     def ask_for_runway(self):
         ok = False
@@ -569,7 +569,7 @@ class Airport:
         return newPlane
 
     def convTupleToTick(self, tupple):
-        return (tupple[0] * 60 + tupple[1])
+        return tupple[0] * 60 + tupple[1]
 
     def convTickToTuple(self, time):
         return ((str(time // 60)).rjust(2, '0'),
@@ -788,4 +788,4 @@ class Airport:
                 correct = True
             except:
                 print("\nVous n'avez pas entré un nombre correct!\n")
-        return (heure * 60 + minutes)
+        return heure * 60 + minutes
