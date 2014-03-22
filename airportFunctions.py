@@ -84,9 +84,11 @@ class Airport:
 
         while not ok:
             company = (
-                str(input("\nEntrez le nom complet de la compagnie que vous voulez ajouter: "))).lower()
+                str(input("\nEntrez le nom complet de la compagnie"
+                          " que vous voulez ajouter: "))).lower()
             ID_letter = (
-                str(input("Entrez l'ID de la compagnie (2 ou 3 lettres) :"))).upper()
+                str(input("Entrez l'ID de la compagnie (2 ou 3 lettres) :"))
+            ).upper()
             if ID_letter not in self. airlines:
                 ok = True
             else:
@@ -107,8 +109,8 @@ class Airport:
         '''
         avion le plus prioritaire pour le depart
 
-        [1:] permet de ne pas verifier l'avion prioritaire avec lui même vu qu'il
-        est le premier de la liste
+        [1:] permet de ne pas verifier l'avion prioritaire avec lui même
+        vu qu'il est le premier de la liste
         '''
         if len(self.departure_list) == 0:
             most_prior_plane = None
@@ -128,8 +130,8 @@ class Airport:
         avion le plus prioritaire pour l'atterissage
 
         on divise le niveau de carburant (fuel)par la consommation de carburant
-        par tour (consumption), pour obtenir le nombre de tours que l'avion peut
-        encore rester en l'air.
+        par tour (consumption), pour obtenir le nombre de tours que l'avion
+        peut encore rester en l'air.
         '''
         if len(self.arrival_list) == 0:
             most_prior_plane = None
@@ -242,7 +244,8 @@ class Airport:
                 print(
                     "\nL'avion",
                     plane.getID(),
-                    "n'a malheureusement pas pu atterire à temps. \nVous avez tué",
+                    "n'a malheureusement pas pu atterire à temps."
+                    " \nVous avez tué",
                     plane.getPassengers(),
                     'passagers./o\\')
                 plane.setStatut('Crashed')
@@ -277,7 +280,8 @@ class Airport:
             self.arrival_list.remove(most_prior_plane)
             print("\nL'avion", most_prior_plane.getID(), "a attéri.")
 
-        elif departure_plane is not None and self.convTupleToTick(departure_plane.getTime()) <= self.tick:
+        elif departure_plane is not None and\
+                self.convTupleToTick(departure_plane.getTime()) <= self.tick:
             most_prior_plane = departure_plane
             most_prior_plane.setStatut('Take Off')
             self.departure_list.remove(most_prior_plane)
@@ -298,7 +302,8 @@ class Airport:
         departure_plane = self.departure_priority_plane()
         most_prior_plane = None
 
-        if departure_plane is not None and self.convTupleToTick(departure_plane.getTime()) <= self.tick:
+        if departure_plane is not None and\
+           self.convTupleToTick(departure_plane.getTime()) <= self.tick:
             most_prior_plane = departure_plane
             most_prior_plane.setStatut('Take Off')
             self.departure_list.remove(most_prior_plane)
@@ -401,7 +406,8 @@ class Airport:
                 ok = True
             except:
                 print(
-                    "Vous avez entré une donnée incorrecte, veuillez rééssayez.")
+                    "Vous avez entré une donnée incorrecte,"
+                    " veuillez rééssayez.")
 
         modCar = [
             modFuel,
@@ -458,7 +464,8 @@ class Airport:
         '''
         if len(self.dico_model) == 0:
             print(
-                "\nIl n'y a aucun modèle d'avion enregistré, veuillez en entrer un manuellement")
+                "\nIl n'y a aucun modèle d'avion enregistré,"
+                " veuillez en entrer un manuellement")
 
             model, fuel, consumption, maxPass = self.add_model()
             passengers = randint(1, maxPass)
@@ -474,7 +481,8 @@ class Airport:
 
         if len(self.airlines) == 0:
             print(
-                "\nIl n'y a aucune compagnie enregistrée, veuillez en entrer une manuellement")
+                "\nIl n'y a aucune compagnie enregistrée,"
+                " veuillez en entrer une manuellement")
 
             company, ID_letter = self.add_company()
 
@@ -512,7 +520,8 @@ class Airport:
         '''
         if len(self.dico_model) == 0:
             print(
-                "\nIl n'y a aucun modèle d'avion enregistré, veuillez en entrer un manuellement")
+                "\nIl n'y a aucun modèle d'avion enregistré,"
+                " veuillez en entrer un manuellement")
 
             model, fuel, consumption, maxPass = self.add_model()
             passengers = randint(1, maxPass)
@@ -528,7 +537,8 @@ class Airport:
 
         if len(self.airlines) == 0:
             print(
-                "\nIl n'y a aucune compagnie enregistrée, veuillez en entrer une manuellement")
+                "\nIl n'y a aucune compagnie enregistrée,"
+                " veuillez en entrer une manuellement")
 
             company, ID_letter = self.add_company()
 
@@ -580,7 +590,8 @@ class Airport:
 
     def user_menu(self):
         '''
-        Menu principal de l'utilisateur. Permet le choix des actions à effectuer
+        Menu principal de l'utilisateur.
+        Permet le choix des actions à effectuer
         '''
         answer = 0
         while answer != 'q':
@@ -616,7 +627,8 @@ class Airport:
                 while not ok:
                     try:
                         letterID = (
-                            str(input("\nLes 2 ou 3 premières lettres de l'ID:"))).upper()
+                            str(input("\nLes 2 ou 3 premières lettres de l'ID:"))
+                        ).upper()
                         numberID = int(input("les 4 chiffres de l'ID:"))
                         ID = (letterID + (str(numberID)))
                         company = (str(input('Compagnie:'))).lower()
@@ -649,7 +661,8 @@ class Airport:
                 while not ok:
                     try:
                         letterID = (
-                            str(input("\nLes 2 ou 3 premières lettres de l'ID:"))).upper()
+                            str(input("\nLes 2 ou 3 premières lettres de l'ID:"))
+                        ).upper()
                         numberID = int(input("les 4 chiffres de l'ID:"))
                         ID = (letterID + (str(numberID)))
                         company = str(input('Compagnie:'))
