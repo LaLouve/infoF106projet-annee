@@ -58,6 +58,74 @@ class Airport:
             self.airlines[ID_letter] = company
             return newPlane
 
+    def ask_for_add_plane(self, plane_type):
+        if len (self.dico_model) == 0 :
+            print ("\nIl n'y a aucun modèle d'avion enregistré, veuillez en créer un.")
+            model, fuel, consumption, modMaxPass = self.add_model()
+        
+        else:
+            ansOK = False
+            while not ansOK:
+                ans = str(input("\nVoulez-vous utiliser un modèle d'avion enregistré? (O)ui/(N)on ")).lower() 
+                if ans == 'o' or ans == 'n':
+                    ansOK = True
+
+            if ans == 'o':
+                self.show_model()
+                model = str(input("\nEntrez le nom du modèle souhaité: ")).upper()
+                modMaxPass = self.dico_model[model][2]
+                fuel = self.dico_model[model][0]
+                consumption = self.dico_model[model][1]
+
+            elif ans == 'n':
+                model, fuel, consumption, modMaxPass = self.add_model()
+
+        ok = False
+        print ("\nInformations de l'avion:")
+        while not ok:
+            try:
+                letterID = (
+                    str(input("\nLes 2 ou 3 premières lettres de l'ID:"))).upper()
+                numberID = int(input("les 4 chiffres de l'ID:"))
+                ID = (letterID + (str(numberID)))
+                company = (str(input('Compagnie:'))).lower()
+                passOK = False
+                while not passOK:
+                    passengers = int(input("Nombre de passagers: "))
+                    if passengers > modMaxPass:
+                        print ("Le nombre de passagers dépasse la capacité de ce modèle d'avion")
+                    else:
+                        passOK = True
+                if plane_type == 'departure':
+                    heure = int(input('Heure de départ (heure):'))
+                    minutes = int(input('minutes:'))
+                    time = (heure, minutes)
+                    statut = 'In Time'
+                else:
+                    time = None
+                    statut = None
+                ok = True
+            except:
+                print("\nVous avez entré une donnée incorrecte!")
+        newplane = self.create_plane(
+            ID,
+            company,
+            passengers,
+            fuel,
+            consumption,
+            model,
+            time,
+            statut)
+        self.add_plane(newplane)
+        if plane_type == 'departure':
+            type_text = "au décollage"
+        else:
+            type_text = "à l'atterrissage"
+        
+        text = "L'avion {} a été ajouté à la liste des avions {}.".format(newplane.getID(), type_text)
+        print(text)
+
+
     def add_plane(self, plane):
         '''
         ajout d'un avion à departure_list, arrival_list
@@ -413,11 +481,12 @@ class Airport:
             del self.dico_model[model]
             print ("Le modèle à été supprimé.")
         else:
-            print("Vous n'avez pas entré un ID correct")
+            print("Vous n'avez pas entré un nom de modeèle correct")
     
     def show_model(self):
         if len(self.dico_model) == 0:
             print("\nIl n'y a aucun modèle enregistré")
+
         else:
             print('\nListe des modèles enregistrés:')
             count = 1
@@ -590,69 +659,10 @@ class Airport:
             answer = (str(input("\nAction choisie: "))).lower()
 
             if answer == 'a':
-                ok = False
-                while not ok:
-                    try:
-                        letterID = (
-                            str(input("\nLes 2 ou 3 premières lettres de l'ID:"))).upper()
-                        numberID = int(input("les 4 chiffres de l'ID:"))
-                        ID = (letterID + (str(numberID)))
-                        company = (str(input('Compagnie:'))).lower()
-                        passengers = int(input('Nombre de passagers:'))
-                        fuel = int(input('Quantité de carburant:'))
-                        consumption = int(input('Consommation de carburant:'))
-                        heure = int(input('Heure de départ (heure):'))
-                        minutes = int(input('minutes:'))
-                        time = (heure, minutes)
-                        ok = True
-                    except:
-                        print("\nVous avez entré une donnée incorrecte!")
-                statut = None
-                newplane = self.create_plane(
-                    ID,
-                    company,
-                    passengers,
-                    fuel,
-                    consumption,
-                    time,
-                    statut)
-                self.add_plane(newplane)
-                print(
-                    "\nL'avion",
-                    newplane.getID(),
-                    "a été ajouté à la liste des avions au décollage")
+                self.ask_for_add_plane("departure")
 
             elif answer == 'b':
-                ok = False
-                while not ok:
-                    try:
-                        letterID = (
-                            str(input("\nLes 2 ou 3 premières lettres de l'ID:"))).upper()
-                        numberID = int(input("les 4 chiffres de l'ID:"))
-                        ID = (letterID + (str(numberID)))
-                        company = str(input('Compagnie:'))
-                        passengers = int(input('Nombre de passagers:'))
-                        fuel = int(input('Quantité de carburant:'))
-                        consumption = int(input('Consommation de carburant:'))
-                        ok = True
-                    except:
-                        print('Vous avez entré une donnée incorrecte!')
-
-                time = None
-                statut = None
-                newplane = self.create_plane(
-                    ID,
-                    company,
-                    passengers,
-                    fuel,
-                    consumption,
-                    time,
-                    statut)
-                self.add_plane(newplane)
-                print(
-                    "\nL'avion",
-                    newplane.getID(),
-                    "a été ajouté à la liste des avions à l'atterissage")
+                self.ask_for_add_plane("arrival")
 
             elif answer == 'c':
                 print('\nListe des avions au départ:\n')
