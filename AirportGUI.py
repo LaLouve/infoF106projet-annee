@@ -196,8 +196,8 @@ class AirportGUI:
                 self.nbr_min.get())).pack(
             side=BOTTOM)
 
-        #partie centrale de la troisième colonne, contient les informations
-        #des pistes 
+        # partie centrale de la troisième colonne, contient les informations
+        # des pistes
         frame_adjust = Frame(column3, height=50, bg='white').pack()
         column3_partCENTER = Frame(column3, height=220, bg='white')
         column3_partCENTER.pack(side=TOP)
@@ -222,7 +222,9 @@ class AirportGUI:
             bg='white',
             text=text_departure_label)
         self.departure_label.pack(side=RIGHT)
-        self.departure_label.bind("<Double-Button-1>", self.mod_depRunway_button)
+        self.departure_label.bind(
+            "<Double-Button-1>",
+            self.mod_depRunway_button)
 
         arrival_frame = Frame(label_principal, bd=6, bg='white')
         arrival_frame.pack(side=TOP)
@@ -277,12 +279,12 @@ class AirportGUI:
             bg='#C0C0C0',
             command=self.companiesButton).pack(
             side=BOTTOM)
-        #Button(
+        # Button(
         #   column3_partBOTTOM,
         #    text='Runway',
         #    relief=GROOVE,
         #    width=12,
-        #    bg='#C0C0C0',
+        # bg='#C0C0C0',
         #    command=self.runwayButton).pack(
         #    side=BOTTOM)
 
@@ -1169,7 +1171,6 @@ class AirportGUI:
                 item = list_plane.index(plane.getID())
                 self.list_box_arrivals.delete(item)
 
-            
     def stepButton(self, nbr_min):
         self.nbr_min.delete(0, last=END)
 
@@ -1180,7 +1181,7 @@ class AirportGUI:
         elif nbr_min == '':
             nbr_min = 1
             ok = True
-       
+
         if airport.departure_runway == 0 and airport.arrival_runway == 0 and airport.mixte_runway == 0:
             text = "\nVotre aéroport n'a aucune piste pour faire décoller ou atterrire des avions."\
                    "\nVeuillez en ajouter."
@@ -1193,7 +1194,7 @@ class AirportGUI:
             text = "\nVotre aéroport n'a aucune piste pour faire atterrire des avions."\
                    "\nVeuillez en ajouter."
             message = tkm.showwarning('No runway', text)
-        
+
         if ok:
             plane = None
             for i in range(int(nbr_min)):
@@ -1206,13 +1207,13 @@ class AirportGUI:
                 for l in range(airport.mixte_runway):
                     plane = airport.next_event()
                     self.execute_plane(plane)
-                
+
                 crashedPlane, delayedPlane = airport.update_status()
                 for plane in crashedPlane:
                     text = "L'avion {} n'a malheureusement pas pu atterrire à temps."\
                         " \nVous avez tué {} passagers. /o\\".format(
-                        plane.getID(),
-                        plane.getPassengers())
+                            plane.getID(),
+                            plane.getPassengers())
                     message = tkm.showinfo('Plane Crashed', text)
                     list_plane = self.list_box_arrivals.get(0, END)
                     item = list_plane.index(plane.getID())
@@ -1221,7 +1222,7 @@ class AirportGUI:
                 for plane in delayedPlane:
                     text = "L'avion {} est en retard.".format(plane.getID())
                     message = tkm.showinfo('Plane Delayed', text)
-                
+
                 if airport.tick == 1440:
                     airport.new_day()
                     text = '{:^20}'.format('New Day')
@@ -1235,7 +1236,7 @@ class AirportGUI:
     ### Fonctions relatives aux pistes ###
     def mod_depRunway_button(self, event=None):
         self.modifiy_nbrRunway('departures')
-        
+
     def mod_arrRunway_button(self, event=None):
         self.modifiy_nbrRunway('arrivals')
 
@@ -1260,7 +1261,7 @@ class AirportGUI:
             bg='white',
             text=text_label,
             font=tkFont.Font(
-            size=5))
+                size=5))
         label_principal.pack()
 
         button_frame = Frame(
@@ -1275,7 +1276,7 @@ class AirportGUI:
             relief=GROOVE,
             width=2,
             bg='#C0C0C0',
-            command=lambda:self.incr_nbr_runway(name_runway))
+            command=lambda: self.incr_nbr_runway(name_runway))
         button_plus.pack(side=LEFT)
 
         button_moins = Button(
@@ -1284,9 +1285,8 @@ class AirportGUI:
             relief=GROOVE,
             width=2,
             bg='#C0C0C0',
-            command=lambda:self.decr_nbr_runway(name_runway))
+            command=lambda: self.decr_nbr_runway(name_runway))
         button_moins.pack(side=RIGHT)
-
 
     def incr_nbr_runway(self, name_runway):
         if name_runway == 'departures':
@@ -1300,7 +1300,7 @@ class AirportGUI:
             text_arrival_label = "Arrival runways: {}".format(
                 airport.arrival_runway)
             self.arrival_label.configure(text=text_arrival_label)
-        
+
         elif name_runway == 'mixtes':
             airport.mixte_runway += 1
             text_mixte_label = "Mixte runways: {}".format(
@@ -1308,8 +1308,6 @@ class AirportGUI:
             self.mixte_label.configure(text=text_mixte_label)
 
         self.modify_nbrRunway_window.destroy()
-
-
 
     def decr_nbr_runway(self, name_runway):
         if name_runway == 'departures':
@@ -1327,7 +1325,7 @@ class AirportGUI:
             text_arrival_label = "Arrival runways: {}".format(
                 airport.arrival_runway)
             self.arrival_label.configure(text=text_arrival_label)
-        
+
         elif name_runway == 'mixtes':
             airport.mixte_runway -= 1
             if airport.mixte_runway < 0:
@@ -1337,7 +1335,6 @@ class AirportGUI:
             self.mixte_label.configure(text=text_mixte_label)
 
         self.modify_nbrRunway_window.destroy()
-
 
 
 if __name__ == "__main__":
