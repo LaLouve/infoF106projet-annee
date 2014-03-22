@@ -198,7 +198,7 @@ class AirportGUI:
 
         # partie centrale de la troisième colonne, contient les informations
         # des pistes
-        frame_adjust = Frame(column3, height=50, bg='white').pack()
+        Frame(column3, height=50, bg='white').pack()
         column3_partCENTER = Frame(column3, height=220, bg='white')
         column3_partCENTER.pack(side=TOP)
 
@@ -249,7 +249,7 @@ class AirportGUI:
         self.mixte_label.pack(side=RIGHT)
         self.mixte_label.bind("<Double-Button-1>", self.mod_mixRunway_button)
 
-        frame_adjust2 = Frame(column3, height=50, bg='white').pack()
+        Frame(column3, height=50, bg='white').pack()
 
         # partie basse de la troisième colonne, contient les boutons "history",
         # "companies" et "help"
@@ -526,13 +526,13 @@ class AirportGUI:
                 message = tkm.showerror('Error', text)
         else:
             text = "Les données entrées ne sont pas correctes!\nVeuillez les vérifier"
-            message = tkm.showerror('Error', text)
+            tkm.showerror('Error', text)
 
     def addDepartureButton(self):
         '''
         ajoute un avion dans la liste des départs
         '''
-        plane = self.addButton(
+        self.addButton(
             "Add Departure Plane",
             airport.departure_list,
             self.list_box_departures)
@@ -541,7 +541,7 @@ class AirportGUI:
         '''
         Ajoute un avion dans la liste des arrivées
         '''
-        plane = self.addButton(
+        self.addButton(
             "Add Arrival Plane",
             airport.arrival_list,
             self.list_box_arrivals)
@@ -555,7 +555,7 @@ class AirportGUI:
         plane = airport.add_random_departure_plane()
         self.list_box_departures.insert(END, plane.getID())
         text = "L'avion {} a été ajouté".format(plane.getID())
-        message = tkm.showinfo('Plane Added', text)
+        tkm.showinfo('Plane Added', text)
 
     def addArrivalRandom(self):
         '''
@@ -566,7 +566,7 @@ class AirportGUI:
         plane = airport.add_random_arrival_plane()
         self.list_box_arrivals.insert(END, plane.getID())
         text = "L'avion {} a été ajouté".format(plane.getID())
-        message = tkm.showinfo('Plane Added', text)
+        tkm.showinfo('Plane Added', text)
 
     def deletePlaneButton(self):
         '''
@@ -579,7 +579,7 @@ class AirportGUI:
         plane = airport.departure_list[numPlane]
         airport.del_plane(plane)
         text = "L'avion {} a été supprimé".format(plane.getID())
-        message = tkm.showwarning("Plane deleted", text)
+        tkm.showwarning("Plane deleted", text)
 
     def checkPlaneDelete(self, event=None):
         '''
@@ -845,7 +845,7 @@ class AirportGUI:
             self.list_box_company.insert(END, text)
         else:
             text = "La compagnie {} existe déjà".format(company)
-            message = tkm.showwarning('Company already exist', text)
+            tkm.showwarning('Company already exist', text)
 
     def deleteCompanyButton(self):
         '''
@@ -857,7 +857,7 @@ class AirportGUI:
         company = self.list_airlines[numCompany]
         nameCompany = airport.airlines[company]
         text = "La compagnie '{}' a été supprimé".format(nameCompany)
-        message = tkm.showwarning("Company deleted", text)
+        tkm.showwarning("Company deleted", text)
         airport.del_company(company)
 
     def checkCompanyDelete(self, event=None):
@@ -913,7 +913,7 @@ class AirportGUI:
             bd=5,
             bg='white')  # frame secondaire, contient l'id
         frame_ID.grid(row=0, column=0)
-        label_ID = Label(
+        Label(
             frame_ID,
             bd=3,
             bg='white',
@@ -922,7 +922,7 @@ class AirportGUI:
                 size=9)).grid(
             row=0,
             column=0)
-        info_ID = Label(
+        Label(
             frame_ID,
             bd=3,
             bg='white',
@@ -935,7 +935,7 @@ class AirportGUI:
             bd=5,
             bg='white')  # frame secondaire, contient la compagnie
         frame_company.grid(row=0, column=1)
-        label_company = Label(
+        Label(
             frame_company,
             bd=3,
             bg='white',
@@ -944,7 +944,7 @@ class AirportGUI:
                 size=9)).grid(
             row=0,
             column=0)
-        info_compnay = Label(
+        Label(
             frame_company,
             bd=3,
             bg='white',
@@ -957,7 +957,7 @@ class AirportGUI:
             bd=5,
             bg='white')  # frame secondaire, contient le nombre de passagers
         frame_passengers.grid(row=0, column=2)
-        label_passengers = Label(
+        Label(
             frame_passengers,
             bd=3,
             bg='white',
@@ -966,7 +966,7 @@ class AirportGUI:
                 size=9)).grid(
             row=0,
             column=0)
-        info_passengers = Label(
+        Label(
             frame_passengers,
             bd=3,
             bg='white',
@@ -979,7 +979,7 @@ class AirportGUI:
             bd=5,
             bg='white')  # frame secondaire, contient le fuel
         frame_fuel.grid(row=0, column=3)
-        label_fuel = Label(
+        Label(
             frame_fuel,
             bd=3,
             bg='white',
@@ -988,7 +988,7 @@ class AirportGUI:
                 size=9)).grid(
             row=0,
             column=0)
-        info_fuel = Label(
+        Label(
             frame_fuel,
             bd=3,
             bg='white',
@@ -1001,7 +1001,7 @@ class AirportGUI:
             bd=5,
             bg='white')  # frame secondaire, contient la consommation
         frame_consumption.grid(row=0, column=4)
-        label_consumption = Label(
+        Label(
             frame_consumption,
             bd=3,
             bg='white',
@@ -1010,7 +1010,7 @@ class AirportGUI:
                 size=10)).grid(
             row=0,
             column=0)
-        info_consumption = Label(
+        Label(
             frame_consumption,
             bd=3,
             bg='white',
@@ -1024,7 +1024,7 @@ class AirportGUI:
                 bd=5,
                 bg='white')  # frame secondaire, contient l'heure
             frame_time.grid(row=0, column=5)
-            label_time = Label(
+            Label(
                 frame_time,
                 bd=3,
                 bg='white',
@@ -1035,7 +1035,7 @@ class AirportGUI:
                 column=0)
             time = plane.getTime()
             text = (str(time[0]) + 'h' + str(time[1]))
-            info_time = Label(
+            Label(
                 frame_time,
                 bd=3,
                 bg='white',
@@ -1049,7 +1049,7 @@ class AirportGUI:
                 bd=5,
                 bg='white')  # frame secondaire, contient le statut
             frame_statut.grid(row=0, column=6)
-            label_statut = Label(
+            Label(
                 frame_statut,
                 bd=3,
                 bg='white',
@@ -1058,7 +1058,7 @@ class AirportGUI:
                     size=9)).grid(
                 row=0,
                 column=0)
-            info_statut = Label(
+            Label(
                 frame_statut,
                 bd=3,
                 bg='white',
@@ -1068,7 +1068,7 @@ class AirportGUI:
 
         frame_button = Frame(principal, bd=5, bg='white')
         frame_button.grid(row=1, column=3)
-        button_OK = Button(
+        Button(
             frame_button,
             text='OK',
             relief=GROOVE,
@@ -1140,7 +1140,7 @@ class AirportGUI:
         scrollbar.pack(side=RIGHT, fill=Y)
         list_box_area.pack()
         self.list_box_company_plane.pack()
-        button_OK = Button(
+        Button(
             principal,
             text='OK',
             relief=GROOVE,
@@ -1231,7 +1231,7 @@ class AirportGUI:
 
         else:
             text = "La valeur entrée n'est pas correcte. Veuillez la vérifier."
-            message = tkm.showwarning("Valeur Incorecte", text)
+            tkm.showwarning("Valeur Incorecte", text)
 
     ### Fonctions relatives aux pistes ###
     def mod_depRunway_button(self, event=None):

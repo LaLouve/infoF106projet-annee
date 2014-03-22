@@ -310,7 +310,7 @@ class Airport:
         return (most_prior_plane)
 
     def next_arrival(self):
-        departure_plane = self.departure_priority_plane()
+        self.departure_priority_plane()
         most_prior_plane = None
 
         arrival_plane = self.arrival_priority_plane()
