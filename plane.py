@@ -44,11 +44,11 @@ class Plane:
     def getFuel(self):
         return self.fuel
 
-    def getModel(self):
-        return self.model
-
     def getConsumption(self):
         return self.consumption
+
+    def getModel(self):
+        return self.model
 
     def getTime(self):
         return self.time

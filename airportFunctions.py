@@ -28,7 +28,7 @@ class Airport:
         self.departure_runway = 0  # nbr de pistes de décollage
         self.arrival_runway = 0  # nbr de pistes d'atterissage
         self.mixte_runway = 0  # nbr de piste d'atterissage et de décollage
-        self.dico_model = {}  # dico des différents modèles d'avions
+        self.dico_model = {} #dico des différents modèles d'avions
 
     def create_plane(
             self,
@@ -58,6 +58,74 @@ class Airport:
             self.airlines[ID_letter] = company
             return newPlane
 
+    def ask_for_add_plane(self, plane_type):
+        if len (self.dico_model) == 0 :
+            print ("\nIl n'y a aucun modèle d'avion enregistré, veuillez en créer un.")
+            model, fuel, consumption, modMaxPass = self.add_model()
+        
+        else:
+            ansOK = False
+            while not ansOK:
+                ans = str(input("\nVoulez-vous utiliser un modèle d'avion enregistré? (O)ui/(N)on ")).lower() 
+                if ans == 'o' or ans == 'n':
+                    ansOK = True
+
+            if ans == 'o':
+                self.show_model()
+                model = str(input("\nEntrez le nom du modèle souhaité: ")).upper()
+                modMaxPass = self.dico_model[model][2]
+                fuel = self.dico_model[model][0]
+                consumption = self.dico_model[model][1]
+
+            elif ans == 'n':
+                model, fuel, consumption, modMaxPass = self.add_model()
+
+        ok = False
+        print ("\nInformations de l'avion:")
+        while not ok:
+            try:
+                letterID = (
+                    str(input("\nLes 2 ou 3 premières lettres de l'ID:"))).upper()
+                numberID = int(input("les 4 chiffres de l'ID:"))
+                ID = (letterID + (str(numberID)))
+                company = (str(input('Compagnie:'))).lower()
+                passOK = False
+                while not passOK:
+                    passengers = int(input("Nombre de passagers: "))
+                    if passengers > modMaxPass:
+                        print ("Le nombre de passagers dépasse la capacité de ce modèle d'avion")
+                    else:
+                        passOK = True
+                if plane_type == 'departure':
+                    heure = int(input('Heure de départ (heure):'))
+                    minutes = int(input('minutes:'))
+                    time = (heure, minutes)
+                    statut = 'In Time'
+                else:
+                    time = None
+                    statut = None
+                ok = True
+            except:
+                print("\nVous avez entré une donnée incorrecte!")
+        newplane = self.create_plane(
+            ID,
+            company,
+            passengers,
+            fuel,
+            consumption,
+            model,
+            time,
+            statut)
+        self.add_plane(newplane)
+        if plane_type == 'departure':
+            type_text = "au décollage"
+        else:
+            type_text = "à l'atterrissage"
+        
+        text = "L'avion {} a été ajouté à la liste des avions {}.".format(newplane.getID(), type_text)
+        print(text)
+
+
     def add_plane(self, plane):
         '''
         ajout d'un avion à departure_list, arrival_list
@@ -84,11 +152,9 @@ class Airport:
 
         while not ok:
             company = (
-                str(input("\nEntrez le nom complet de la compagnie"
-                          " que vous voulez ajouter: "))).lower()
+                str(input("\nEntrez le nom complet de la compagnie que vous voulez ajouter: "))).lower()
             ID_letter = (
-                str(input("Entrez l'ID de la compagnie (2 ou 3 lettres) :"))
-            ).upper()
+                str(input("Entrez l'ID de la compagnie (2 ou 3 lettres) :"))).upper()
             if ID_letter not in self. airlines:
                 ok = True
             else:
@@ -109,8 +175,8 @@ class Airport:
         '''
         avion le plus prioritaire pour le depart
 
-        [1:] permet de ne pas verifier l'avion prioritaire avec lui même
-        vu qu'il est le premier de la liste
+        [1:] permet de ne pas verifier l'avion prioritaire avec lui même vu qu'il
+        est le premier de la liste
         '''
         if len(self.departure_list) == 0:
             most_prior_plane = None
@@ -130,8 +196,8 @@ class Airport:
         avion le plus prioritaire pour l'atterissage
 
         on divise le niveau de carburant (fuel)par la consommation de carburant
-        par tour (consumption), pour obtenir le nombre de tours que l'avion
-        peut encore rester en l'air.
+        par tour (consumption), pour obtenir le nombre de tours que l'avion peut
+        encore rester en l'air.
         '''
         if len(self.arrival_list) == 0:
             most_prior_plane = None
@@ -244,8 +310,7 @@ class Airport:
                 print(
                     "\nL'avion",
                     plane.getID(),
-                    "n'a malheureusement pas pu atterire à temps."
-                    " \nVous avez tué",
+                    "n'a malheureusement pas pu atterire à temps. \nVous avez tué",
                     plane.getPassengers(),
                     'passagers./o\\')
                 plane.setStatut('Crashed')
@@ -280,8 +345,7 @@ class Airport:
             self.arrival_list.remove(most_prior_plane)
             print("\nL'avion", most_prior_plane.getID(), "a attéri.")
 
-        elif departure_plane is not None and\
-                self.convTupleToTick(departure_plane.getTime()) <= self.tick:
+        elif departure_plane is not None and self.convTupleToTick(departure_plane.getTime()) <= self.tick:
             most_prior_plane = departure_plane
             most_prior_plane.setStatut('Take Off')
             self.departure_list.remove(most_prior_plane)
@@ -296,14 +360,13 @@ class Airport:
         if most_prior_plane is not None:
             self.history_list.append(most_prior_plane)
 
-        return most_prior_plane
+        return (most_prior_plane)
 
     def next_departure(self):
         departure_plane = self.departure_priority_plane()
         most_prior_plane = None
 
-        if departure_plane is not None and\
-           self.convTupleToTick(departure_plane.getTime()) <= self.tick:
+        if departure_plane is not None and self.convTupleToTick(departure_plane.getTime()) <= self.tick:
             most_prior_plane = departure_plane
             most_prior_plane.setStatut('Take Off')
             self.departure_list.remove(most_prior_plane)
@@ -312,10 +375,10 @@ class Airport:
         if most_prior_plane is not None:
             self.history_list.append(most_prior_plane)
 
-        return most_prior_plane
+        return (most_prior_plane)
 
     def next_arrival(self):
-        self.departure_priority_plane()
+        departure_plane = self.departure_priority_plane()
         most_prior_plane = None
 
         arrival_plane = self.arrival_priority_plane()
@@ -335,27 +398,22 @@ class Airport:
         if most_prior_plane is not None:
             self.history_list.append(most_prior_plane)
 
-        return most_prior_plane
+        return (most_prior_plane)
 
     def ask_for_runway(self):
         ok = False
         while not ok:
             try:
                 print("\nEntrez le nombre de pistes souhaitées:")
-                self.nbr_departure_runway = int(
-                    input("Pistes pour le décollage:"))
-                self.nbr_arrival_runway = int(
-                    input("Pistes pour l'atterissage:"))
+                self.nbr_departure_runway = int(input("Pistes pour le décollage:"))
+                self.nbr_arrival_runway = int(input("Pistes pour l'atterissage:"))
                 self.nbr_mixte_runway = int(
                     input("Pistes pour l'atterisssage et le décollage:"))
                 ok = True
             except:
                 print("\nVous n'avez pas indiqué des valeurs correcte!")
 
-        return (
-            self.nbr_departure_runway,
-            self.nbr_arrival_runway,
-            self.nbr_mixte_runway)
+        return (self.nbr_departure_runway, self.nbr_arrival_runway, self.nbr_mixte_runway)
 
     def show_runway(self):
         print("\nListe des pistes:")
@@ -395,7 +453,7 @@ class Airport:
         permet d'ajouter un nouveau modèle d'avion
         '''
         ok = False
-        print("\nAjout d'un nouvel d'un nouveau modèle d'avion:")
+        print ("\nAjout d'un nouvel d'un nouveau modèle d'avion:")
 
         while not ok:
             try:
@@ -405,14 +463,9 @@ class Airport:
                 modPass = int(input("Nombre maximum de passagers:"))
                 ok = True
             except:
-                print(
-                    "Vous avez entré une donnée incorrecte,"
-                    " veuillez rééssayez.")
+                print ("Vous avez entré une donnée incorrecte, veuillez rééssayez.")
 
-        modCar = [
-            modFuel,
-            modConso,
-            modPass]  # liste des caractéristique du modèle
+        modCar = [modFuel, modConso, modPass] #liste des caractéristique du modèle
         self.dico_model[model] = modCar
 
         return model, modFuel, modConso, modPass
@@ -426,34 +479,24 @@ class Airport:
 
         if model in self.dico_model:
             del self.dico_model[model]
-            print("Le modèle à été supprimé.")
+            print ("Le modèle à été supprimé.")
         else:
-            print("Vous n'avez pas entré un ID correct")
-
+            print("Vous n'avez pas entré un nom de modeèle correct")
+    
     def show_model(self):
         if len(self.dico_model) == 0:
             print("\nIl n'y a aucun modèle enregistré")
+
         else:
             print('\nListe des modèles enregistrés:')
             count = 1
-            print(
-                "      {:^10} {:^6} {:^6} {:^10}".format(
-                    "Model",
-                    "Fuel",
-                    "Cons.",
-                    "Passengers"))
+            print ("      {:^10} {:^6} {:^6} {:^10}".format("Model", "Fuel", "Cons.", "Passengers"))
             list_keys = self.dico_model.keys()
             for model in list_keys:
                 fuel = str(self.dico_model[model][0])
                 consumption = str(self.dico_model[model][1])
                 passengers = str(self.dico_model[model][2])
-                print(
-                    "n°{:2}: {:^10} {:^6} {:^6} {:^10}".format(
-                        count,
-                        model,
-                        fuel,
-                        consumption,
-                        passengers))
+                print("n°{:2}: {:^10} {:^6} {:^6} {:^10}".format(count, model, fuel, consumption, passengers))
                 count += 1
 
     def add_random_departure_plane(self):
@@ -463,9 +506,7 @@ class Airport:
         sont demandées à l'utilisateur afin d'en créer une nouvelle.
         '''
         if len(self.dico_model) == 0:
-            print(
-                "\nIl n'y a aucun modèle d'avion enregistré,"
-                " veuillez en entrer un manuellement")
+            print("\nIl n'y a aucun modèle d'avion enregistré, veuillez en entrer un manuellement")
 
             model, fuel, consumption, maxPass = self.add_model()
             passengers = randint(1, maxPass)
@@ -481,8 +522,7 @@ class Airport:
 
         if len(self.airlines) == 0:
             print(
-                "\nIl n'y a aucune compagnie enregistrée,"
-                " veuillez en entrer une manuellement")
+                "\nIl n'y a aucune compagnie enregistrée, veuillez en entrer une manuellement")
 
             company, ID_letter = self.add_company()
 
@@ -519,9 +559,7 @@ class Airport:
         sont demandées à l'utilisateur afin d'en créer une nouvelle.
         '''
         if len(self.dico_model) == 0:
-            print(
-                "\nIl n'y a aucun modèle d'avion enregistré,"
-                " veuillez en entrer un manuellement")
+            print("\nIl n'y a aucun modèle d'avion enregistré, veuillez en entrer un manuellement")
 
             model, fuel, consumption, maxPass = self.add_model()
             passengers = randint(1, maxPass)
@@ -537,8 +575,7 @@ class Airport:
 
         if len(self.airlines) == 0:
             print(
-                "\nIl n'y a aucune compagnie enregistrée,"
-                " veuillez en entrer une manuellement")
+                "\nIl n'y a aucune compagnie enregistrée, veuillez en entrer une manuellement")
 
             company, ID_letter = self.add_company()
 
@@ -569,7 +606,7 @@ class Airport:
         return newPlane
 
     def convTupleToTick(self, tupple):
-        return tupple[0] * 60 + tupple[1]
+        return (tupple[0] * 60 + tupple[1])
 
     def convTickToTuple(self, time):
         return ((str(time // 60)).rjust(2, '0'),
@@ -590,8 +627,7 @@ class Airport:
 
     def user_menu(self):
         '''
-        Menu principal de l'utilisateur.
-        Permet le choix des actions à effectuer
+        Menu principal de l'utilisateur. Permet le choix des actions à effectuer
         '''
         answer = 0
         while answer != 'q':
@@ -623,71 +659,10 @@ class Airport:
             answer = (str(input("\nAction choisie: "))).lower()
 
             if answer == 'a':
-                ok = False
-                while not ok:
-                    try:
-                        letterID = (
-                            str(input("\nLes 2 ou 3 premières lettres de l'ID:"))
-                        ).upper()
-                        numberID = int(input("les 4 chiffres de l'ID:"))
-                        ID = (letterID + (str(numberID)))
-                        company = (str(input('Compagnie:'))).lower()
-                        passengers = int(input('Nombre de passagers:'))
-                        fuel = int(input('Quantité de carburant:'))
-                        consumption = int(input('Consommation de carburant:'))
-                        heure = int(input('Heure de départ (heure):'))
-                        minutes = int(input('minutes:'))
-                        time = (heure, minutes)
-                        ok = True
-                    except:
-                        print("\nVous avez entré une donnée incorrecte!")
-                statut = None
-                newplane = self.create_plane(
-                    ID,
-                    company,
-                    passengers,
-                    fuel,
-                    consumption,
-                    time,
-                    statut)
-                self.add_plane(newplane)
-                print(
-                    "\nL'avion",
-                    newplane.getID(),
-                    "a été ajouté à la liste des avions au décollage")
+                self.ask_for_add_plane("departure")
 
             elif answer == 'b':
-                ok = False
-                while not ok:
-                    try:
-                        letterID = (
-                            str(input("\nLes 2 ou 3 premières lettres de l'ID:"))
-                        ).upper()
-                        numberID = int(input("les 4 chiffres de l'ID:"))
-                        ID = (letterID + (str(numberID)))
-                        company = str(input('Compagnie:'))
-                        passengers = int(input('Nombre de passagers:'))
-                        fuel = int(input('Quantité de carburant:'))
-                        consumption = int(input('Consommation de carburant:'))
-                        ok = True
-                    except:
-                        print('Vous avez entré une donnée incorrecte!')
-
-                time = None
-                statut = None
-                newplane = self.create_plane(
-                    ID,
-                    company,
-                    passengers,
-                    fuel,
-                    consumption,
-                    time,
-                    statut)
-                self.add_plane(newplane)
-                print(
-                    "\nL'avion",
-                    newplane.getID(),
-                    "a été ajouté à la liste des avions à l'atterissage")
+                self.ask_for_add_plane("arrival")
 
             elif answer == 'c':
                 print('\nListe des avions au départ:\n')
@@ -788,4 +763,4 @@ class Airport:
                 correct = True
             except:
                 print("\nVous n'avez pas entré un nombre correct!\n")
-        return heure * 60 + minutes
+        return (heure * 60 + minutes)
