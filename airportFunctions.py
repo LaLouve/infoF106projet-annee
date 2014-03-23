@@ -196,9 +196,11 @@ class Airport:
         else:
             most_prior_plane = self.departure_list[0]
             for plane in self.departure_list[1:]:
-                if int(plane.getTime()) < most_prior_plane.getTime():
+                if self.convTupleToTick(plane.getTime()) <\
+                   self.convTupleToTick(most_prior_plane.getTime()):
                     most_prior_plane = plane
-                if int(plane.getTime()) == most_prior_plane.getTime():
+                if self.convTupleToTick(plane.getTime()) ==\
+                   self.convTupleToTick(most_prior_plane.getTime()):
                     if int(plane.getPassengers()) >\
                        most_prior_plane.getPassengers():
                         most_prior_plane = plane
