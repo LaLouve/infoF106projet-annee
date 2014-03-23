@@ -17,15 +17,25 @@ def main_loop():
 
     while True:
         nbrTick = airport.user_menu()
-        if airport.departure_runway == 0 and airport.arrival_runway == 0 and airport.mixte_runway == 0:
-            print ("\nVotre aéroport n'a aucune piste, vous ne pouvez faire décoller ou atterrire des avions."\
-                   "\nVeuillez en ajouter.")
-        elif airport.departure_runway == 0 and airport.mixte_runway == 0:
-            print ("\nVotre aéroport n'a aucune piste pour faire décoller des avions."\
-                   "\nVeuillez en ajouter.")
-        elif airport.arrival_runway == 0 and airport.mixte_runway == 0:
-            print ("\nVotre aéroport n'a aucune piste pour faire atterrire des avions."\
-                   "\nVeuillez en ajouter.")  
+        if airport.departure_runway == 0 and\
+           airport.arrival_runway == 0 and\
+           airport.mixte_runway == 0:
+            print(
+                "\nVotre aéroport n'a aucune piste,"
+                " vous ne pouvez faire décoller ou atterrire des avions."
+                "\nVeuillez en ajouter.")
+        elif airport.departure_runway == 0 and\
+                airport.mixte_runway == 0:
+            print(
+                "\nVotre aéroport n'a aucune piste"
+                " pour faire décoller des avions."
+                "\nVeuillez en ajouter.")
+        elif airport.arrival_runway == 0 and\
+                airport.mixte_runway == 0:
+            print(
+                "\nVotre aéroport n'a aucune piste"
+                " pour faire atterrire des avions."
+                "\nVeuillez en ajouter.")
         else:
             for i in range(nbrTick):
                 for j in range(airport.departure_runway):
