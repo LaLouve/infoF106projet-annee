@@ -28,7 +28,7 @@ class Airport:
         self.departure_runway = 0  # nbr de pistes de décollage
         self.arrival_runway = 0  # nbr de pistes d'atterissage
         self.mixte_runway = 0  # nbr de piste d'atterissage et de décollage
-        self.dico_model = {} #dico des différents modèles d'avions
+        self.dico_model = {}  # dico des différents modèles d'avions
 
     def create_plane(
             self,
@@ -59,20 +59,23 @@ class Airport:
             return newPlane
 
     def ask_for_add_plane(self, plane_type):
-        if len (self.dico_model) == 0 :
-            print ("\nIl n'y a aucun modèle d'avion enregistré, veuillez en créer un.")
+        if len(self.dico_model) == 0:
+            print(
+                "\nIl n'y a aucun modèle d'avion enregistré, veuillez en créer un.")
             model, fuel, consumption, modMaxPass = self.add_model()
-        
+
         else:
             ansOK = False
             while not ansOK:
-                ans = str(input("\nVoulez-vous utiliser un modèle d'avion enregistré? (O)ui/(N)on ")).lower() 
+                ans = str(
+                    input("\nVoulez-vous utiliser un modèle d'avion enregistré? (O)ui/(N)on ")).lower()
                 if ans == 'o' or ans == 'n':
                     ansOK = True
 
             if ans == 'o':
                 self.show_model()
-                model = str(input("\nEntrez le nom du modèle souhaité: ")).upper()
+                model = str(
+                    input("\nEntrez le nom du modèle souhaité: ")).upper()
                 modMaxPass = self.dico_model[model][2]
                 fuel = self.dico_model[model][0]
                 consumption = self.dico_model[model][1]
@@ -81,7 +84,7 @@ class Airport:
                 model, fuel, consumption, modMaxPass = self.add_model()
 
         ok = False
-        print ("\nInformations de l'avion:")
+        print("\nInformations de l'avion:")
         while not ok:
             try:
                 letterID = (
@@ -93,7 +96,8 @@ class Airport:
                 while not passOK:
                     passengers = int(input("Nombre de passagers: "))
                     if passengers > modMaxPass:
-                        print ("Le nombre de passagers dépasse la capacité de ce modèle d'avion")
+                        print(
+                            "Le nombre de passagers dépasse la capacité de ce modèle d'avion")
                     else:
                         passOK = True
                 if plane_type == 'departure':
@@ -121,10 +125,11 @@ class Airport:
             type_text = "au décollage"
         else:
             type_text = "à l'atterrissage"
-        
-        text = "L'avion {} a été ajouté à la liste des avions {}.".format(newplane.getID(), type_text)
-        print(text)
 
+        text = "L'avion {} a été ajouté à la liste des avions {}.".format(
+            newplane.getID(),
+            type_text)
+        print(text)
 
     def add_plane(self, plane):
         '''
@@ -405,15 +410,20 @@ class Airport:
         while not ok:
             try:
                 print("\nEntrez le nombre de pistes souhaitées:")
-                self.nbr_departure_runway = int(input("Pistes pour le décollage:"))
-                self.nbr_arrival_runway = int(input("Pistes pour l'atterissage:"))
+                self.nbr_departure_runway = int(
+                    input("Pistes pour le décollage:"))
+                self.nbr_arrival_runway = int(
+                    input("Pistes pour l'atterissage:"))
                 self.nbr_mixte_runway = int(
                     input("Pistes pour l'atterisssage et le décollage:"))
                 ok = True
             except:
                 print("\nVous n'avez pas indiqué des valeurs correcte!")
 
-        return (self.nbr_departure_runway, self.nbr_arrival_runway, self.nbr_mixte_runway)
+        return (
+            self.nbr_departure_runway,
+            self.nbr_arrival_runway,
+            self.nbr_mixte_runway)
 
     def show_runway(self):
         print("\nListe des pistes:")
@@ -453,7 +463,7 @@ class Airport:
         permet d'ajouter un nouveau modèle d'avion
         '''
         ok = False
-        print ("\nAjout d'un nouvel d'un nouveau modèle d'avion:")
+        print("\nAjout d'un nouvel d'un nouveau modèle d'avion:")
 
         while not ok:
             try:
@@ -463,9 +473,13 @@ class Airport:
                 modPass = int(input("Nombre maximum de passagers:"))
                 ok = True
             except:
-                print ("Vous avez entré une donnée incorrecte, veuillez rééssayez.")
+                print(
+                    "Vous avez entré une donnée incorrecte, veuillez rééssayez.")
 
-        modCar = [modFuel, modConso, modPass] #liste des caractéristique du modèle
+        modCar = [
+            modFuel,
+            modConso,
+            modPass]  # liste des caractéristique du modèle
         self.dico_model[model] = modCar
 
         return model, modFuel, modConso, modPass
@@ -479,10 +493,10 @@ class Airport:
 
         if model in self.dico_model:
             del self.dico_model[model]
-            print ("Le modèle à été supprimé.")
+            print("Le modèle à été supprimé.")
         else:
             print("Vous n'avez pas entré un nom de modeèle correct")
-    
+
     def show_model(self):
         if len(self.dico_model) == 0:
             print("\nIl n'y a aucun modèle enregistré")
@@ -490,13 +504,24 @@ class Airport:
         else:
             print('\nListe des modèles enregistrés:')
             count = 1
-            print ("      {:^10} {:^6} {:^6} {:^10}".format("Model", "Fuel", "Cons.", "Passengers"))
+            print(
+                "      {:^10} {:^6} {:^6} {:^10}".format(
+                    "Model",
+                    "Fuel",
+                    "Cons.",
+                    "Passengers"))
             list_keys = self.dico_model.keys()
             for model in list_keys:
                 fuel = str(self.dico_model[model][0])
                 consumption = str(self.dico_model[model][1])
                 passengers = str(self.dico_model[model][2])
-                print("n°{:2}: {:^10} {:^6} {:^6} {:^10}".format(count, model, fuel, consumption, passengers))
+                print(
+                    "n°{:2}: {:^10} {:^6} {:^6} {:^10}".format(
+                        count,
+                        model,
+                        fuel,
+                        consumption,
+                        passengers))
                 count += 1
 
     def add_random_departure_plane(self):
@@ -506,7 +531,8 @@ class Airport:
         sont demandées à l'utilisateur afin d'en créer une nouvelle.
         '''
         if len(self.dico_model) == 0:
-            print("\nIl n'y a aucun modèle d'avion enregistré, veuillez en entrer un manuellement")
+            print(
+                "\nIl n'y a aucun modèle d'avion enregistré, veuillez en entrer un manuellement")
 
             model, fuel, consumption, maxPass = self.add_model()
             passengers = randint(1, maxPass)
@@ -559,7 +585,8 @@ class Airport:
         sont demandées à l'utilisateur afin d'en créer une nouvelle.
         '''
         if len(self.dico_model) == 0:
-            print("\nIl n'y a aucun modèle d'avion enregistré, veuillez en entrer un manuellement")
+            print(
+                "\nIl n'y a aucun modèle d'avion enregistré, veuillez en entrer un manuellement")
 
             model, fuel, consumption, maxPass = self.add_model()
             passengers = randint(1, maxPass)
