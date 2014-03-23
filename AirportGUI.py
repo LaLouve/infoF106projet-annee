@@ -1419,7 +1419,7 @@ class AirportGUI:
             width=12,
             bg='#C0C0C0',
             state=DISABLED,
-            command=self.deleteModelButton)
+            command=self.deleteModel)
         self.delModelButton.pack(side=BOTTOM)
         Button(
             column,
@@ -1431,14 +1431,130 @@ class AirportGUI:
             side=BOTTOM)
 
     def addModel(self):
-        pass
+        self.add_model_window = Tk()
+        self.add_model_window.title("Add Model")
+        self.add_model_window.config(bg='white')
+        self.add_model_window.resizable(width=FALSE, height=FALSE)
 
-    def deleteModelButton(self):
+        principal_frame = Frame(
+            self.add_model_window,
+            bd=3,
+            bg='white')  # frame du label
+        principal_frame.grid(row=0, column=1)
+       
+        entry_frame = Frame(
+            self.add_model_window,
+            bd=5,
+            bg='white')  # frame des entry
+        entry_frame.grid(row=1, column=1)
+
+        label_principal = Label(
+            principal_frame,
+            bd=6,
+            bg='white',
+            text='Add Model',
+            font=tkFont.Font(
+                size=10))
+        label_principal.grid(row=0, column=1)
+        
+        label_model = Label(
+            entry_frame,
+            bd=4,
+            bg='white',
+            text='Name')
+        label_model.grid(row=0, column=0)
+        model = Entry(
+            entry_frame,
+            bd=2,
+            bg='white',
+            textvariable=str,
+            justify=CENTER,
+            relief=SUNKEN,
+            width=12)
+        model.grid(row=0, column=1)
+
+        label_fuel = Label(
+            entry_frame,
+            bd=4,
+            bg='white',
+            text='Fuel')
+        label_fuel.grid(row=1, column=0)
+        fuel = Entry(
+            entry_frame,
+            bd=2,
+            bg='white',
+            textvariable=int,
+            justify=CENTER,
+            relief=SUNKEN,
+            width=12)
+        fuel.grid(row=1, column=1)
+
+        label_cons = Label(
+            entry_frame,
+            bd=4,
+            bg='white',
+            text='Consumption')
+        label_cons.grid(row=2, column=0)
+        consumption = Entry(
+            entry_frame,
+            bd=2,
+            bg='white',
+            textvariable=int,
+            justify=CENTER,
+            relief=SUNKEN,
+            width=12)
+        consumption.grid(row=2, column=1)
+
+        label_passengers = Label(
+            entry_frame,
+            bd=4,
+            bg='white',
+            text='Passengers')
+        label_passengers.grid(row=3, column=0)
+        passengers = Entry(
+            entry_frame,
+            bd=2,
+            bg='white',
+            textvariable=int,
+            justify=CENTER,
+            relief=SUNKEN,
+            width=12)
+        passengers.grid(row=3, column=1)
+
+        frame_button = Frame(self.add_model_window, bd=5, bg='white')
+        frame_button.grid(row=2, column=1)
+        button_OK = Button(
+            frame_button,
+            text='OK',
+            relief=GROOVE,
+            width=6,
+            bg='#C0C0C0',
+            command=lambda: self.addModelButton(model, fuel, consumption, passengers)).grid(
+            row=0,
+            column=0)
+
+    def addModelButton(self, newModel, newFuel, newConsumption, newPassengers):
+        model = str(newModel.get()).upper()
+        fuel = newFuel.get()
+        consumption = newConsumption.get()
+        passengers = newConsumption.get()
+
+        if fuel.isdigit() and consumption.isdigit() and passengers.isdigit():
+            modCar = [(int(fuel)), (int(consumption)), (int(passengers))]
+            airport.dico_model[model] = modCar
+            txt = "Le modèle {} a été ajouté.".format(model)
+            message = tkm.showinfo("Model added", txt)
+            self.add_model_window.destroy()
+            self.list_box_model.insert(END, model)
+        else:
+            text = "Les données entrées ne sont pas correctes!\nVeuillez les vérifier"
+            message = tkm.showerror('Error', text)
+
+    def deleteModel(self):
         item = self.list_box_model.curselection()
         self.list_box_model.delete(item)
         numModel = item[0]
         model = self.list_model[numModel]
-        #nameCompany = airport.airlines[company]
         text = "La compagnie '{}' a été supprimé".format(model)
         message = tkm.showwarning("Model deleted", text)
         del airport.dico_model[model]
@@ -1568,7 +1684,7 @@ class AirportGUI:
             relief=GROOVE,
             width=6,
             bg='#C0C0C0',
-            command=lambda: self.modelButtonOK()).grid(
+            command=lambda:self.modelButtonOK()).grid(
             row=0,
             column=0)
 

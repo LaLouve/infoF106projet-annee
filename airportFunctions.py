@@ -539,7 +539,7 @@ class Airport:
             ID = (airlines_key + ID_number)
 
         time = (randint(0, 23), randint(0, 59))
-        statut = None
+        statut = "In Time"
         newPlane = self.create_plane(
             ID,
             company,
