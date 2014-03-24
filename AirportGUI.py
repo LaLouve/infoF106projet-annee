@@ -570,6 +570,8 @@ class AirportGUI:
         '''
         if len(airport.airlines) == 0:
             self.addCompany()
+        if len(airport.dico_model) == 0:
+            self.addModel()
         plane = airport.add_random_departure_plane()
         self.list_box_departures.insert(END, plane.getID())
         text = "L'avion {} a été ajouté".format(plane.getID())
@@ -581,6 +583,8 @@ class AirportGUI:
         '''
         if len(airport.airlines) == 0:
             self.addCompany()
+        if len(airport.dico_model) == 0:
+            self.addModel()
         plane = airport.add_random_arrival_plane()
         self.list_box_arrivals.insert(END, plane.getID())
         text = "L'avion {} a été ajouté".format(plane.getID())
@@ -860,7 +864,6 @@ class AirportGUI:
             message = tkm.showinfo('Company added', text)
             self.add_airlines.destroy()
             text = (str(company_ID).ljust(10, ' ') + str(company))
-            self.list_box_company.insert(END, text)
         else:
             text = "La compagnie {} existe déjà".format(company)
             message = tkm.showwarning('Company already exist', text)
@@ -1560,7 +1563,6 @@ class AirportGUI:
             txt = "Le modèle {} a été ajouté.".format(model)
             message = tkm.showinfo("Model added", txt)
             self.add_model_window.destroy()
-            self.list_box_model.insert(END, model)
         else:
             text = "Les données entrées ne sont pas correctes!\nVeuillez les vérifier"
             message = tkm.showerror('Error', text)
@@ -1570,7 +1572,7 @@ class AirportGUI:
         self.list_box_model.delete(item)
         numModel = item[0]
         model = self.list_model[numModel]
-        text = "La compagnie '{}' a été supprimé".format(model)
+        text = "Le modèle '{}' a été supprimé".format(model)
         message = tkm.showwarning("Model deleted", text)
         del airport.dico_model[model]
 
