@@ -314,19 +314,16 @@ class AirportGUI:
         else:
             text = "Voulez-vous utiliser un modèle enregistré?"
             answer = tkm.askquestion('New Model?', text)
-        if answer == 'no':
-            text = "Veuillez aller ajouter le modèle via le bouton 'Model'."
-            message = tkm.showinfo('Add Model', text)            
-        else:
-            self.model_selected = self.showListModel()
-            print ("addPlane//model: ", self.model_selected)
-            if self.model_selected != None:
-                if list_plane == "departure":
-                    self.addDepartureButton()
-                else:
-                    self.addArrivalButton()
+            if answer == 'no':
+                text = "Veuillez aller ajouter le modèle via le bouton 'Model'."
+                message = tkm.showinfo('Add Model', text)            
             else:
-                print ("nope")
+                self.model_selected = self.showListModel()
+                if self.model_selected != None:
+                    if list_plane == "departure":
+                        self.addDepartureButton()
+                    else:
+                        self.addArrivalButton()
 
     def addDepartureButton(self):
         '''
@@ -493,7 +490,6 @@ class AirportGUI:
         nbr_passengers = passengers.get()
 
         model = self.model_selected
-        print ("getPLane//model: ", model)
         fuel = airport.dico_model[model][0]
         consumption = airport.dico_model[model][1]
         max_passengers = airport.dico_model[model][2] 
@@ -501,7 +497,7 @@ class AirportGUI:
         if len(letter_ID) >= 2 and len(letter_ID) <= 3 and len(number_ID) == 4:
             if number_ID.isdigit() and nbr_passengers.isdigit():
                 ID = (str(letter_ID) + str(number_ID))
-                if int(nbr_passengers) < max_passengers:
+                if int(nbr_passengers) <= max_passengers:
                     if heure is not None and minute is not None:
                         nbr_heure = heure.get()
                         nbr_minute = minute.get()
@@ -516,8 +512,9 @@ class AirportGUI:
                                     ID,
                                     name_company,
                                     nbr_passengers,
-                                    nbr_fuel,
-                                    nbr_consumption,
+                                    fuel,
+                                    consumption,
+                                    model,
                                     time,
                                     statut)
                                 airport.add_plane(plane)
@@ -526,7 +523,6 @@ class AirportGUI:
                                 message = tkm.showinfo('Plane Added', text)
                                 list_box.insert(END, plane.getID())
                                 self.add_window.destroy()
-
                             else:
                                 text = "Les données entrées ne sont pas correctes!\nVeuillez les vérifier"
                                 message = tkm.showerror('Error', text)
@@ -542,6 +538,7 @@ class AirportGUI:
                             nbr_passengers,
                             fuel,
                             consumption,
+                            model,
                             time,
                             statut)
                         airport.add_plane(plane)
@@ -550,7 +547,7 @@ class AirportGUI:
                         list_box.insert(END, plane.getID())
                         self.add_window.destroy()
                 else:
-                    text = "Le nombre de passagers dépasse la capacité maximale du modèle d'avion sélectionné."
+                    text = "Le nombre de passagers dépasse la capacité maximale du modèle d'avion sélectionné.\nCapacité max= {}".format(max_passengers)
                     message = tkm.showwarning('Error', text)
             else:
                 text = "Les données entrées ne sont pas correctes!\nVeuillez les vérifier"
