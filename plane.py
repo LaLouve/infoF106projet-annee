@@ -84,6 +84,6 @@ class Plane:
                (str(self.passengers).ljust(5, ' ')) +
                (str(self.fuel).ljust(6, ' ')) +
                (str(self.consumption).ljust(5, ' ')) +
-               (str(self.model).ljust(10, ' '))
+               (str(self.model).ljust(8, ' '))
                )
         return res

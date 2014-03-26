@@ -30,6 +30,15 @@ class Airport:
         self.mixte_runway = 0  # nbr de piste d'atterissage et de décollage
         self.dico_model = {}  # dico des différents modèles d'avions
 
+        self.statAvionGlobal = 0 #nbr total d'avions
+        self.statAvionDep = 0 #nbr d'avions au décollage
+        self.statAvionArr = 0 #nbr d'avions à l'arrivé
+        self.statPassengers = 0 #nbr de passagers
+        self.statCrash = 0 #nbr de crash
+        self.statDeath = 0 #nbr de passagers morts dans des crashs
+        self.statCompany = 0 #nbr de compagnies 
+        self.statModel = 0 #nbr de modèles
+
     def create_plane(
             self,
             ID,
@@ -56,7 +65,9 @@ class Airport:
         # ajouter la compagnie au dictionnaire si elle n'y est pas déjà
         if (company) not in self.airlines:
             self.airlines[ID_letter] = company
-            return newPlane
+        self.statAvionGlobal += 1
+        self.statPassengers += passengers
+        return newPlane
 
     def ask_for_add_plane(self, plane_type):
         if len(self.dico_model) == 0:
@@ -142,9 +153,10 @@ class Airport:
         '''
         if plane.getTime() is None:
             self.arrival_list.append(plane)
-
+            self.statAvionArr += 1
         else:
             self.departure_list.append(plane)
+            self.statAvionDep +=1
 
     def del_plane(self, plane):
         '''
@@ -176,12 +188,13 @@ class Airport:
                 self.airlines[ID_letter] = company
             else:
                 print('Cette compangie existe déjà')
-
+        self.statCompany += 1
         return company, ID_letter
 
     def del_company(self, company_ID):
         print("\nLa compagnie", self.airlines[company_ID], "a été supprimée.")
         self.airlines.pop(company_ID)
+        self.statCompany -= 1
 
     def departure_priority_plane(self):
         '''
@@ -260,7 +273,8 @@ class Airport:
                 self.showTime(plane.getTime())
                 if plane.getStatut() is not None:
                     print(plane.getStatut())
-                print()
+                else:
+                    print()
                 count += 1
 
     def show_all_info(self):
@@ -323,16 +337,19 @@ class Airport:
             plane.update()
 
             if plane.isCrashed():  # si l'avion n'a plus de fuel, il se crashe
+                passengers = plane.getPassengers()
                 print(
                     "\nL'avion",
                     plane.getID(),
                     "n'a malheureusement pas pu atterire à temps."
                     " \nVous avez tué",
-                    plane.getPassengers(),
+                    passengers,
                     'passagers./o\\')
                 plane.setStatut('Crashed')
                 self.arrival_list.remove(plane)
                 self.history_list.append(plane)
+                self.statCrash += 1
+                self.statDeath += passengers
                 crashedPlane.append(plane)
 
         for plane in self.departure_list:
@@ -495,7 +512,7 @@ class Airport:
             modConso,
             modPass]  # liste des caractéristique du modèle
         self.dico_model[model] = modCar
-
+        self.statModel += 1
         return model, modFuel, modConso, modPass
 
     def del_model(self):
@@ -508,8 +525,9 @@ class Airport:
         if model in self.dico_model:
             del self.dico_model[model]
             print("Le modèle à été supprimé.")
+            self.statModel -= 1
         else:
-            print("Vous n'avez pas entré un nom de modeèle correct")
+            print("Vous n'avez pas entré un nom de modèle correct")
 
     def show_model(self):
         if len(self.dico_model) == 0:
@@ -670,6 +688,26 @@ class Airport:
                   'h' +
                   (str(tick[1])).rjust(2, '0'), end='  ')
 
+    def showStatistiques (self):
+        text = "\nNombre total d'avions: {}"\
+            "\nNombre d'avions au décollage: {}"\
+            "\nNombre d'avions à l'attérissage: {}"\
+            "\nNombre total de passagers: {}"\
+            "\nNombre de crashs: {}"\
+            "\nNombre de morts lors des crashs: {}"\
+            "\nNombre de compangies: {}"\
+            "\nNombre de modèles d'avions: {}".format(self.statAvionGlobal,
+                self.statAvionDep,
+                self.statAvionArr,
+                self.statPassengers,
+                self.statCrash,
+                self.statDeath,
+                self.statCompany,
+                self.statModel)
+        print (text)
+
+
+
     def user_menu(self):
         '''
         Menu principal de l'utilisateur.
@@ -698,6 +736,7 @@ class Airport:
                   "\nAfficher les modèles d'avions: (N)"
                   "\nAjouter un modèle d'avion: (O)"
                   "\nSupprimer un modèle d'avion: (P)"
+                  "\nAfficher les statistiques de l'aéroport: (R)"
                   "\nQuitter le menu: (Q)"
                   "\n---------------------------------------------------------"
                   "\n(Entrez la lettre correpsondant à l'action)")
@@ -798,6 +837,9 @@ class Airport:
 
             elif answer == 'p':
                 self.del_model()
+
+            elif answer == 'r':
+                self.showStatistiques()
 
             elif answer != 'q':
                 print("\nVous n'avez pas entré une lettre correcte, rééssayez")

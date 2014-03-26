@@ -58,7 +58,7 @@ class AirportGUI:
         root.bind("<Button-1>", self.checkPlaneDelete)
         self.root = root
 
-        ####### colonne 1 #########
+        # colonne 1 #########
         column1 = Frame(root, bd=3, bg='white')
         column1.pack(side=LEFT)
         Label(
@@ -98,7 +98,7 @@ class AirportGUI:
             text="Add",
             relief=GROOVE,
             bg='#C0C0C0',
-            command=lambda:self.addPlane('arrival')).pack(
+            command=lambda: self.addPlane('arrival')).pack(
             side=LEFT)
         Button(
             column1,
@@ -108,7 +108,7 @@ class AirportGUI:
             command=self.addArrivalRandom).pack(
             side=LEFT)
 
-        ####### colonne 2 #########
+        # colonne 2 #########
         column2 = Frame(root, bd=3, bg='white')  # création de la colonne
         column2.pack(side=LEFT)
         Label(
@@ -153,7 +153,7 @@ class AirportGUI:
             text="Add",
             relief=GROOVE,
             bg='#C0C0C0',
-            command=lambda:self.addPlane('departure')).pack(
+            command=lambda: self.addPlane('departure')).pack(
             side=LEFT)
         Button(
             column2,
@@ -171,7 +171,7 @@ class AirportGUI:
             command=self.deletePlaneButton)
         self.delPlaneButton.pack(side=LEFT)
 
-        ####### colonne 3 #########
+        # colonne 3 #########
         column3 = Frame(root, bd=6, bg='white')
         column3.pack()
         self.column_time = column3
@@ -306,7 +306,7 @@ class AirportGUI:
             command=self.modelButton).pack(
             side=BOTTOM)
 
-    ### Fonctions d'ajout et de suppression d'avions ###
+    # Fonctions d'ajout et de suppression d'avions ###
     def addPlane(self, list_plane):
         if len(airport.dico_model) == 0:
             text = "Il n'y a aucun modèle enregistré, \nveuillez en ajouter un via le bouton 'Model'."
@@ -316,10 +316,10 @@ class AirportGUI:
             answer = tkm.askquestion('New Model?', text)
             if answer == 'no':
                 text = "Veuillez aller ajouter le modèle via le bouton 'Model'."
-                message = tkm.showinfo('Add Model', text)            
+                message = tkm.showinfo('Add Model', text)
             else:
                 self.model_selected = self.showListModel()
-                if self.model_selected != None:
+                if self.model_selected is not None:
                     if list_plane == "departure":
                         self.addDepartureButton()
                     else:
@@ -492,7 +492,7 @@ class AirportGUI:
         model = self.model_selected
         fuel = airport.dico_model[model][0]
         consumption = airport.dico_model[model][1]
-        max_passengers = airport.dico_model[model][2] 
+        max_passengers = airport.dico_model[model][2]
 
         if len(letter_ID) >= 2 and len(letter_ID) <= 3 and len(number_ID) == 4:
             if number_ID.isdigit() and nbr_passengers.isdigit():
@@ -547,7 +547,8 @@ class AirportGUI:
                         list_box.insert(END, plane.getID())
                         self.add_window.destroy()
                 else:
-                    text = "Le nombre de passagers dépasse la capacité maximale du modèle d'avion sélectionné.\nCapacité max= {}".format(max_passengers)
+                    text = "Le nombre de passagers dépasse la capacité maximale du modèle d'avion sélectionné.\nCapacité max= {}".format(
+                        max_passengers)
                     message = tkm.showwarning('Error', text)
             else:
                 text = "Les données entrées ne sont pas correctes!\nVeuillez les vérifier"
@@ -555,7 +556,6 @@ class AirportGUI:
         else:
             text = "Les données entrées ne sont pas correctes!\nVeuillez les vérifier"
             message = tkm.showerror('Error', text)
-
 
     def addDepartureRandom(self):
         '''
@@ -612,7 +612,7 @@ class AirportGUI:
         else:
             self.delPlaneButton.configure(state=DISABLED)
 
-    ### Fonction d'affichage de l'aide ###
+    # Fonction d'affichage de l'aide ###
     def helpButton(self):
         '''
         Affiche une fenêtre contenant le texte d'aide
@@ -659,7 +659,7 @@ class AirportGUI:
             anchor=CENTER)
         message.pack()
 
-    ### Fonction d'affichage de l'history list ###
+    # Fonction d'affichage de l'history list ###
     def historyButton(self):
         '''
         Affiche la liste "history" dans une nouvelle fenêtre
@@ -707,7 +707,7 @@ class AirportGUI:
         list_box_area.pack()
         self.list_box_history.pack()
 
-    ### Fonctions d'affichages et de modifications des compagnies ###
+    # Fonctions d'affichages et de modifications des compagnies ###
     def companiesButton(self):
         '''
         Affiche la liste des compangines dans une nouvelle fenêtre ainsi
@@ -891,7 +891,7 @@ class AirportGUI:
         else:
             self.delCompanyButton.configure(state=DISABLED)
 
-    ### Fonctions d'affichage des informations d'un avion ###
+    # Fonctions d'affichage des informations d'un avion ###
     def infoArrivalPlane(self, event=None):
         item = self.list_box_arrivals.curselection()
         num = item[0]
@@ -1124,7 +1124,7 @@ class AirportGUI:
     def planeButtonOK(self):
         self.info_plane_window.destroy()
 
-    ### Fonctions d'affichage des avions d'une compagnie ###
+    # Fonctions d'affichage des avions d'une compagnie ###
     def showInfoCompany(self, event=None):
         item = self.list_box_company.curselection()
         numCompany = item[0]
@@ -1195,7 +1195,7 @@ class AirportGUI:
     def companyButtonOK(self):
         self.info_company_window.destroy()
 
-    ### Fonctions relatives au temps ###
+    # Fonctions relatives au temps ###
     def time(self, tick):
         return (str(tick //
                     60).rjust(2, '0') +
@@ -1276,7 +1276,7 @@ class AirportGUI:
             text = "La valeur entrée n'est pas correcte. Veuillez la vérifier."
             message = tkm.showwarning("Valeur Incorecte", text)
 
-    ### Fonctions relatives aux pistes ###
+    # Fonctions relatives aux pistes ###
     def mod_depRunway_button(self, event=None):
         self.modifiy_nbrRunway('departures')
 
@@ -1379,7 +1379,7 @@ class AirportGUI:
 
         self.modify_nbrRunway_window.destroy()
 
-    ### Fonctions des modèles ###
+    # Fonctions des modèles ###
     def showListModel(self):
         self.show_model_window = Tk()
         self.show_model_window.title("Model")
@@ -1404,11 +1404,15 @@ class AirportGUI:
             column,
             bd=8,
             bg='white')  # création de list_box et de la scrollbar associée
-        txt = "{}    {}    {}  {}".format("model", "fuel", "cons.", "passengers")
+        txt = "{}    {}    {}  {}".format(
+            "model",
+            "fuel",
+            "cons.",
+            "passengers")
         Label(list_box_area,
-            bd=7,
-            bg='white',
-            text= txt).pack(side=TOP)
+              bd=7,
+              bg='white',
+              text=txt).pack(side=TOP)
         scrollbar = Scrollbar(
             list_box_area,
             bg='#C0C0C0',
@@ -1429,7 +1433,8 @@ class AirportGUI:
             fuel = str(airport.dico_model[model][0])
             consumption = str(airport.dico_model[model][1])
             passengers = str(airport.dico_model[model][2])
-            text = "{}:     {}    {}      {}".format(model, fuel, consumption, passengers)
+            text = "{}:     {}    {}      {}".format(
+                model, fuel, consumption, passengers)
             self.list_show_model.insert(END, text)
             self.list_model.append(model)
         scrollbar.config(command=self.list_show_model.yview)
@@ -1541,7 +1546,7 @@ class AirportGUI:
             bd=3,
             bg='white')  # frame du label
         principal_frame.grid(row=0, column=1)
-       
+
         entry_frame = Frame(
             self.add_model_window,
             bd=5,
@@ -1556,7 +1561,7 @@ class AirportGUI:
             font=tkFont.Font(
                 size=10))
         label_principal.grid(row=0, column=1)
-        
+
         label_model = Label(
             entry_frame,
             bd=4,
@@ -1784,7 +1789,7 @@ class AirportGUI:
             relief=GROOVE,
             width=6,
             bg='#C0C0C0',
-            command=lambda:self.modelButtonOK()).grid(
+            command=lambda: self.modelButtonOK()).grid(
             row=0,
             column=0)
 
