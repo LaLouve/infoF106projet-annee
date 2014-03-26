@@ -66,7 +66,7 @@ class Airport:
         if (company) not in self.airlines:
             self.airlines[ID_letter] = company
         self.statAvionGlobal += 1
-        self.statPassengers += passengers
+        self.statPassengers += int(passengers)
         return newPlane
 
     def ask_for_add_plane(self, plane_type):
@@ -669,7 +669,7 @@ class Airport:
         return newPlane
 
     def convTupleToTick(self, tupple):
-        return (tupple[0] * 60 + tupple[1])
+        return int(tupple[0] * 60 + tupple[1])
 
     def convTickToTuple(self, time):
         return ((str(time // 60)).rjust(2, '0'),
@@ -690,8 +690,8 @@ class Airport:
 
     def showStatistiques (self):
         text = "\nNombre total d'avions: {}"\
-            "\nNombre d'avions au décollage: {}"\
-            "\nNombre d'avions à l'attérissage: {}"\
+            "\nNombre d'avions au décollage ou ayant décollés: {}"\
+            "\nNombre d'avions à l'attérissage ou ayant attéris : {}"\
             "\nNombre total de passagers: {}"\
             "\nNombre de crashs: {}"\
             "\nNombre de morts lors des crashs: {}"\

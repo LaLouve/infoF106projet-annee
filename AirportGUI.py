@@ -1830,14 +1830,14 @@ class AirportGUI:
                         size=11))
         principal.pack()
 
-        text = "\nNombre total d'avions: {}"\
-            "\nNombre d'avions au décollage: {}"\
-            "\nNombre d'avions à l'attérissage: {}"\
-            "\nNombre total de passagers: {}"\
-            "\nNombre de crashs: {}"\
-            "\nNombre de morts lors des crashs: {}"\
-            "\nNombre de compagnies: {}"\
-            "\nNombre de modèles d'avions: {}".format(airport.statAvionGlobal,
+        text = "\n- Nombre total d'avions: {}"\
+            "\n\n- Nombre d'avions au décollage\nou ayant décollés: {}"\
+            "\n\n- Nombre d'avions à l'attérissage\nou ayant attéris: {}"\
+            "\n\n- Nombre total de passagers: {}"\
+            "\n\n- Nombre de crashs: {}"\
+            "\n\n- Nombre de morts lors des crashs: {}"\
+            "\n\n- Nombre de compagnies: {}"\
+            "\n\n- Nombre de modèles d'avions: {}".format(airport.statAvionGlobal,
                 airport.statAvionDep,
                 airport.statAvionArr,
                 airport.statPassengers,
@@ -1845,12 +1845,13 @@ class AirportGUI:
                 airport.statDeath,
                 airport.statCompany,
                 airport.statModel)
-        Label(principal,
-            bd=3,
-            bg='white',
+        message = Message(
+            principal,
             text=text,
-            font=tkFont.Font(
-                size=8)).pack()
+            bd=5,
+            bg='white',
+            anchor=CENTER)
+        message.pack()
 
 if __name__ == "__main__":
     root = Tk()
