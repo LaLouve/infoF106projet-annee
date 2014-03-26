@@ -98,7 +98,7 @@ class AirportGUI:
             text="Add",
             relief=GROOVE,
             bg='#C0C0C0',
-            command=self.addArrivalButton).pack(
+            command=lambda:self.addPlane('arrival')).pack(
             side=LEFT)
         Button(
             column1,
@@ -153,7 +153,7 @@ class AirportGUI:
             text="Add",
             relief=GROOVE,
             bg='#C0C0C0',
-            command=self.addDepartureButton).pack(
+            command=lambda:self.addPlane('departure')).pack(
             side=LEFT)
         Button(
             column2,
@@ -307,6 +307,45 @@ class AirportGUI:
             side=BOTTOM)
 
     ### Fonctions d'ajout et de suppression d'avions ###
+    def addPlane(self, list_plane):
+        if len(airport.dico_model) == 0:
+            text = "Il n'y a aucun modèle enregistré, \nveuillez en ajouter un via le bouton 'Model'."
+            message = tkm.showwarning('No model', text)
+        else:
+            text = "Voulez-vous utiliser un modèle enregistré?"
+            answer = tkm.askquestion('New Model?', text)
+        if answer == 'no':
+            text = "Veuillez aller ajouter le modèle via le bouton 'Model'."
+            message = tkm.showinfo('Add Model', text)            
+        else:
+            self.model_selected = self.showListModel()
+            print ("addPlane//model: ", self.model_selected)
+            if self.model_selected != None:
+                if list_plane == "departure":
+                    self.addDepartureButton()
+                else:
+                    self.addArrivalButton()
+            else:
+                print ("nope")
+
+    def addDepartureButton(self):
+        '''
+        ajoute un avion dans la liste des départs
+        '''
+        plane = self.addButton(
+            "Add Departure Plane",
+            airport.departure_list,
+            self.list_box_departures)
+
+    def addArrivalButton(self):
+        '''
+        Ajoute un avion dans la liste des arrivées
+        '''
+        plane = self.addButton(
+            "Add Arrival Plane",
+            airport.arrival_list,
+            self.list_box_arrivals)
+
     def addButton(self, title, list_plane, list_box):
         '''
         Ouvre une fenêtre demandant les différentes informations pour
@@ -382,34 +421,6 @@ class AirportGUI:
             width=13)
         passengers.grid(row=2, column=1)
 
-        Label(add_frame, bd=4, bg='white', text='Fuel').grid(row=3, column=0)
-        fuel = Entry(
-            add_frame,
-            bd=2,
-            bg='white',
-            textvariable=int,
-            justify=CENTER,
-            relief=SUNKEN,
-            width=13)
-        fuel.grid(row=3, column=1)
-
-        Label(
-            add_frame,
-            bd=4,
-            bg='white',
-            text='Consumption').grid(
-            row=4,
-            column=0)
-        consumption = Entry(
-            add_frame,
-            bd=2,
-            bg='white',
-            textvariable=int,
-            justify=CENTER,
-            relief=SUNKEN,
-            width=13)
-        consumption.grid(row=4, column=1)
-
         if list_plane == airport.departure_list:
             Label(
                 add_frame,
@@ -445,38 +456,30 @@ class AirportGUI:
             heure = None
             minute = None
 
-        statut = None
-
         Button(
             add_frame,
             text="Add",
             relief=GROOVE,
             bg='#C0C0C0',
-            command=lambda: self.get_plane(
+            command=lambda: self.getPlane(
                 ID_letter,
                 ID_number,
                 company,
                 passengers,
-                fuel,
-                consumption,
                 heure,
                 minute,
-                statut,
                 list_box)).grid(
             row=7,
             column=1)
 
-    def get_plane(
+    def getPlane(
             self,
             ID_letter,
             ID_number,
             company,
             passengers,
-            fuel,
-            consumption,
             heure,
             minute,
-            statut,
             list_box):
         '''
         Ajoute l'avion créé par l'utilisateur dans sa liste
@@ -488,57 +491,67 @@ class AirportGUI:
         number_ID = ID_number.get()
         name_company = (company.get()).lower()
         nbr_passengers = passengers.get()
-        nbr_fuel = fuel.get()
-        nbr_consumption = consumption.get()
+
+        model = self.model_selected
+        print ("getPLane//model: ", model)
+        fuel = airport.dico_model[model][0]
+        consumption = airport.dico_model[model][1]
+        max_passengers = airport.dico_model[model][2] 
 
         if len(letter_ID) >= 2 and len(letter_ID) <= 3 and len(number_ID) == 4:
-            if number_ID.isdigit() and nbr_passengers.isdigit() and\
-                    nbr_fuel.isdigit() and nbr_consumption.isdigit():
+            if number_ID.isdigit() and nbr_passengers.isdigit():
                 ID = (str(letter_ID) + str(number_ID))
-                if heure is not None and minute is not None:
-                    nbr_heure = heure.get()
-                    nbr_minute = minute.get()
-                    if nbr_heure.isdigit() and nbr_minute.isdigit():
-                        if int(nbr_heure) >= 0 and int(nbr_heure) <= 23 and int(nbr_minute) >= 0 and int(nbr_minute) <= 59:
-                            time = (
-                                str(nbr_heure).rjust(
-                                    2, '0'), str(nbr_minute).rjust(
-                                    2, '0'))
-                            plane = airport.create_plane(
-                                ID,
-                                name_company,
-                                nbr_passengers,
-                                nbr_fuel,
-                                nbr_consumption,
-                                time,
-                                statut)
-                            airport.add_plane(plane)
-                            text = "L'avion {} a été ajouté".format(
-                                plane.getID())
-                            message = tkm.showinfo('Plane Added', text)
-                            list_box.insert(END, plane.getID())
-                            self.add_window.destroy()
+                if int(nbr_passengers) < max_passengers:
+                    if heure is not None and minute is not None:
+                        nbr_heure = heure.get()
+                        nbr_minute = minute.get()
+                        statut = 'In Time'
+                        if nbr_heure.isdigit() and nbr_minute.isdigit():
+                            if int(nbr_heure) >= 0 and int(nbr_heure) <= 23 and int(nbr_minute) >= 0 and int(nbr_minute) <= 59:
+                                time = (
+                                    str(nbr_heure).rjust(
+                                        2, '0'), str(nbr_minute).rjust(
+                                        2, '0'))
+                                plane = airport.create_plane(
+                                    ID,
+                                    name_company,
+                                    nbr_passengers,
+                                    nbr_fuel,
+                                    nbr_consumption,
+                                    time,
+                                    statut)
+                                airport.add_plane(plane)
+                                text = "L'avion {} a été ajouté".format(
+                                    plane.getID())
+                                message = tkm.showinfo('Plane Added', text)
+                                list_box.insert(END, plane.getID())
+                                self.add_window.destroy()
+
+                            else:
+                                text = "Les données entrées ne sont pas correctes!\nVeuillez les vérifier"
+                                message = tkm.showerror('Error', text)
                         else:
                             text = "Les données entrées ne sont pas correctes!\nVeuillez les vérifier"
                             message = tkm.showerror('Error', text)
                     else:
-                        text = "Les données entrées ne sont pas correctes!\nVeuillez les vérifier"
-                        message = tkm.showerror('Error', text)
+                        time = None
+                        statut = None
+                        plane = airport.create_plane(
+                            ID,
+                            name_company,
+                            nbr_passengers,
+                            fuel,
+                            consumption,
+                            time,
+                            statut)
+                        airport.add_plane(plane)
+                        text = "L'avion {} a été ajouté".format(plane.getID())
+                        message = tkm.showinfo('Plane Added', text)
+                        list_box.insert(END, plane.getID())
+                        self.add_window.destroy()
                 else:
-                    time = None
-                    plane = airport.create_plane(
-                        ID,
-                        name_company,
-                        nbr_passengers,
-                        nbr_fuel,
-                        nbr_consumption,
-                        time,
-                        statut)
-                    airport.add_plane(plane)
-                    text = "L'avion {} a été ajouté".format(plane.getID())
-                    message = tkm.showinfo('Plane Added', text)
-                    list_box.insert(END, plane.getID())
-                    self.add_window.destroy()
+                    text = "Le nombre de passagers dépasse la capacité maximale du modèle d'avion sélectionné."
+                    message = tkm.showwarning('Error', text)
             else:
                 text = "Les données entrées ne sont pas correctes!\nVeuillez les vérifier"
                 message = tkm.showerror('Error', text)
@@ -546,49 +559,38 @@ class AirportGUI:
             text = "Les données entrées ne sont pas correctes!\nVeuillez les vérifier"
             message = tkm.showerror('Error', text)
 
-    def addDepartureButton(self):
-        '''
-        ajoute un avion dans la liste des départs
-        '''
-        plane = self.addButton(
-            "Add Departure Plane",
-            airport.departure_list,
-            self.list_box_departures)
-
-    def addArrivalButton(self):
-        '''
-        Ajoute un avion dans la liste des arrivées
-        '''
-        plane = self.addButton(
-            "Add Arrival Plane",
-            airport.arrival_list,
-            self.list_box_arrivals)
 
     def addDepartureRandom(self):
         '''
         Ajoute un avion aléatoire au départ
         '''
         if len(airport.airlines) == 0:
-            self.addCompany()
+            text = "Il n'y a aucune compangie enregistrée, \nveuillez en ajouter une via le bouton 'Company'"
+            message = tkm.showwarning('No airlines', text)
         if len(airport.dico_model) == 0:
-            self.addModel()
-        plane = airport.add_random_departure_plane()
-        self.list_box_departures.insert(END, plane.getID())
-        text = "L'avion {} a été ajouté".format(plane.getID())
-        message = tkm.showinfo('Plane Added', text)
+            text = "Il n'y a aucun modèle enregistré, \nveuillez en ajouter un via le bouton 'Model'"
+            message = tkm.showwarning('No model', text)
+        if len(airport.airlines) > 0 and len(airport.dico_model) > 0:
+            plane = airport.add_random_departure_plane()
+            self.list_box_departures.insert(END, plane.getID())
+            text = "L'avion {} a été ajouté".format(plane.getID())
+            message = tkm.showinfo('Plane Added', text)
 
     def addArrivalRandom(self):
         '''
         Ajoute un avion aléatoire à l'arrivée
         '''
         if len(airport.airlines) == 0:
-            self.addCompany()
+            text = "Il n'y a aucune compangie enregistrée, \nveuillez en ajouter une via le bouton 'Company'"
+            message = tkm.showwarning('No airlines', text)
         if len(airport.dico_model) == 0:
-            self.addModel()
-        plane = airport.add_random_arrival_plane()
-        self.list_box_arrivals.insert(END, plane.getID())
-        text = "L'avion {} a été ajouté".format(plane.getID())
-        message = tkm.showinfo('Plane Added', text)
+            text = "Il n'y a aucun modèle enregistré, \nveuillez en ajouter un via le bouton 'Model'"
+            message = tkm.showwarning('No model', text)
+        if len(airport.airlines) > 0 and len(airport.dico_model) > 0:
+            plane = airport.add_random_arrival_plane()
+            self.list_box_arrivals.insert(END, plane.getID())
+            text = "L'avion {} a été ajouté".format(plane.getID())
+            message = tkm.showinfo('Plane Added', text)
 
     def deletePlaneButton(self):
         '''
@@ -863,7 +865,8 @@ class AirportGUI:
             text = "La compagnie {} a été ajoutée".format(company)
             message = tkm.showinfo('Company added', text)
             self.add_airlines.destroy()
-            text = (str(company_ID).ljust(10, ' ') + str(company))
+            txt = (str(company_ID).ljust(10, ' ') + str(company))
+            self.list_box_company.insert(END, txt)
         else:
             text = "La compagnie {} existe déjà".format(company)
             message = tkm.showwarning('Company already exist', text)
@@ -1380,6 +1383,88 @@ class AirportGUI:
         self.modify_nbrRunway_window.destroy()
 
     ### Fonctions des modèles ###
+    def showListModel(self):
+        self.show_model_window = Tk()
+        self.show_model_window.title("Model")
+        self.show_model_window.config(bg='white')
+        self.show_model_window.bind("<Button-1>", self.checkModelSelected)
+        self.show_model_window.resizable(width=FALSE, height=FALSE)
+
+        column = Frame(
+            self.show_model_window,
+            bd=3,
+            bg='white')  # création de la colonne
+        column.pack(side=LEFT)
+        self.column_model = column
+        Label(
+            column,
+            bd=7,
+            bg='white',
+            text='Models:',
+            font=tkFont.Font(
+                size=12)).pack()
+        list_box_area = Frame(
+            column,
+            bd=8,
+            bg='white')  # création de list_box et de la scrollbar associée
+        txt = "{}    {}    {}  {}".format("model", "fuel", "cons.", "passengers")
+        Label(list_box_area,
+            bd=7,
+            bg='white',
+            text= txt).pack(side=TOP)
+        scrollbar = Scrollbar(
+            list_box_area,
+            bg='#C0C0C0',
+            activebackground='grey',
+            troughcolor='#F5F5F5',
+            orient=VERTICAL)
+        self.list_show_model = Listbox(
+            list_box_area,
+            height=10,
+            width=25,
+            bd=2,
+            yscrollcommand=scrollbar.set)
+        self.list_show_model.bind(
+            "<<ListboxSelect>>",
+            self.checkModelSelected)
+        self.list_model = []
+        for model in airport.dico_model:
+            fuel = str(airport.dico_model[model][0])
+            consumption = str(airport.dico_model[model][1])
+            passengers = str(airport.dico_model[model][2])
+            text = "{}:     {}    {}      {}".format(model, fuel, consumption, passengers)
+            self.list_show_model.insert(END, text)
+            self.list_model.append(model)
+        scrollbar.config(command=self.list_show_model.yview)
+        scrollbar.pack(side=RIGHT, fill=Y)
+        list_box_area.pack()
+        self.list_show_model.pack()
+        self.selModelButton = Button(
+            column,
+            text='Select',
+            relief=GROOVE,
+            width=12,
+            bg='#C0C0C0',
+            state=DISABLED,
+            command=self.selectModel)
+        self.selModelButton.pack(side=BOTTOM)
+        return model
+
+    def checkModelSelected(self, event=None):
+        if self.list_show_model.curselection():
+            self.selModelButton.configure(state=NORMAL)
+        else:
+            self.selModelButton.configure(state=DISABLED)
+
+    def selectModel(self):
+        item = self.list_show_model.curselection()
+        numModel = item[0]
+        model = self.list_model[numModel]
+        text = "Le modèle '{}' a été sélectionné".format(model)
+        message = tkm.showinfo("Model selected", text)
+        self.show_model_window.destroy()
+        return model
+
     def modelButton(self):
         model_window = Tk()
         model_window.title("Model")
@@ -1562,6 +1647,7 @@ class AirportGUI:
             airport.dico_model[model] = modCar
             txt = "Le modèle {} a été ajouté.".format(model)
             message = tkm.showinfo("Model added", txt)
+            self.list_box_model.insert(END, model)
             self.add_model_window.destroy()
         else:
             text = "Les données entrées ne sont pas correctes!\nVeuillez les vérifier"
