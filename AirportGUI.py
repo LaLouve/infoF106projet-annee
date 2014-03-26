@@ -41,7 +41,12 @@ airport.departure_list = [plane2]
 airport.history_list = [plane3]
 airport.airlines = {'EX': 'Exemple Airline'}
 airport.dico_model = {'A380': [2600, 11, 500]}
-
+airport.statAvionGlobal = 3
+airport.statAvionDep = 2
+airport.statAvionArr = 1 
+airport.statPassengers = 450
+airport.statCompany = 1
+airport.statModel = 1
 
 class AirportGUI:
     airport = airportFunctions.Airport()
@@ -304,6 +309,15 @@ class AirportGUI:
             width=12,
             bg='#C0C0C0',
             command=self.modelButton).pack(
+            side=BOTTOM)
+
+        Button(
+            column3_partBOTTOM,
+            text='Statistics',
+            relief=GROOVE,
+            width=12,
+            bg='#C0C0C0',
+            command=self.showStat).pack(
             side=BOTTOM)
 
     # Fonctions d'ajout et de suppression d'avions ###
@@ -864,6 +878,7 @@ class AirportGUI:
             self.add_airlines.destroy()
             txt = (str(company_ID).ljust(10, ' ') + str(company))
             self.list_box_company.insert(END, txt)
+            airport.statCompany += 1
         else:
             text = "La compagnie {} existe déjà".format(company)
             message = tkm.showwarning('Company already exist', text)
@@ -1651,6 +1666,7 @@ class AirportGUI:
             message = tkm.showinfo("Model added", txt)
             self.list_box_model.insert(END, model)
             self.add_model_window.destroy()
+            airport.statModel += 1
         else:
             text = "Les données entrées ne sont pas correctes!\nVeuillez les vérifier"
             message = tkm.showerror('Error', text)
@@ -1663,6 +1679,7 @@ class AirportGUI:
         text = "Le modèle '{}' a été supprimé".format(model)
         message = tkm.showwarning("Model deleted", text)
         del airport.dico_model[model]
+        airport.statModel -= 1
 
     def checkModelDelete(self, event=None):
         if self.list_box_model.curselection():
@@ -1795,6 +1812,45 @@ class AirportGUI:
 
     def modelButtonOK(self):
         self.info_model_window.destroy()
+
+    # Fonctions d'affichage des statistiques ###
+    def showStat(self):
+        self.showStat_window = Tk()
+        self.showStat_window.title("Statistics")
+        self.showStat_window.configure(background='white')
+        self.showStat_window.resizable(width=FALSE, height=FALSE)
+
+        principal = LabelFrame(
+                    self.showStat_window,
+                    bd=4,
+                    relief=RIDGE,
+                    bg='white',
+                    text='Statistics',
+                    font=tkFont.Font(
+                        size=11))
+        principal.pack()
+
+        text = "\nNombre total d'avions: {}"\
+            "\nNombre d'avions au décollage: {}"\
+            "\nNombre d'avions à l'attérissage: {}"\
+            "\nNombre total de passagers: {}"\
+            "\nNombre de crashs: {}"\
+            "\nNombre de morts lors des crashs: {}"\
+            "\nNombre de compagnies: {}"\
+            "\nNombre de modèles d'avions: {}".format(airport.statAvionGlobal,
+                airport.statAvionDep,
+                airport.statAvionArr,
+                airport.statPassengers,
+                airport.statCrash,
+                airport.statDeath,
+                airport.statCompany,
+                airport.statModel)
+        Label(principal,
+            bd=3,
+            bg='white',
+            text=text,
+            font=tkFont.Font(
+                size=8)).pack()
 
 if __name__ == "__main__":
     root = Tk()
