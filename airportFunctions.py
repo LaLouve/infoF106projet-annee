@@ -10,6 +10,7 @@ fichier: airportFunctions.py
 from random import randint, choice
 from plane import Plane
 
+ID_max = 9999 #valeur maximun de l'ID
 
 class Airport:
 
@@ -586,7 +587,7 @@ class Airport:
 
             company, ID_letter = self.add_company()
 
-            number = str(randint(1, 9999))
+            number = str(randint(1, ID_max))
             ID_number = number.rjust(4, '0')
             ID = (ID_letter + ID_number)
 
@@ -594,7 +595,7 @@ class Airport:
             list_key_airline = self.airlines.keys()
             airlines_key = choice(list(list_key_airline))
             company = self.airlines[airlines_key]
-            number = str(randint(1, 9999))
+            number = str(randint(1, ID_max))
             ID_number = number.rjust(4, '0')
             ID = (airlines_key + ID_number)
 
@@ -642,7 +643,7 @@ class Airport:
 
             company, ID_letter = self.add_company()
 
-            number = str(randint(1, 9999))
+            number = str(randint(1, ID_max))
             ID_number = number.rjust(4, '0')
             ID = (ID_letter + ID_number)
 
@@ -650,7 +651,7 @@ class Airport:
             list_key_airline = self.airlines.keys()
             airlines_key = choice(list(list_key_airline))
             company = self.airlines[airlines_key]
-            number = str(randint(1, 9999))
+            number = str(randint(1, ID_max))
             ID_number = number.rjust(4, '0')
             ID = (airlines_key + ID_number)
 
