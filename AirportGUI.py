@@ -2,7 +2,7 @@
 Dervaux Florence, N° de matricule : 000396246, groupe 1
 
 Projet d'année: Simulation de la gestion du trafic aérien d’un aéroport
-Partie 3
+Partie 4
 
 fichier: AirportGUI.py
 '''
@@ -221,7 +221,7 @@ class AirportGUI:
 
         # partie centrale de la troisième colonne, contient les informations
         # des pistes
-        frame_adjust = Frame(column3, height=50, bg='white').pack()
+        frame_adjust = Frame(column3, height=30, bg='white').pack()
         column3_partCENTER = Frame(column3, height=220, bg='white')
         column3_partCENTER.pack(side=TOP)
 
@@ -272,7 +272,7 @@ class AirportGUI:
         self.mixte_label.pack(side=RIGHT)
         self.mixte_label.bind("<Double-Button-1>", self.mod_mixRunway_button)
 
-        frame_adjust2 = Frame(column3, height=50, bg='white').pack()
+        frame_adjust2 = Frame(column3, height=30, bg='white').pack()
 
         # partie basse de la troisième colonne, contient les boutons "history",
         # "companies" et "help"

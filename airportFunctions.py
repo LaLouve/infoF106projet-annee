@@ -2,13 +2,14 @@
 Dervaux Florence, N° de matricule : 000396246, groupe 1
 
 Projet d'année: Simulation de la gestion du trafic aérien d’un aéroport
-Partie 3
+Partie 4
 
 fichier: airportFunctions.py
 '''
 
 from random import randint, choice
 from plane import Plane
+import json
 
 ID_max = 9999 #valeur maximun de l'ID
 
@@ -707,7 +708,51 @@ class Airport:
                 self.statModel)
         print (text)
 
+    # Fonctions pour json ###
 
+    def saveSystem(self):
+        self.save_departure_plane = []
+        self.save_arrival_plane = []
+        self.save_history_plane = []
+
+        for plane in self.departure_list:
+            savePlane = plane.__dict__
+            self.save_departure_plane.append(savePlane)
+        
+        for plane in self.arrival_list:
+            savePlane = plane.__dict__
+            self.save_arrival_plane.append(savePlane)
+        
+        for plane in self.history_list:
+            savePlane = plane.__dict__
+            self.save_history_plane.append(savePlane)
+
+        self.save_runways = {"departure_runway": self.departure_runway,
+                            "arrival_runway": self.arrival_runway, 
+                            "mixte_runway": self.mixte_runway}
+
+        self.save_time = {"time": self.tick}
+        self.save_stat = {"plane global": self.statAvionGlobal,
+                            "plane dep": self.statAvionDep,
+                            "plane arr": self.statAvionArr,
+                            "passengers": self.statPassengers,
+                            "death": self.statDeath,
+                            "company": self.statCompany,
+                            "model": self.statModel}
+
+        self.save = json.dumps({"models": self.dico_model,
+                                "airlines": self.airlines,
+                                "runways": self.save_runways,
+                                "departure_planes": self.save_departure_plane,
+                                "arrival_planes": self.save_arrival_plane,
+                                "history_planes": self.save_history_plane,
+                                "time": self.save_time,
+                                "stat": self.save_stat})
+
+        save_file = open("save.txt", "w")
+        save_file.write(self.save)
+
+        print ("\nSystem saved in save.txt")
 
     def user_menu(self):
         '''
@@ -738,6 +783,8 @@ class Airport:
                   "\nAjouter un modèle d'avion: (O)"
                   "\nSupprimer un modèle d'avion: (P)"
                   "\nAfficher les statistiques de l'aéroport: (R)"
+                  "\nSauvegarde: (S)"
+                  "\nRestauration: (T)"
                   "\nQuitter le menu: (Q)"
                   "\n---------------------------------------------------------"
                   "\n(Entrez la lettre correpsondant à l'action)")
@@ -841,6 +888,9 @@ class Airport:
 
             elif answer == 'r':
                 self.showStatistiques()
+
+            elif answer == 's':
+                self.saveSystem()
 
             elif answer != 'q':
                 print("\nVous n'avez pas entré une lettre correcte, rééssayez")
