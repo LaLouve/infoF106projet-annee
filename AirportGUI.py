@@ -1888,7 +1888,12 @@ class AirportGUI:
         if len(file_name) > 0:
             if airport.loadSystem(file_name):
                 tkm.showinfo("Chargement", "Chargement réussit.")
-                self.root.update()
+                self.root.destroy()
+                root = Tk()
+                root.title("Airport Simulator")
+                root.configure(background='white')
+                root.resizable(width=FALSE, height=FALSE)
+                self.__init__(root)
             else:
                 tkm.showwarning("Chargement", "Problème pendant la chargement.")   
 
