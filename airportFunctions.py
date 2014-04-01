@@ -9,7 +9,8 @@ fichier: airportFunctions.py
 
 from random import randint, choice
 from plane import Plane
-import json
+import json #pour le système de sauvegarde
+import os
 
 ID_max = 9999 #valeur maximun de l'ID
 
@@ -711,28 +712,28 @@ class Airport:
     # Fonctions pour json ###
 
     def saveSystem(self):
-        self.save_departure_plane = []
-        self.save_arrival_plane = []
-        self.save_history_plane = []
+        save_departure_plane = []
+        save_arrival_plane = []
+        save_history_plane = []
 
         for plane in self.departure_list:
             savePlane = plane.__dict__
-            self.save_departure_plane.append(savePlane)
+            save_departure_plane.append(savePlane)
         
         for plane in self.arrival_list:
             savePlane = plane.__dict__
-            self.save_arrival_plane.append(savePlane)
+            save_arrival_plane.append(savePlane)
         
         for plane in self.history_list:
             savePlane = plane.__dict__
-            self.save_history_plane.append(savePlane)
+            save_history_plane.append(savePlane)
 
-        self.save_runways = {"departure_runway": self.departure_runway,
+        save_runways = {"departure_runway": self.departure_runway,
                             "arrival_runway": self.arrival_runway, 
                             "mixte_runway": self.mixte_runway}
 
-        self.save_time = {"time": self.tick}
-        self.save_stat = {"plane global": self.statAvionGlobal,
+        save_time = {"time": self.tick}
+        save_stat = {"plane global": self.statAvionGlobal,
                             "plane dep": self.statAvionDep,
                             "plane arr": self.statAvionArr,
                             "passengers": self.statPassengers,
@@ -740,19 +741,84 @@ class Airport:
                             "company": self.statCompany,
                             "model": self.statModel}
 
-        self.save = json.dumps({"models": self.dico_model,
+        save = json.dumps({"models": self.dico_model,
                                 "airlines": self.airlines,
-                                "runways": self.save_runways,
-                                "departure_planes": self.save_departure_plane,
-                                "arrival_planes": self.save_arrival_plane,
-                                "history_planes": self.save_history_plane,
-                                "time": self.save_time,
-                                "stat": self.save_stat})
+                                "runways": save_runways,
+                                "departure_planes": save_departure_plane,
+                                "arrival_planes": save_arrival_plane,
+                                "history_planes": save_history_plane,
+                                "time": save_time,
+                                "stat": save_stat})
 
         save_file = open("save.txt", "w")
-        save_file.write(self.save)
+        save_file.write(save)
 
         print ("\nSystem saved in save.txt")
+
+    def loadSystem(self):
+        save_file = open("save.txt", "r")
+        save = json.load(save_file)
+
+        self.dico_model = save["models"]
+        self.airlines = save["airlines"]
+
+        load_runways = save["runways"]
+        self.arrival_runway = load_runways["arrival_runway"]
+        self.departure_runway = load_runways["departure_runway"]
+        self.mixte_runway = load_runways["mixte_runway"]
+        
+        load_departure_plane = save["departure_planes"]
+        for plane in load_departure_plane:
+            newplane = Plane.fromjson(plane)
+            self.departure_list.append(newplane)
+        load_arrival_plane = save["arrival_planes"]
+        for plane in load_arrival_plane:
+            newplane = Plane.fromjson(plane)
+            self.arrival_list.append(newplane)
+        load_history_plane = save["history_planes"]
+        for plane in load_history_plane:
+            newplane = Plane.fromjson(plane)
+            self.history_list.append(newplane)
+
+        load_time = save["time"]
+        time = load_time["time"]
+        self.tick = time
+
+
+        load_stat = save["stat"]
+        self.statAvionGlobal = load_stat["plane global"]
+        self.statAvionDep = load_stat["plane dep"]
+        self.statAvionArr = load_stat["plane arr"]
+        self.statPassengers = load_stat["passengers"]
+        self.statDeath = load_stat["death"]
+        self.statCompany = load_stat["company"]
+        self.statModel = load_stat["model"] 
+
+    def askForNewGame(self):
+        save_file = None
+        try:
+            save_file = open("save.txt", "r")
+
+        except:
+            print ("\nIl n'y a pas de sauvegarde enregistrée.")           
+
+        if save_file != None:            
+            ansOK = False
+            while not ansOK:
+                ans = str(
+                    input("\n"
+                          "Voulez-vous utiliser la sauvegarde? (Si non, une nouvelle simulation commencera)"
+                          "(O)ui/(N)on\n ")).lower()
+                if ans == 'o' or ans == 'n':
+                    ansOK = True
+            if ans == 'n':
+                os.remove("save.txt")
+                self.add_runway()
+            else:
+                self.loadSystem()
+        else : 
+            self.add_runway()
+
 
     def user_menu(self):
         '''
@@ -891,6 +957,9 @@ class Airport:
 
             elif answer == 's':
                 self.saveSystem()
+
+            elif answer == 't':
+                self.loadSystem()
 
             elif answer != 'q':
                 print("\nVous n'avez pas entré une lettre correcte, rééssayez")

@@ -87,3 +87,16 @@ class Plane:
                (str(self.model).ljust(8, ' '))
                )
         return res
+
+    @staticmethod
+    def fromjson(json):
+        ID = json["ID"]
+        company = json["company"]
+        passengers = json["passengers"]
+        fuel = json["fuel"]
+        consumption = json["consumption"]
+        model = json["model"]
+        time = json["time"]
+        statut = json["statut"]
+
+        return Plane(ID, company, passengers, fuel, consumption, model, time, statut)
