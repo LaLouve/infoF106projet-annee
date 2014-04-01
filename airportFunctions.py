@@ -357,9 +357,10 @@ class Airport:
 
         for plane in self.departure_list:
             if plane.isDelayed(self.tick):
-                print("\nL'avion", plane.getID(), "Est en retard.")
-                plane.setStatut('Delayed')
-                delayedPlane.append(plane)
+                if plane.getStatut() != 'Delayed':
+                    print("\nL'avion", plane.getID(), "est en retard.")
+                    plane.setStatut('Delayed')
+                    delayedPlane.append(plane)
         self.tick += 1
 
         return crashedPlane, delayedPlane
@@ -822,6 +823,18 @@ class Airport:
         else : 
             self.add_runway()
 
+    def eventRandom(self):
+        nbr = int(randint(0, 40))
+
+        if len(self.dico_model) > 0 and len(self.airlines) > 0: 
+            if nbr == 8:
+                newPlane = self.add_random_departure_plane()
+                print("\nL'avion",newPlane.getID(),
+                    "a été ajouté à la liste des avions au décollage.")
+            if nbr == 3:
+                newPlane = self.add_random_arrival_plane()
+                print("\nL'avion",newPlane.getID(),
+                    "a été ajouté à la liste des avions à l'attérissage.")
 
     def user_menu(self):
         '''

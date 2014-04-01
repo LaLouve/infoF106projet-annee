@@ -73,7 +73,7 @@ class Plane:
         return self.fuel <= 0
 
     def isDelayed(self, tick):  # L'avion est-il retardé?
-        if (int((self.time[0] * 60) + (self.time[1]))) < tick:
+        if (int((self.time[0] * 60) + (self.time[1]))) <= tick:
             return True
         else:
             return False

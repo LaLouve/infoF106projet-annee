@@ -12,7 +12,7 @@ import airportFunctions
 
 def main_loop():
     airport = airportFunctions.Airport()
-    
+
     airport.askForNewGame("save.txt")
 
     while True:
@@ -38,6 +38,7 @@ def main_loop():
                 "\nVeuillez en ajouter.")
         else:
             for i in range(nbrTick):
+                airport.eventRandom()
                 for j in range(airport.departure_runway):
                     airport.next_departure()
                 for k in range(airport.arrival_runway):

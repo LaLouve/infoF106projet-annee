@@ -15,6 +15,7 @@ import airportFunctions
 from plane import Plane
 from tkinter import messagebox as tkm
 import tkinter.filedialog as filedialog
+from random import randint
 
 airport = airportFunctions.Airport()
 plane1 = Plane('EX1234', 'Exemple Airline', 100, 2600, 10, 'A380', None, None)
@@ -871,6 +872,7 @@ class AirportGUI:
             text = "La compagnie {} a été ajoutée".format(company)
             message = tkm.showinfo('Company added', text)
             self.add_airlines.destroy()
+            self.list_airlines.append(company_ID)
             txt = (str(company_ID).ljust(10, ' ') + str(company))
             self.list_box_company.insert(END, txt)
             airport.statCompany += 1
@@ -1251,6 +1253,7 @@ class AirportGUI:
         if ok:
             plane = None
             for i in range(int(nbr_min)):
+                self.eventRandom()
                 for j in range(airport.departure_runway):
                     plane = airport.next_departure()
                     self.execute_plane(plane)
@@ -1659,6 +1662,7 @@ class AirportGUI:
             airport.dico_model[model] = modCar
             txt = "Le modèle {} a été ajouté.".format(model)
             message = tkm.showinfo("Model added", txt)
+            self.list_model.append(model)
             self.list_box_model.insert(END, model)
             self.add_model_window.destroy()
             airport.statModel += 1
@@ -1878,8 +1882,15 @@ class AirportGUI:
             else:
                 tkm.showwarning("Chargement", "Problème pendant la chargement.")   
 
+    ### Fonction d'evénement aléatoire ###
+    def eventRandom(self):
+        nbr = int(randint(0, 40))
 
-
+        if len(airport.dico_model) > 0 and len(airport.airlines) > 0: 
+            if nbr == 8:
+                self.addDepartureRandom()
+            if nbr == 3:
+                self.addArrivalRandom()
 
 
 if __name__ == "__main__":
