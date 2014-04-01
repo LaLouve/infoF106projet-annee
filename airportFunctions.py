@@ -711,7 +711,7 @@ class Airport:
 
     # Fonctions pour json ###
 
-    def saveSystem(self):
+    def saveSystem(self, filename):
         save_departure_plane = []
         save_arrival_plane = []
         save_history_plane = []
@@ -750,13 +750,14 @@ class Airport:
                                 "time": save_time,
                                 "stat": save_stat})
 
-        save_file = open("save.txt", "w")
+        save_file = open(filename, "w")
         save_file.write(save)
 
-        print ("\nSystem saved in save.txt")
+        print ("\nSystem saved in", filename)
+        return True
 
-    def loadSystem(self):
-        save_file = open("save.txt", "r")
+    def loadSystem(self, filename):
+        save_file = open(filename, "r")
         save = json.load(save_file)
 
         self.dico_model = save["models"]
@@ -792,12 +793,14 @@ class Airport:
         self.statPassengers = load_stat["passengers"]
         self.statDeath = load_stat["death"]
         self.statCompany = load_stat["company"]
-        self.statModel = load_stat["model"] 
+        self.statModel = load_stat["model"]
 
-    def askForNewGame(self):
+        return True
+
+    def askForNewGame(self, filename):
         save_file = None
         try:
-            save_file = open("save.txt", "r")
+            save_file = open(filename, "r")
 
         except:
             print ("\nIl n'y a pas de sauvegarde enregistrée.")           
@@ -812,10 +815,10 @@ class Airport:
                 if ans == 'o' or ans == 'n':
                     ansOK = True
             if ans == 'n':
-                os.remove("save.txt")
+                os.remove(filename)
                 self.add_runway()
             else:
-                self.loadSystem()
+                self.loadSystem(filename)
         else : 
             self.add_runway()
 
@@ -956,10 +959,10 @@ class Airport:
                 self.showStatistiques()
 
             elif answer == 's':
-                self.saveSystem()
+                self.saveSystem("save.txt")
 
             elif answer == 't':
-                self.loadSystem()
+                self.loadSystem("save.txt")
 
             elif answer != 'q':
                 print("\nVous n'avez pas entré une lettre correcte, rééssayez")

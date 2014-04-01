@@ -14,6 +14,7 @@ import tkinter.font as tkFont
 import airportFunctions
 from plane import Plane
 from tkinter import messagebox as tkm
+import tkinter.filedialog as filedialog
 
 airport = airportFunctions.Airport()
 plane1 = Plane('EX1234', 'Exemple Airline', 100, 2600, 10, 'A380', None, None)
@@ -221,7 +222,6 @@ class AirportGUI:
 
         # partie centrale de la troisième colonne, contient les informations
         # des pistes
-        frame_adjust = Frame(column3, height=30, bg='white').pack()
         column3_partCENTER = Frame(column3, height=220, bg='white')
         column3_partCENTER.pack(side=TOP)
 
@@ -272,7 +272,6 @@ class AirportGUI:
         self.mixte_label.pack(side=RIGHT)
         self.mixte_label.bind("<Double-Button-1>", self.mod_mixRunway_button)
 
-        frame_adjust2 = Frame(column3, height=30, bg='white').pack()
 
         # partie basse de la troisième colonne, contient les boutons "history",
         # "companies" et "help"
@@ -286,6 +285,20 @@ class AirportGUI:
             bg='#C0C0C0',
             command=self.helpButton).pack(
             side=BOTTOM)
+        Button(column3_partBOTTOM, 
+            text='Load',
+            relief=GROOVE,
+            width=12,
+            bg='#C0C0C0',
+            command=self.loadSystem).pack(
+            side=BOTTOM)
+        Button(column3_partBOTTOM, 
+            text='Save',
+            relief=GROOVE,
+            width=12,
+            bg='#C0C0C0',
+            command=self.saveSystem).pack(
+            side=BOTTOM)        
         Button(
             column3_partBOTTOM,
             text='History',
@@ -310,7 +323,6 @@ class AirportGUI:
             bg='#C0C0C0',
             command=self.modelButton).pack(
             side=BOTTOM)
-
         Button(
             column3_partBOTTOM,
             text='Statistics',
@@ -319,6 +331,8 @@ class AirportGUI:
             bg='#C0C0C0',
             command=self.showStat).pack(
             side=BOTTOM)
+
+
 
     # Fonctions d'ajout et de suppression d'avions ###
     def addPlane(self, list_plane):
@@ -1852,6 +1866,35 @@ class AirportGUI:
             bg='white',
             anchor=CENTER)
         message.pack()
+
+
+    ### fonction de sauvegarde/restauration ###
+    def saveSystem(self, event = None):
+        '''
+        Permet de sauvegarder le système
+        '''
+        file_name = filedialog.asksaveasfilename(filetypes=[("Fichier txt", "*.txt"),("Tous","*")])
+        if len(file_name) > 0:
+            if airport.saveSystem(file_name):
+                tkm.showinfo("Sauvegarde", "Sauvegarde réussie.")
+            else:
+                tkm.showwarning("Sauvegarde", "Problème pendant la sauvegarde.")
+
+    def loadSystem(self, event = None):
+        '''
+        Permet de charger une sauvegarde
+        '''
+        file_name = filedialog.askopenfilename(filetypes=[("Fichier txt", "*.txt"),("Tous","*")])
+        if len(file_name) > 0:
+            if airport.loadSystem(file_name):
+                tkm.showinfo("Chargement", "Chargement réussit.")
+                self.root.update()
+            else:
+                tkm.showwarning("Chargement", "Problème pendant la chargement.")   
+
+
+
+
 
 if __name__ == "__main__":
     root = Tk()

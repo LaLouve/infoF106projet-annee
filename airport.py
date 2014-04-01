@@ -12,8 +12,8 @@ import airportFunctions
 
 def main_loop():
     airport = airportFunctions.Airport()
-
-    airport.askForNewGame()
+    
+    airport.askForNewGame("save.txt")
 
     while True:
         nbrTick = airport.user_menu()
