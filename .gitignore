@@ -1,7 +1,8 @@
-*.txt
 *.pdf
 __pycache__/
 Correction/
+autres/
 airTests_p1.py
 airTests_p2.py
 rapport.odt
+save.txt
