@@ -657,27 +657,8 @@ class AirportGUI:
                 size=9)).pack(
             side=TOP)
 
-        text = (
-            "Fonctionnement du programme:"
-            "\n\n\n La fenêtre principale est divisée en trois colonne contenant:"
-            "\n*les avions à l'arrivée "
-            "\n*les avions au départ "
-            "\n*l'heure et différents boutons utiles au fonctionnement du programme."
-            "\n\n\nFonctions des différents boutons: "
-            "\n\n*'Add': Permet d'ajouter manuellement un avion. Il vous faudra "
-            "entrer toutes les informations de cet avion "
-            "\n\n*'Add Random': Permet d'ajouter un nouvel avion avec des données aléatoires "
-            "\n\n*'Del': Permet de supprimer un avion au décollage uniquement "
-            "\n\n*'Step': Permet d'avancer le temps de la simulation et d'exécuter "
-            "l'événement suivant. Si vous n'indiquez pas de nombre, le programme "
-            "passe 1 minute"
-            "\n\n*'History': Affiche la liste de tous les avions passés"
-            "\n\n*'Company': Affiche la liste des compagnies aériennes. Cette "
-            "fenêtre permet aussi d'ajouter ou de supprimer des compagnies"
-            "\n\n\nLorsque vous double-cliquez sur un avion, cela affiche une fenêtre  "
-            "contenant toutes les informations de cet avion"
-            "\nDe même lorsque vous double-cliquez sur une compagnie, cela  "
-            "affiche tous les avions de cette compagnie")
+        text_file = open("help.txt", "r")
+        text = text_file.read()
 
         message = Message(
             text_help,
