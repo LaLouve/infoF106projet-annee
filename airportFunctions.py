@@ -22,16 +22,16 @@ class Airport:
         initialisation des données
         '''
         self.departure_list = []  # avions en attente de décollage
-        self.arrival_list = []  # avions en attente de d'attérissage
-        # autres avions (déjà attéri, décollé ou crashé)
+        self.arrival_list = []  # avions en attente de d'atterissage
+        # autres avions (déjà atterri, décollé ou crashé)
         self.history_list = []
         # dictionnaire de toutes les compagnies, avec leur ID
         self.airlines = {}
         # entier représentant les minutes écoulées (min: 0, max: 1439)
         self.tick = 0
         self.departure_runway = 0  # nbr de pistes de décollage
-        self.arrival_runway = 0  # nbr de pistes d'atterissage
-        self.mixte_runway = 0  # nbr de piste d'atterissage et de décollage
+        self.arrival_runway = 0  # nbr de pistes d'atterrissage
+        self.mixte_runway = 0  # nbr de piste d'atterrissage et de décollage
         self.dico_model = {}  # dico des différents modèles d'avions
 
         self.statAvionGlobal = 0  # nbr total d'avions
@@ -381,7 +381,7 @@ class Airport:
                 print(
                     "\nL'avion",
                     plane.getID(),
-                    "n'a malheureusement pas pu atterire à temps."
+                    "n'a malheureusement pas pu atterrir à temps."
                     " \nVous avez tué",
                     passengers,
                     'passagers./o\\')
@@ -406,7 +406,7 @@ class Airport:
         '''
         Permet d'effectuer l'action la plus prioritaire. Si il n'y a pas
         d'avion devant décoller, c'est l'avion avec le ratio carburant/
-        consomation le plus petit qui attéri.
+        consomation le plus petit qui atterri.
         Une fois l'action effectuée, l'avion en question est retiré de sa liste
         d'origine et placé dans history_list
         '''
@@ -418,7 +418,7 @@ class Airport:
             most_prior_plane = arrival_plane
             most_prior_plane.setStatut('Landed')
             self.arrival_list.remove(most_prior_plane)
-            print("\nL'avion", most_prior_plane.getID(), "a attéri.")
+            print("\nL'avion", most_prior_plane.getID(), "a atterri.")
 
         elif departure_plane is not None and\
                 self.convTuppleToTick(departure_plane.getTime()) <= self.tick:
@@ -431,7 +431,7 @@ class Airport:
             most_prior_plane = arrival_plane
             most_prior_plane.setStatut('Landed')
             self.arrival_list.remove(most_prior_plane)
-            print("\nL'avion", most_prior_plane.getID(), "a attéri.")
+            print("\nL'avion", most_prior_plane.getID(), "a atterri.")
 
         if most_prior_plane is not None:
             self.history_list.append(most_prior_plane)
@@ -459,7 +459,7 @@ class Airport:
 
     def next_arrival(self):
         '''
-        Determine le prochain avion à attérire
+        Determine le prochain avion à atterrir
         '''
         most_prior_plane = None
 
@@ -469,13 +469,13 @@ class Airport:
             most_prior_plane = arrival_plane
             most_prior_plane.setStatut('Landed')
             self.arrival_list.remove(most_prior_plane)
-            print("\nL'avion", most_prior_plane.getID(), "a attéri.")
+            print("\nL'avion", most_prior_plane.getID(), "a atterri.")
 
         elif arrival_plane is not None:
             most_prior_plane = arrival_plane
             most_prior_plane.setStatut('Landed')
             self.arrival_list.remove(most_prior_plane)
-            print("\nL'avion", most_prior_plane.getID(), "a attéri.")
+            print("\nL'avion", most_prior_plane.getID(), "a atterri.")
 
         if most_prior_plane is not None:
             self.history_list.append(most_prior_plane)
@@ -768,7 +768,7 @@ class Airport:
         '''
         text = "\nNombre total d'avions: {}"\
             "\nNombre d'avions au décollage ou ayant décollés: {}"\
-            "\nNombre d'avions à l'attérissage ou ayant attéris : {}"\
+            "\nNombre d'avions à l'atterrissage ou ayant atterri : {}"\
             "\nNombre total de passagers: {}"\
             "\nNombre de crashs: {}"\
             "\nNombre de morts lors des crashs: {}"\
@@ -923,7 +923,7 @@ class Airport:
             if nbr == 3:
                 newPlane = self.add_random_arrival_plane()
                 print("\nL'avion", newPlane.getID(),
-                      "a été ajouté à la liste des avions à l'attérissage.")
+                      "a été ajouté à la liste des avions à l'atterrissage.")
 
     def user_menu(self):
         '''

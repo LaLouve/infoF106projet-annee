@@ -17,42 +17,14 @@ from tkinter import messagebox as tkm
 import tkinter.filedialog as filedialog
 from random import randint
 
+
+
+
 airport = airportFunctions.Airport()
-plane1 = Plane('EX1234', 'Exemple Airline', 100, 2600, 10, 'A380', None, None)
-plane2 = Plane(
-    'EX2345',
-    'Exemple Airline',
-    150,
-    2600,
-    10,
-    'A380',
-    (10,
-     20),
-    'In Time')
-plane3 = Plane(
-    'EX3456',
-    'Exemple Airline',
-    200,
-    2600,
-    10,
-    'A380',
-    None,
-    'Take Off')
-airport.arrival_list = [plane1]
-airport.departure_list = [plane2]
-airport.history_list = [plane3]
-airport.airlines = {'EX': 'Exemple Airline'}
-airport.dico_model = {'A380': [2600, 11, 500]}
-airport.statAvionGlobal = 3
-airport.statAvionDep = 2
-airport.statAvionArr = 1
-airport.statPassengers = 450
-airport.statCompany = 1
-airport.statModel = 1
 
 
 class AirportGUI:
-    airport = airportFunctions.Airport()
+    
 
     # Création de la fenêtre principale ###
     def __init__(self, root):
@@ -62,7 +34,41 @@ class AirportGUI:
         de la deuxième colonne (c'est à dire le rendre inactif tant que
         l'utilisateur ne selectionne pas un avion dans la liste des avions
         au départ
+        
+
+        plane1 = Plane('EX1234', 'Exemple Airline', 100, 2600, 10, 'A380', None, None)
+        plane2 = Plane(
+            'EX2345',
+            'Exemple Airline',
+            150,
+            2600,
+            10,
+            'A380',
+            (10,
+             20),
+            'In Time')
+        plane3 = Plane(
+            'EX3456',
+            'Exemple Airline',
+            200,
+            2600,
+            10,
+            'A380',
+            None,
+            'Take Off')
+        airport.arrival_list = [plane1]
+        airport.departure_list = [plane2]
+        airport.history_list = [plane3]
+        airport.airlines = {'EX': 'Exemple Airline'}
+        airport.dico_model = {'A380': [2600, 11, 500]}
+        airport.statAvionGlobal = 3
+        airport.statAvionDep = 2
+        airport.statAvionArr = 1
+        airport.statPassengers = 450
+        airport.statCompany = 1
+        airport.statModel = 1
         '''
+
         root.bind("<Button-1>", self.checkPlaneDelete)
         self.root = root
 
@@ -361,7 +367,6 @@ class AirportGUI:
         '''
         plane = self.addButton(
             "Add Departure Plane",
-            airport.departure_list,
             self.list_box_departures)
 
     def addArrivalButton(self):
@@ -370,10 +375,9 @@ class AirportGUI:
         '''
         plane = self.addButton(
             "Add Arrival Plane",
-            airport.arrival_list,
             self.list_box_arrivals)
 
-    def addButton(self, title, list_plane, list_box):
+    def addButton(self, title, list_box):
         '''
         Ouvre une fenêtre demandant les différentes informations pour
         l'ajout d'un avion
@@ -448,7 +452,7 @@ class AirportGUI:
             width=13)
         passengers.grid(row=2, column=1)
 
-        if list_plane == airport.departure_list:
+        if title == "Add Departure Plane":
             Label(
                 add_frame,
                 bd=4,
@@ -479,6 +483,7 @@ class AirportGUI:
                 relief=SUNKEN,
                 width=6)
             minute.grid(row=0, column=1)
+        
         else:
             heure = None
             minute = None
@@ -1251,7 +1256,7 @@ class AirportGUI:
 
     def execute_plane(self, plane):
         '''
-        Effectue l'évenement (attérissage ou décollage)
+        Effectue l'évenement (atterrissage ou décollage)
         '''
         if plane is not None:
             list_plane = self.list_box_departures.get(0, END)
@@ -1283,7 +1288,7 @@ class AirportGUI:
             ok = True
 
         if airport.departure_runway == 0 and airport.arrival_runway == 0 and airport.mixte_runway == 0:
-            text = "\nVotre aéroport n'a aucune piste pour faire décoller ou atterrire des avions."\
+            text = "\nVotre aéroport n'a aucune piste pour faire décoller ou atterrir des avions."\
                    "\nVeuillez en ajouter."
             message = tkm.showwarning('No runway', text)
         elif airport.departure_runway == 0 and airport.mixte_runway == 0:
@@ -1291,7 +1296,7 @@ class AirportGUI:
                    "\nVeuillez en ajouter."
             message = tkm.showwarning('No runway', text)
         elif airport.arrival_runway == 0 and airport.mixte_runway == 0:
-            text = "\nVotre aéroport n'a aucune piste pour faire atterrire des avions."\
+            text = "\nVotre aéroport n'a aucune piste pour faire atterrir des avions."\
                    "\nVeuillez en ajouter."
             message = tkm.showwarning('No runway', text)
 
@@ -1311,7 +1316,7 @@ class AirportGUI:
 
                 crashedPlane, delayedPlane = airport.update_status()
                 for plane in crashedPlane:
-                    text = "L'avion {} n'a malheureusement pas pu atterrire à temps."\
+                    text = "L'avion {} n'a malheureusement pas pu atterrir à temps."\
                         " \nVous avez tué {} passagers. /o\\".format(
                             plane.getID(),
                             plane.getPassengers())
@@ -1343,7 +1348,7 @@ class AirportGUI:
 
     def mod_arrRunway_button(self, event=None):
         '''
-        Modifie le nombre de pistes d'attérissage'
+        Modifie le nombre de pistes d'atterrissage'
         '''
         self.modifiy_nbrRunway('arrivals')
 
@@ -1936,7 +1941,7 @@ class AirportGUI:
 
         text = "\n- Nombre total d'avions: {}"\
             "\n\n- Nombre d'avions au décollage\nou ayant décollés: {}"\
-            "\n\n- Nombre d'avions à l'attérissage\nou ayant attéris: {}"\
+            "\n\n- Nombre d'avions à l'atterrissage\nou ayant atterri: {}"\
             "\n\n- Nombre total de passagers: {}"\
             "\n\n- Nombre de crashs: {}"\
             "\n\n- Nombre de morts lors des crashs: {}"\

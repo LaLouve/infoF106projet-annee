@@ -32,7 +32,7 @@ def main_loop():
            airport.mixte_runway == 0:
             print(
                 "\nVotre aéroport n'a aucune piste,"
-                " vous ne pouvez faire décoller ou atterrire des avions."
+                " vous ne pouvez faire décoller ou atterrir des avions."
                 "\nVeuillez en ajouter.")
         elif airport.departure_runway == 0 and\
                 airport.mixte_runway == 0:
@@ -44,7 +44,7 @@ def main_loop():
                 airport.mixte_runway == 0:
             print(
                 "\nVotre aéroport n'a aucune piste"
-                " pour faire atterrire des avions."
+                " pour faire atterrir des avions."
                 "\nVeuillez en ajouter.")
         else:
             for i in range(nbrTick):
