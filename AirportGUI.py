@@ -925,7 +925,7 @@ class AirportGUI:
         plane = airport.departure_list[num]
         self.infoPlane(airport.departure_list, plane)
 
-    def infoHistoryPlane(self, event=None):*
+    def infoHistoryPlane(self, event=None):
         '''
         Affiche les informations d'un avion se trouvant dans la liste
         "History"

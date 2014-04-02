@@ -165,6 +165,35 @@ class Airport:
             self.departure_list.append(plane)
             self.statAvionDep += 1
 
+
+    def ask_for_del_plane(self):
+        if len(self.departure_list) == 0:
+            print ("\nIl n'y a pas d'avion à supprimer.")
+        else:
+            print('\nListe des avions au départ:\n')
+            self.show_list_info(self.departure_list)
+            print('\nQuel avion voulez-vous supprimer?')
+
+            ok = False
+            while not ok:
+                try:
+                    indice = int(input('Entrez sa position dans'
+                                  ' la liste des avions au départ: ')) - 1
+                    if indice < len(self.departure_list) and\
+                        indice >= 0:
+                        ok = True
+                    else:
+                        ok = False
+                        print("\nVous n'avez pas entré"
+                              " le numéro d'un avion.")
+                except:
+                    ok = False
+                    print("\nVous n'avez pas entré un nombre.")
+
+            plane = self.departure_list[indice]
+            self.del_plane(plane)
+            print("\nL'avion", plane.getID(), "a été supprimé")
+
     def del_plane(self, plane):
         '''
         supression d'un avion de departure_list
@@ -219,11 +248,11 @@ class Airport:
         else:
             most_prior_plane = self.departure_list[0]
             for plane in self.departure_list[1:]:
-                if self.convTupleToTick(plane.getTime()) <\
-                   self.convTupleToTick(most_prior_plane.getTime()):
+                if self.convTuppleToTick(plane.getTime()) <\
+                   self.convTuppleToTick(most_prior_plane.getTime()):
                     most_prior_plane = plane
-                if self.convTupleToTick(plane.getTime()) ==\
-                   self.convTupleToTick(most_prior_plane.getTime()):
+                if self.convTuppleToTick(plane.getTime()) ==\
+                   self.convTuppleToTick(most_prior_plane.getTime()):
                     if int(plane.getPassengers()) >\
                        most_prior_plane.getPassengers():
                         most_prior_plane = plane
@@ -319,7 +348,8 @@ class Airport:
                     self.showTime(plane.getTime())
                     if plane.getStatut() is not None:
                         print(plane.getStatut())
-                    print()
+                    else:
+                        print()
                     count += 1
 
     def new_day(self):
@@ -391,7 +421,7 @@ class Airport:
             print("\nL'avion", most_prior_plane.getID(), "a attéri.")
 
         elif departure_plane is not None and\
-                self.convTupleToTick(departure_plane.getTime()) <= self.tick:
+                self.convTuppleToTick(departure_plane.getTime()) <= self.tick:
             most_prior_plane = departure_plane
             most_prior_plane.setStatut('Take Off')
             self.departure_list.remove(most_prior_plane)
@@ -416,7 +446,7 @@ class Airport:
         most_prior_plane = None
 
         if departure_plane is not None and\
-           self.convTupleToTick(departure_plane.getTime()) <= self.tick:
+           self.convTuppleToTick(departure_plane.getTime()) <= self.tick:
             most_prior_plane = departure_plane
             most_prior_plane.setStatut('Take Off')
             self.departure_list.remove(most_prior_plane)
@@ -939,29 +969,7 @@ class Airport:
                 self.ask_for_add_plane("arrival")
 
             elif answer == 'c':
-                print('\nListe des avions au départ:\n')
-                self.show_list_info(self.departure_list)
-                print('\nQuel avion voulez-vous supprimer?')
-
-                ok = False
-                while not ok:
-                    try:
-                        indice = (
-                            int(input('Entrez sa position dans'
-                                      'la liste des avions au départ: ')) - 1)
-                        if indice <= (len(self.departure_list)) and\
-                           indice >= 0:
-                            ok = True
-                        else:
-                            ok = False
-                            print("\nVous n'avez pas entré"
-                                  " le numéro d'un avion.")
-                    except:
-                        print("\nVous n'avez pas entré un nombre.")
-
-                plane = self.departure_list[indice]
-                self.del_plane(plane)
-                print("\nL'avion", plane.getID(), "a été supprimé")
+                self.ask_for_del_plane()
 
             elif answer == 'd':
                 self.show_all_info()
@@ -970,6 +978,7 @@ class Airport:
                 if len(self.airlines) == 0:
                     print("\nIl n'y a aucune compagnie enregistrée")
                 else:
+                    self.show_airlines()
                     company_ID = (
                         str(input("\nEntrez l'ID de la compagnie: "))).upper()
                     if company_ID in self.airlines:
