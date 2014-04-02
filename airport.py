@@ -11,6 +11,16 @@ import airportFunctions
 
 
 def main_loop():
+    '''
+    Boucle principale pour le fonctionnement du programme en terminal
+
+    Vérifie si une sauvegarde est présente
+    Appelle le menu des actions 
+    Vérifie si l'aéroport posséde des pistes
+    Effectue l'évenement suivant (attérissage/décollage) en fonction du nombre
+    de pistes présentes
+    Met à jour les informations des avions
+    '''
     airport = airportFunctions.Airport()
 
     airport.askForNewGame("save.txt")

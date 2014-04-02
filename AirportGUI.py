@@ -335,6 +335,9 @@ class AirportGUI:
 
     # Fonctions d'ajout et de suppression d'avions ###
     def addPlane(self, list_plane):
+        '''
+        Lance la procédure d'ajout d'un avion
+        '''
         if len(airport.dico_model) == 0:
             text = "Il n'y a aucun modèle enregistré, \nveuillez en ajouter un via le bouton 'Model'."
             message = tkm.showwarning('No model', text)
@@ -903,31 +906,49 @@ class AirportGUI:
 
     # Fonctions d'affichage des informations d'un avion ###
     def infoArrivalPlane(self, event=None):
+        '''
+        Affiche les informations d'un avion se trouvant dans la liste
+        "Arrival"
+        '''
         item = self.list_box_arrivals.curselection()
         num = item[0]
         plane = airport.arrival_list[num]
         self.infoPlane(airport.arrival_list, plane)
 
     def infoDeparturePlane(self, event=None):
+        '''
+        Affiche les informations d'un avion se trouvant dans la liste
+        "Departure"
+        '''
         item = self.list_box_departures.curselection()
         num = item[0]
         plane = airport.departure_list[num]
         self.infoPlane(airport.departure_list, plane)
 
-    def infoHistoryPlane(self, event=None):
+    def infoHistoryPlane(self, event=None):*
+        '''
+        Affiche les informations d'un avion se trouvant dans la liste
+        "History"
+        '''
         item = self.list_box_history.curselection()
         num = item[0]
         plane = airport.history_list[num]
         self.infoPlane(airport.history_list, plane)
 
     def infoPlaneCompany(self, event=None):
+        '''
+        Affiche les informations d'un avion se trouvant dans la liste
+        des avions d'une compagnie
+        '''
         item = self.list_box_company_plane.curselection()
         num = item[0]
         plane = self.list_of_plane[num]
         self.infoPlane(self.list_of_plane, plane)
 
     def infoPlane(self, plane_list, plane):
-
+        '''
+        fenêtre d'affichage des informations d'un avion
+        '''
         self.info_plane_window = Tk()
         self.info_plane_window.title("Plane Info")
         self.info_plane_window.configure(background='white')
@@ -1132,10 +1153,16 @@ class AirportGUI:
             column=0)
 
     def planeButtonOK(self):
+        '''
+        Ferme la fenêtre d'affichage des informations de l'avion
+        '''
         self.info_plane_window.destroy()
 
     # Fonctions d'affichage des avions d'une compagnie ###
     def showInfoCompany(self, event=None):
+        '''
+        selectionne la compagnie et appelle la fonction d'affichage
+        '''
         item = self.list_box_company.curselection()
         numCompany = item[0]
         company_ID = self.list_airlines[numCompany]
@@ -1143,6 +1170,9 @@ class AirportGUI:
         self.infoCompanyPlane(company_ID)
 
     def infoCompanyPlane(self, company_ID):
+        '''
+        Affiche les avions d'une compagnie
+        '''
         self.info_company_window = Tk()
         self.info_company_window.title("Company Info")
         self.info_company_window.configure(background='white')
@@ -1203,10 +1233,16 @@ class AirportGUI:
             side=BOTTOM)
 
     def companyButtonOK(self):
+        '''
+        Ferme la fenêtre d'affichage des avions d'une compagnie
+        '''
         self.info_company_window.destroy()
 
     # Fonctions relatives au temps ###
     def time(self, tick):
+        '''
+        Afiche le nombre "tick" au format '00h00' 
+        '''
         return (str(tick //
                     60).rjust(2, '0') +
                 "h" +
@@ -1214,6 +1250,9 @@ class AirportGUI:
                     60).rjust(2, '0'))
 
     def execute_plane(self, plane):
+        '''
+        Effectue l'évenement (attérissage ou décollage)
+        '''
         if plane is not None:
             list_plane = self.list_box_departures.get(0, END)
             if plane.getID() in list_plane:
@@ -1225,6 +1264,14 @@ class AirportGUI:
                 self.list_box_arrivals.delete(item)
 
     def stepButton(self, nbr_min):
+        '''
+        Permet d'avancer le temps
+        Si l'aéroport n'a pas de pistes, un message est affiché
+        Effectue les évenement suivants en fonction du nombre de minutes
+        passées et du nombres de pistes présentes dans l'aéroport
+        Affiche un message si un avion est en retard
+        Mets à jour les informations des avions
+        '''
         self.nbr_min.delete(0, last=END)
 
         ok = False
@@ -1289,15 +1336,28 @@ class AirportGUI:
 
     # Fonctions relatives aux pistes ###
     def mod_depRunway_button(self, event=None):
+        '''
+        Modifie le nombre de pistes de décollage
+        '''
         self.modifiy_nbrRunway('departures')
 
     def mod_arrRunway_button(self, event=None):
+        '''
+        Modifie le nombre de pistes d'attérissage'
+        '''
         self.modifiy_nbrRunway('arrivals')
 
     def mod_mixRunway_button(self, event=None):
+        '''
+        Modifie le nombre de pistes mixtes
+        '''
         self.modifiy_nbrRunway('mixtes')
 
     def modifiy_nbrRunway(self, name_runway):
+        '''
+        Ouvre une fenêtre proposant l'incrémentation ou la décrémentation
+        du nombre d'un type de piste
+        '''
         self.modify_nbrRunway_window = Tk()
         self.modify_nbrRunway_window.title("Modify runway")
         self.modify_nbrRunway_window.configure(background='white')
@@ -1343,6 +1403,9 @@ class AirportGUI:
         button_moins.pack(side=RIGHT)
 
     def incr_nbr_runway(self, name_runway):
+        '''
+        Incrémente d'une unité le nombre du type de piste choisie
+        '''
         if name_runway == 'departures':
             airport.departure_runway += 1
             text_departure_label = "Departure runways: {}".format(
@@ -1364,6 +1427,9 @@ class AirportGUI:
         self.modify_nbrRunway_window.destroy()
 
     def decr_nbr_runway(self, name_runway):
+        '''
+        Décrémente d'une unité le nombre du type de piste choisie
+        '''
         if name_runway == 'departures':
             airport.departure_runway -= 1
             if airport.departure_runway < 0:
@@ -1392,6 +1458,10 @@ class AirportGUI:
 
     # Fonctions des modèles ###
     def showListModel(self):
+        '''
+        Affiche la liste des modèles pour la sélection lors de l'ajout 
+        d'un avion
+        '''
         self.show_model_window = Tk()
         self.show_model_window.title("Model")
         self.show_model_window.config(bg='white')
@@ -1464,12 +1534,19 @@ class AirportGUI:
         return model
 
     def checkModelSelected(self, event=None):
+        '''
+        Active le bouton "select" lorsque qu'un modèle est sélectionné
+        dans la liste
+        '''
         if self.list_show_model.curselection():
             self.selModelButton.configure(state=NORMAL)
         else:
             self.selModelButton.configure(state=DISABLED)
 
     def selectModel(self):
+        '''
+        selectionne le modèle voulut pour la création de l'avion
+        '''
         item = self.list_show_model.curselection()
         numModel = item[0]
         model = self.list_model[numModel]
@@ -1479,6 +1556,10 @@ class AirportGUI:
         return model
 
     def modelButton(self):
+        '''
+        Affiche la listes des modèles enregistrés avec les boutons d'ajout
+        et de suppression
+        '''
         model_window = Tk()
         model_window.title("Model")
         model_window.config(bg='white')
@@ -1547,6 +1628,10 @@ class AirportGUI:
             side=BOTTOM)
 
     def addModel(self):
+        '''
+        Ouvre une fenêtre permetant à l'utilisateur d'entrer les informations
+        du modèle qu'il veut ajouter
+        '''
         self.add_model_window = Tk()
         self.add_model_window.title("Add Model")
         self.add_model_window.config(bg='white')
@@ -1650,6 +1735,10 @@ class AirportGUI:
             column=0)
 
     def addModelButton(self, newModel, newFuel, newConsumption, newPassengers):
+        '''
+        Vérifie les données entrées par l'utilisateur et ajoute le modèle si
+        elles sont correctes
+        '''
         model = str(newModel.get()).upper()
         fuel = newFuel.get()
         consumption = newConsumption.get()
@@ -1669,6 +1758,9 @@ class AirportGUI:
             message = tkm.showerror('Error', text)
 
     def deleteModel(self):
+        '''
+        Supprime le modèle sélectionné
+        '''
         item = self.list_box_model.curselection()
         self.list_box_model.delete(item)
         numModel = item[0]
@@ -1679,12 +1771,18 @@ class AirportGUI:
         airport.statModel -= 1
 
     def checkModelDelete(self, event=None):
+        '''
+        Active le bouton "Delete" lorsqu'un modèle est selectionné
+        '''
         if self.list_box_model.curselection():
             self.delModelButton.configure(state=NORMAL)
         else:
             self.delModelButton.configure(state=DISABLED)
 
     def showInfoModel(self, event=None):
+        '''
+        Appelle la fonction d'affichage du modèle sélectionné
+        '''
         item = self.list_box_model.curselection()
         numModel = item[0]
         model = self.list_model[numModel]
@@ -1692,6 +1790,9 @@ class AirportGUI:
         self.infoModel(model)
 
     def infoModel(self, model):
+        '''
+        Affiche les informations du modèle
+        '''
         self.info_model_window = Tk()
         self.info_model_window.title("Model Info")
         self.info_model_window.configure(background='white')
@@ -1808,10 +1909,16 @@ class AirportGUI:
             column=0)
 
     def modelButtonOK(self):
+        '''
+        ferme la fenêtre d'informations du modèle
+        '''
         self.info_model_window.destroy()
 
     # Fonctions d'affichage des statistiques ###
     def showStat(self):
+        '''
+        Affiche les statistiques de l'aéroport
+        '''
         self.showStat_window = Tk()
         self.showStat_window.title("Statistics")
         self.showStat_window.configure(background='white')
@@ -1887,6 +1994,10 @@ class AirportGUI:
 
     # Fonction d'evénement aléatoire ###
     def eventRandom(self):
+        '''
+        Permet de créer un avion de manière aléatoire
+        (évenement aléatoire)
+        '''
         nbr = int(randint(0, 40))
 
         if len(airport.dico_model) > 0 and len(airport.airlines) > 0:

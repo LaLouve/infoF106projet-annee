@@ -74,6 +74,9 @@ class Airport:
         return newPlane
 
     def ask_for_add_plane(self, plane_type):
+        '''
+        Demande les informations nécéssaires à la création d'un nouvel avion
+        '''
         if len(self.dico_model) == 0:
             print(
                 "\nIl n'y a aucun modèle d'avion enregistré,"
@@ -196,6 +199,9 @@ class Airport:
         return company, ID_letter
 
     def del_company(self, company_ID):
+        '''
+        Supprime la compangnie demandée
+        '''
         print("\nLa compagnie", self.airlines[company_ID], "a été supprimée.")
         self.airlines.pop(company_ID)
         self.statCompany -= 1
@@ -403,6 +409,9 @@ class Airport:
         return (most_prior_plane)
 
     def next_departure(self):
+        '''
+        Determine le prochain avion à décoller
+        '''
         departure_plane = self.departure_priority_plane()
         most_prior_plane = None
 
@@ -419,6 +428,9 @@ class Airport:
         return (most_prior_plane)
 
     def next_arrival(self):
+        '''
+        Determine le prochain avion à attérire
+        '''
         most_prior_plane = None
 
         arrival_plane = self.arrival_priority_plane()
@@ -441,6 +453,9 @@ class Airport:
         return (most_prior_plane)
 
     def ask_for_runway(self):
+        '''
+        Demande le nombre de pistes à modifier 
+        '''
         ok = False
         while not ok:
             try:
@@ -461,12 +476,18 @@ class Airport:
             self.nbr_mixte_runway)
 
     def show_runway(self):
+        '''
+        Affiche le nombre de pistes de l'aéroport
+        '''
         print("\nListe des pistes:")
         print("Pistes pour le décollage:", self.departure_runway)
         print("Pistes pour l'atterissage:", self.arrival_runway)
         print("Pistes mixtes:", self.mixte_runway)
 
     def add_runway(self):
+        '''
+        Permet d'ajouter des pistes
+        '''
         self.ask_for_runway()
 
         self.departure_runway += self.nbr_departure_runway
@@ -476,6 +497,9 @@ class Airport:
         return (self.departure_runway, self.arrival_runway, self.mixte_runway)
 
     def del_runway(self):
+        '''
+        Permet de supprimer des pistes
+        '''
         self.ask_for_runway()
 
         self.departure_runway -= self.nbr_departure_runway
@@ -521,6 +545,9 @@ class Airport:
         return model, modFuel, modConso, modPass
 
     def del_model(self):
+        '''
+        Permet de supprimer un modèle d'avion
+        '''
         self.show_model()
         print(
             "\nEntrez le nom du modèle que vous voulez supprimer:",
@@ -535,6 +562,9 @@ class Airport:
             print("Vous n'avez pas entré un nom de modèle correct")
 
     def show_model(self):
+        '''
+        Permet d'afficher les différents modèles d'avion enregistrés
+        '''
         if len(self.dico_model) == 0:
             print("\nIl n'y a aucun modèle enregistré")
 
@@ -673,18 +703,27 @@ class Airport:
         self.add_plane(newPlane)
         return newPlane
 
-    def convTupleToTick(self, tupple):
+    def convTuppleToTick(self, tupple):
+        '''
+        converti un tupple en un entier
+        '''
         return int(tupple[0] * 60 + tupple[1])
 
-    def convTickToTuple(self, time):
+    def convTickToTupple(self, time):
+        '''
+        converti l'entier "tick" en un tupple
+        '''
         return ((str(time // 60)).rjust(2, '0'),
                 (str(time % 60)).rjust(2, '0'))
 
     def showTime(self, tick):
+        '''
+        Affiche l'heure au format '00h00'
+        '''
         if type(tick) is int:
-            print(str(self.convTickToTuple(tick)[0]) +
+            print(str(self.convTickToTupple(tick)[0]) +
                   "h" +
-                  str(self.convTickToTuple(tick)[1]) +
+                  str(self.convTickToTupple(tick)[1]) +
                   ".")
         elif tick is None:
             print("Arr. Plane", end='  ')
@@ -694,6 +733,9 @@ class Airport:
                   (str(tick[1])).rjust(2, '0'), end='  ')
 
     def showStatistiques(self):
+        '''
+        Affiche les différentes statistiques
+        '''
         text = "\nNombre total d'avions: {}"\
             "\nNombre d'avions au décollage ou ayant décollés: {}"\
             "\nNombre d'avions à l'attérissage ou ayant attéris : {}"\
@@ -714,6 +756,11 @@ class Airport:
     # Fonctions pour json ###
 
     def saveSystem(self, filename):
+        '''
+        Sauvegarde l'état courant du système à l'aide de json.
+        Sauve les modèles, les compangies, le nombre de pistes, les avions (dans
+        leurs listes respectives), l'heure et les statistiques de l'aéroport. 
+        '''
         save_departure_plane = []
         save_arrival_plane = []
         save_history_plane = []
@@ -759,6 +806,10 @@ class Airport:
         return True
 
     def loadSystem(self, filename):
+        '''
+        Converti le text du fichier de sauvegarde en données utilisables
+        par le simulateur.
+        '''
         save_file = open(filename, "r")
         save = json.load(save_file)
 
@@ -799,6 +850,10 @@ class Airport:
         return True
 
     def askForNewGame(self, filename):
+        '''
+        Vérifie si une sauvegarde existe et propose de l'utiliser.
+        Si il n'y a pas de sauvegarde, lance le simulateur.
+        '''
         save_file = None
         try:
             save_file = open(filename, "r")
@@ -824,6 +879,10 @@ class Airport:
             self.add_runway()
 
     def eventRandom(self):
+        '''
+        Permet de créer un avion de manière aléatoire
+        (évenement aléatoire) 
+        '''
         nbr = int(randint(0, 40))
 
         if len(self.dico_model) > 0 and len(self.airlines) > 0:
