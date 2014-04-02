@@ -1742,7 +1742,7 @@ class AirportGUI:
         model = str(newModel.get()).upper()
         fuel = newFuel.get()
         consumption = newConsumption.get()
-        passengers = newConsumption.get()
+        passengers = newPassengers.get()
 
         if fuel.isdigit() and consumption.isdigit() and passengers.isdigit():
             modCar = [(int(fuel)), (int(consumption)), (int(passengers))]
