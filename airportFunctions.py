@@ -9,10 +9,11 @@ fichier: airportFunctions.py
 
 from random import randint, choice
 from plane import Plane
-import json #pour le système de sauvegarde
+import json  # pour le système de sauvegarde
 import os
 
-ID_max = 9999 #valeur maximun de l'ID
+ID_max = 9999  # valeur maximun de l'ID
+
 
 class Airport:
 
@@ -33,14 +34,14 @@ class Airport:
         self.mixte_runway = 0  # nbr de piste d'atterissage et de décollage
         self.dico_model = {}  # dico des différents modèles d'avions
 
-        self.statAvionGlobal = 0 #nbr total d'avions
-        self.statAvionDep = 0 #nbr d'avions au décollage
-        self.statAvionArr = 0 #nbr d'avions à l'arrivé
-        self.statPassengers = 0 #nbr de passagers
-        self.statCrash = 0 #nbr de crash
-        self.statDeath = 0 #nbr de passagers morts dans des crashs
-        self.statCompany = 0 #nbr de compagnies 
-        self.statModel = 0 #nbr de modèles
+        self.statAvionGlobal = 0  # nbr total d'avions
+        self.statAvionDep = 0  # nbr d'avions au décollage
+        self.statAvionArr = 0  # nbr d'avions à l'arrivé
+        self.statPassengers = 0  # nbr de passagers
+        self.statCrash = 0  # nbr de crash
+        self.statDeath = 0  # nbr de passagers morts dans des crashs
+        self.statCompany = 0  # nbr de compagnies
+        self.statModel = 0  # nbr de modèles
 
     def create_plane(
             self,
@@ -159,7 +160,7 @@ class Airport:
             self.statAvionArr += 1
         else:
             self.departure_list.append(plane)
-            self.statAvionDep +=1
+            self.statAvionDep += 1
 
     def del_plane(self, plane):
         '''
@@ -692,7 +693,7 @@ class Airport:
                   'h' +
                   (str(tick[1])).rjust(2, '0'), end='  ')
 
-    def showStatistiques (self):
+    def showStatistiques(self):
         text = "\nNombre total d'avions: {}"\
             "\nNombre d'avions au décollage ou ayant décollés: {}"\
             "\nNombre d'avions à l'attérissage ou ayant attéris : {}"\
@@ -701,14 +702,14 @@ class Airport:
             "\nNombre de morts lors des crashs: {}"\
             "\nNombre de compangies: {}"\
             "\nNombre de modèles d'avions: {}".format(self.statAvionGlobal,
-                self.statAvionDep,
-                self.statAvionArr,
-                self.statPassengers,
-                self.statCrash,
-                self.statDeath,
-                self.statCompany,
-                self.statModel)
-        print (text)
+                                                      self.statAvionDep,
+                                                      self.statAvionArr,
+                                                      self.statPassengers,
+                                                      self.statCrash,
+                                                      self.statDeath,
+                                                      self.statCompany,
+                                                      self.statModel)
+        print(text)
 
     # Fonctions pour json ###
 
@@ -720,41 +721,41 @@ class Airport:
         for plane in self.departure_list:
             savePlane = plane.__dict__
             save_departure_plane.append(savePlane)
-        
+
         for plane in self.arrival_list:
             savePlane = plane.__dict__
             save_arrival_plane.append(savePlane)
-        
+
         for plane in self.history_list:
             savePlane = plane.__dict__
             save_history_plane.append(savePlane)
 
         save_runways = {"departure_runway": self.departure_runway,
-                            "arrival_runway": self.arrival_runway, 
-                            "mixte_runway": self.mixte_runway}
+                        "arrival_runway": self.arrival_runway,
+                        "mixte_runway": self.mixte_runway}
 
         save_time = {"time": self.tick}
         save_stat = {"plane global": self.statAvionGlobal,
-                            "plane dep": self.statAvionDep,
-                            "plane arr": self.statAvionArr,
-                            "passengers": self.statPassengers,
-                            "death": self.statDeath,
-                            "company": self.statCompany,
-                            "model": self.statModel}
+                     "plane dep": self.statAvionDep,
+                     "plane arr": self.statAvionArr,
+                     "passengers": self.statPassengers,
+                     "death": self.statDeath,
+                     "company": self.statCompany,
+                     "model": self.statModel}
 
         save = json.dumps({"models": self.dico_model,
-                                "airlines": self.airlines,
-                                "runways": save_runways,
-                                "departure_planes": save_departure_plane,
-                                "arrival_planes": save_arrival_plane,
-                                "history_planes": save_history_plane,
-                                "time": save_time,
-                                "stat": save_stat})
+                           "airlines": self.airlines,
+                           "runways": save_runways,
+                           "departure_planes": save_departure_plane,
+                           "arrival_planes": save_arrival_plane,
+                           "history_planes": save_history_plane,
+                           "time": save_time,
+                           "stat": save_stat})
 
         save_file = open(filename, "w")
         save_file.write(save)
 
-        print ("\nSystem saved in", filename)
+        print("\nSystem saved in", filename)
         return True
 
     def loadSystem(self, filename):
@@ -768,7 +769,7 @@ class Airport:
         self.arrival_runway = load_runways["arrival_runway"]
         self.departure_runway = load_runways["departure_runway"]
         self.mixte_runway = load_runways["mixte_runway"]
-        
+
         load_departure_plane = save["departure_planes"]
         for plane in load_departure_plane:
             newplane = Plane.fromjson(plane)
@@ -785,7 +786,6 @@ class Airport:
         load_time = save["time"]
         time = load_time["time"]
         self.tick = time
-
 
         load_stat = save["stat"]
         self.statAvionGlobal = load_stat["plane global"]
@@ -804,9 +804,9 @@ class Airport:
             save_file = open(filename, "r")
 
         except:
-            print ("\nIl n'y a pas de sauvegarde enregistrée.")           
+            print("\nIl n'y a pas de sauvegarde enregistrée.")
 
-        if save_file != None:            
+        if save_file is not None:
             ansOK = False
             while not ansOK:
                 ans = str(
@@ -820,21 +820,21 @@ class Airport:
                 self.add_runway()
             else:
                 self.loadSystem(filename)
-        else : 
+        else:
             self.add_runway()
 
     def eventRandom(self):
         nbr = int(randint(0, 40))
 
-        if len(self.dico_model) > 0 and len(self.airlines) > 0: 
+        if len(self.dico_model) > 0 and len(self.airlines) > 0:
             if nbr == 8:
                 newPlane = self.add_random_departure_plane()
-                print("\nL'avion",newPlane.getID(),
-                    "a été ajouté à la liste des avions au décollage.")
+                print("\nL'avion", newPlane.getID(),
+                      "a été ajouté à la liste des avions au décollage.")
             if nbr == 3:
                 newPlane = self.add_random_arrival_plane()
-                print("\nL'avion",newPlane.getID(),
-                    "a été ajouté à la liste des avions à l'attérissage.")
+                print("\nL'avion", newPlane.getID(),
+                      "a été ajouté à la liste des avions à l'attérissage.")
 
     def user_menu(self):
         '''

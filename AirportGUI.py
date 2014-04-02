@@ -45,10 +45,11 @@ airport.airlines = {'EX': 'Exemple Airline'}
 airport.dico_model = {'A380': [2600, 11, 500]}
 airport.statAvionGlobal = 3
 airport.statAvionDep = 2
-airport.statAvionArr = 1 
+airport.statAvionArr = 1
 airport.statPassengers = 450
 airport.statCompany = 1
 airport.statModel = 1
+
 
 class AirportGUI:
     airport = airportFunctions.Airport()
@@ -273,7 +274,6 @@ class AirportGUI:
         self.mixte_label.pack(side=RIGHT)
         self.mixte_label.bind("<Double-Button-1>", self.mod_mixRunway_button)
 
-
         # partie basse de la troisième colonne, contient les boutons "history",
         # "companies" et "help"
         column3_partBOTTOM = Frame(column3, height=220, bd=20, bg='white')
@@ -286,20 +286,20 @@ class AirportGUI:
             bg='#C0C0C0',
             command=self.helpButton).pack(
             side=BOTTOM)
-        Button(column3_partBOTTOM, 
-            text='Load',
-            relief=GROOVE,
-            width=12,
-            bg='#C0C0C0',
-            command=self.loadSystem).pack(
+        Button(column3_partBOTTOM,
+               text='Load',
+               relief=GROOVE,
+               width=12,
+               bg='#C0C0C0',
+               command=self.loadSystem).pack(
             side=BOTTOM)
-        Button(column3_partBOTTOM, 
-            text='Save',
-            relief=GROOVE,
-            width=12,
-            bg='#C0C0C0',
-            command=self.saveSystem).pack(
-            side=BOTTOM)        
+        Button(column3_partBOTTOM,
+               text='Save',
+               relief=GROOVE,
+               width=12,
+               bg='#C0C0C0',
+               command=self.saveSystem).pack(
+            side=BOTTOM)
         Button(
             column3_partBOTTOM,
             text='History',
@@ -332,8 +332,6 @@ class AirportGUI:
             bg='#C0C0C0',
             command=self.showStat).pack(
             side=BOTTOM)
-
-
 
     # Fonctions d'ajout et de suppression d'avions ###
     def addPlane(self, list_plane):
@@ -1820,13 +1818,13 @@ class AirportGUI:
         self.showStat_window.resizable(width=FALSE, height=FALSE)
 
         principal = LabelFrame(
-                    self.showStat_window,
-                    bd=4,
-                    relief=RIDGE,
-                    bg='white',
-                    text='Statistics',
-                    font=tkFont.Font(
-                        size=11))
+            self.showStat_window,
+            bd=4,
+            relief=RIDGE,
+            bg='white',
+            text='Statistics',
+            font=tkFont.Font(
+                size=11))
         principal.pack()
 
         text = "\n- Nombre total d'avions: {}"\
@@ -1837,13 +1835,13 @@ class AirportGUI:
             "\n\n- Nombre de morts lors des crashs: {}"\
             "\n\n- Nombre de compagnies: {}"\
             "\n\n- Nombre de modèles d'avions: {}".format(airport.statAvionGlobal,
-                airport.statAvionDep,
-                airport.statAvionArr,
-                airport.statPassengers,
-                airport.statCrash,
-                airport.statDeath,
-                airport.statCompany,
-                airport.statModel)
+                                                          airport.statAvionDep,
+                                                          airport.statAvionArr,
+                                                          airport.statPassengers,
+                                                          airport.statCrash,
+                                                          airport.statDeath,
+                                                          airport.statCompany,
+                                                          airport.statModel)
         message = Message(
             principal,
             text=text,
@@ -1852,24 +1850,27 @@ class AirportGUI:
             anchor=CENTER)
         message.pack()
 
-
-    ### fonction de sauvegarde/restauration ###
-    def saveSystem(self, event = None):
+    # fonction de sauvegarde/restauration ###
+    def saveSystem(self, event=None):
         '''
         Permet de sauvegarder le système
         '''
-        file_name = filedialog.asksaveasfilename(filetypes=[("Fichier txt", "*.txt"),("Tous","*")])
+        file_name = filedialog.asksaveasfilename(
+            filetypes=[("Fichier txt", "*.txt"), ("Tous", "*")])
         if len(file_name) > 0:
             if airport.saveSystem(file_name):
                 tkm.showinfo("Sauvegarde", "Sauvegarde réussie.")
             else:
-                tkm.showwarning("Sauvegarde", "Problème pendant la sauvegarde.")
+                tkm.showwarning(
+                    "Sauvegarde",
+                    "Problème pendant la sauvegarde.")
 
-    def loadSystem(self, event = None):
+    def loadSystem(self, event=None):
         '''
         Permet de charger une sauvegarde
         '''
-        file_name = filedialog.askopenfilename(filetypes=[("Fichier txt", "*.txt"),("Tous","*")])
+        file_name = filedialog.askopenfilename(
+            filetypes=[("Fichier txt", "*.txt"), ("Tous", "*")])
         if len(file_name) > 0:
             if airport.loadSystem(file_name):
                 tkm.showinfo("Chargement", "Chargement réussit.")
@@ -1880,13 +1881,15 @@ class AirportGUI:
                 root.resizable(width=FALSE, height=FALSE)
                 self.__init__(root)
             else:
-                tkm.showwarning("Chargement", "Problème pendant la chargement.")   
+                tkm.showwarning(
+                    "Chargement",
+                    "Problème pendant la chargement.")
 
-    ### Fonction d'evénement aléatoire ###
+    # Fonction d'evénement aléatoire ###
     def eventRandom(self):
         nbr = int(randint(0, 40))
 
-        if len(airport.dico_model) > 0 and len(airport.airlines) > 0: 
+        if len(airport.dico_model) > 0 and len(airport.airlines) > 0:
             if nbr == 8:
                 self.addDepartureRandom()
             if nbr == 3:
