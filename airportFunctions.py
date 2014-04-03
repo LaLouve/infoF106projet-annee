@@ -248,11 +248,11 @@ class Airport:
         else:
             most_prior_plane = self.departure_list[0]
             for plane in self.departure_list[1:]:
-                if self.convTuppleToTick(plane.getTime()) <\
-                   self.convTuppleToTick(most_prior_plane.getTime()):
+                if self.convTupleToTick(plane.getTime()) <\
+                   self.convTupleToTick(most_prior_plane.getTime()):
                     most_prior_plane = plane
-                if self.convTuppleToTick(plane.getTime()) ==\
-                   self.convTuppleToTick(most_prior_plane.getTime()):
+                if self.convTupleToTick(plane.getTime()) ==\
+                   self.convTupleToTick(most_prior_plane.getTime()):
                     if int(plane.getPassengers()) >\
                        most_prior_plane.getPassengers():
                         most_prior_plane = plane
@@ -421,7 +421,7 @@ class Airport:
             print("\nL'avion", most_prior_plane.getID(), "a atterri.")
 
         elif departure_plane is not None and\
-                self.convTuppleToTick(departure_plane.getTime()) <= self.tick:
+                self.convTupleToTick(departure_plane.getTime()) <= self.tick:
             most_prior_plane = departure_plane
             most_prior_plane.setStatut('Take Off')
             self.departure_list.remove(most_prior_plane)
@@ -446,7 +446,7 @@ class Airport:
         most_prior_plane = None
 
         if departure_plane is not None and\
-           self.convTuppleToTick(departure_plane.getTime()) <= self.tick:
+           self.convTupleToTick(departure_plane.getTime()) <= self.tick:
             most_prior_plane = departure_plane
             most_prior_plane.setStatut('Take Off')
             self.departure_list.remove(most_prior_plane)
@@ -733,15 +733,15 @@ class Airport:
         self.add_plane(newPlane)
         return newPlane
 
-    def convTuppleToTick(self, tupple):
+    def convTupleToTick(self, tupple):
         '''
-        converti un tupple en un entier
+        converti un tuple en un entier
         '''
         return int(tupple[0] * 60 + tupple[1])
 
-    def convTickToTupple(self, time):
+    def convTickToTuple(self, time):
         '''
-        converti l'entier "tick" en un tupple
+        converti l'entier "tick" en un tuple
         '''
         return ((str(time // 60)).rjust(2, '0'),
                 (str(time % 60)).rjust(2, '0'))
@@ -751,9 +751,9 @@ class Airport:
         Affiche l'heure au format '00h00'
         '''
         if type(tick) is int:
-            print(str(self.convTickToTupple(tick)[0]) +
+            print(str(self.convTickToTuple(tick)[0]) +
                   "h" +
-                  str(self.convTickToTupple(tick)[1]) +
+                  str(self.convTickToTuple(tick)[1]) +
                   ".")
         elif tick is None:
             print("Arr. Plane", end='  ')
@@ -840,42 +840,45 @@ class Airport:
         Converti le text du fichier de sauvegarde en données utilisables
         par le simulateur.
         '''
-        save_file = open(filename, "r")
-        save = json.load(save_file)
+        try:
+            save_file = open(filename, "r")
+            save = json.load(save_file)
 
-        self.dico_model = save["models"]
-        self.airlines = save["airlines"]
+            self.dico_model = save["models"]
+            self.airlines = save["airlines"]
 
-        load_runways = save["runways"]
-        self.arrival_runway = load_runways["arrival_runway"]
-        self.departure_runway = load_runways["departure_runway"]
-        self.mixte_runway = load_runways["mixte_runway"]
+            load_runways = save["runways"]
+            self.arrival_runway = load_runways["arrival_runway"]
+            self.departure_runway = load_runways["departure_runway"]
+            self.mixte_runway = load_runways["mixte_runway"]
 
-        load_departure_plane = save["departure_planes"]
-        for plane in load_departure_plane:
-            newplane = Plane.fromjson(plane)
-            self.departure_list.append(newplane)
-        load_arrival_plane = save["arrival_planes"]
-        for plane in load_arrival_plane:
-            newplane = Plane.fromjson(plane)
-            self.arrival_list.append(newplane)
-        load_history_plane = save["history_planes"]
-        for plane in load_history_plane:
-            newplane = Plane.fromjson(plane)
-            self.history_list.append(newplane)
+            load_departure_plane = save["departure_planes"]
+            for plane in load_departure_plane:
+                newplane = Plane.fromjson(plane)
+                self.departure_list.append(newplane)
+            load_arrival_plane = save["arrival_planes"]
+            for plane in load_arrival_plane:
+                newplane = Plane.fromjson(plane)
+                self.arrival_list.append(newplane)
+            load_history_plane = save["history_planes"]
+            for plane in load_history_plane:
+                newplane = Plane.fromjson(plane)
+                self.history_list.append(newplane)
 
-        load_time = save["time"]
-        time = load_time["time"]
-        self.tick = time
+            load_time = save["time"]
+            time = load_time["time"]
+            self.tick = time
 
-        load_stat = save["stat"]
-        self.statAvionGlobal = load_stat["plane global"]
-        self.statAvionDep = load_stat["plane dep"]
-        self.statAvionArr = load_stat["plane arr"]
-        self.statPassengers = load_stat["passengers"]
-        self.statDeath = load_stat["death"]
-        self.statCompany = load_stat["company"]
-        self.statModel = load_stat["model"]
+            load_stat = save["stat"]
+            self.statAvionGlobal = load_stat["plane global"]
+            self.statAvionDep = load_stat["plane dep"]
+            self.statAvionArr = load_stat["plane arr"]
+            self.statPassengers = load_stat["passengers"]
+            self.statDeath = load_stat["death"]
+            self.statCompany = load_stat["company"]
+            self.statModel = load_stat["model"]
+        except:
+            print ("Il n'y a aucun fichier de sauvegarde enregistré.")
 
         return True
 
