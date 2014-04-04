@@ -17,8 +17,8 @@ def main_loop():
     Vérifie si une sauvegarde est présente
     Appelle le menu des actions 
     Vérifie si l'aéroport posséde des pistes
-    Effectue l'évenement suivant (attérissage/décollage) en fonction du nombre
-    de pistes présentes
+    Effectue l'évenement suivant (attérissage/décollage) en fonction 
+    du nombre de pistes présentes
     Met à jour les informations des avions
     '''
     airport = airportFunctions.Airport()

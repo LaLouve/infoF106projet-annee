@@ -1,3 +1,13 @@
+'''
+Dervaux Florence, N° de matricule : 000396246, groupe 1
+
+Projet d'année: Simulation de la gestion du trafic aérien d’un aéroport
+Partie 4
+
+fichier: help.txt
+'''
+
+
 Fonctionnement du programme:
 La fenêtre principale est divisée en trois colonne contenant:
     *les avions à l'arrivée
