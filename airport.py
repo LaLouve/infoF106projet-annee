@@ -8,9 +8,10 @@ fichier: airport.py
 '''
 
 import airportFunctions
+import airportTerminal
 
 
-def main_loop():
+def mainLoop():
     '''
     Boucle principale pour le fonctionnement du programme en terminal
 
@@ -22,26 +23,27 @@ def main_loop():
     Met à jour les informations des avions
     '''
     airport = airportFunctions.Airport()
+    terminal = airportTerminal.Terminal()
 
-    airport.askForNewGame("save.txt")
+    terminal.askNewGame("save.txt")
 
     while True:
-        nbrTick = airport.user_menu()
-        if airport.departure_runway == 0 and\
-           airport.arrival_runway == 0 and\
-           airport.mixte_runway == 0:
+        nbrTick = terminal.userMenu()
+        if airport.departureRunway == 0 and\
+           airport.arrivalRunway == 0 and\
+           airport.mixteRunway == 0:
             print(
                 "\nVotre aéroport n'a aucune piste,"
                 " vous ne pouvez faire décoller ou atterrir des avions."
                 "\nVeuillez en ajouter.")
-        elif airport.departure_runway == 0 and\
-                airport.mixte_runway == 0:
+        elif airport.departureRunway == 0 and\
+                airport.mixteRunway == 0:
             print(
                 "\nVotre aéroport n'a aucune piste"
                 " pour faire décoller des avions."
                 "\nVeuillez en ajouter.")
-        elif airport.arrival_runway == 0 and\
-                airport.mixte_runway == 0:
+        elif airport.arrivalRunway == 0 and\
+                airport.mixteRunway == 0:
             print(
                 "\nVotre aéroport n'a aucune piste"
                 " pour faire atterrir des avions."
@@ -49,16 +51,16 @@ def main_loop():
         else:
             for i in range(nbrTick):
                 airport.eventRandom()
-                for j in range(airport.departure_runway):
-                    airport.next_departure()
-                for k in range(airport.arrival_runway):
-                    airport.next_arrival()
-                for l in range(airport.mixte_runway):
-                    airport.next_event()
-                airport.update_status()
+                for j in range(airport.departureRunway):
+                    airport.nextDeparture()
+                for k in range(airport.arrivalRunway):
+                    airport.nextArrival()
+                for l in range(airport.mixteRunway):
+                    airport.nextEvent()
+                airport.updateStatus()
                 if airport.tick == 1440:
-                    airport.new_day()
+                    airport.newDay()
 
 
 if __name__ == "__main__":
-    main_loop()
+    mainLoop()
