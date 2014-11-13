@@ -11,10 +11,9 @@ contient toutes les fonctions de bases du programme
 permet fonctionnement en terminal et en GUI 
 '''
 
-from random import randint, choice
+import random
 from plane import Plane
 import json  # pour le système de sauvegarde
-import os
 
 IDmax = 9999  # valeur maximun de l'ID
 
@@ -69,7 +68,7 @@ class Airport:
         IDletter = ID[:-4]
         # ajouter la compagnie au dictionnaire si elle n'y est pas déjà
         if (company) not in self.airlines:
-            self.airlines[IDletter] = company
+            self.addAirlines(company, IDletter)
         self.statPlaneGlobal += 1 #statistiques
         self.statPassengers += int(passengers) #statistiques
         return newPlane
@@ -121,8 +120,7 @@ class Airport:
             modPass]  # liste des caractéristique du modèle
         self.dicoModel[model] = modCar
         self.statModel += 1
-        return model, modFuel, modConso, modPass
-
+        
     def delModel(self, model):
         '''
         Permet de supprimer un modèle d'avion
@@ -132,76 +130,51 @@ class Airport:
 
 
     # RANDOM PLANE
-    def randomPlane(self):
+    def randomPlane(self, airlines, model, planeList):
         '''
         Permet la création d'un avion au départ avec des données aléatoires.
-        Si il n'y a aucune compagnie aérienne enregistrée, des informations
-        sont demandées à l'utilisateur afin d'en créer une nouvelle.
+        utilise l'ID et le modèle passés en paramètres 
         '''
-        #Demande de créer un modèle si il n'en existe pas déjà
-        if len(self.dicoModel) == 0:
-            model, fuel, consumption, maxPass = self.addModel()
-            passengers = randint(1, maxPass)
+        modMaxPass = self.dicoModel[model][2]
+        passengers = random.randint(1, modMaxPass)
+        fuel = self.dicoModel[model][0]
+        consumption = self.dicoModel[model][1]   
 
+
+        company = self.airlines[airlines]
+        number = str(random.randint(1, IDmax))
+        IDnumber = number.rjust(4, '0')
+        ID = (airlines + IDnumber)
+
+        if planeList == self.departureList:
+            time = (random.randint(0, 23), random.randint(0, 59))
+            statut = "In Time"
         else:
-            listKeyModel = self.dicoModel.keys()
-            model = choice(list(listKeyModel))
+            time = None
+            statut = None
 
-            modMaxPass = self.dicoModel[model][2]
-            passengers = randint(1, modMaxPass)
-            fuel = self.dicoModel[model][0]
-            consumption = self.dicoModel[model][1]
+        newPlane = self.createPlane(
+            ID,
+            company,
+            passengers,
+            fuel,
+            consumption,
+            model,
+            time,
+            statut)
+        self.addPlane(newPlane)
 
-        #Demande de créer une compagnie si il n'en existe pas déjà   
-        if len(self.airlines) == 0:
-            company, IDletter = self.addAirlines()
-
-            number = str(randint(1, IDmax))
-            IDnumber = number.rjust(4, '0')
-            ID = (IDletter + IDnumber)
-
-        else:
-            listKeyAirlines = self.airlines.keys()
-            airlinesKey = choice(list(listKeyAirlines))
-
-            company = self.airlines[airlinesKey]
-            number = str(randint(1, IDmax))
-            IDnumber = number.rjust(4, '0')
-            ID = (airlinesKey + IDnumber)
-
-        return ID, company, passengers, fuel, consumption, model
+        return newPlane
 
 
     # RUNWAYS
-    def addRunway(self):
+    def modifRunways(self, nbrDepRunway, nbrArrRunway, nbrMixteRunway):
         '''
-        Permet d'ajouter des pistes
+        Permet de modifier le nombre de pistes
         '''
-        nbrDepartureRunway, nbrArrivalRunway, nbrMixteRunway = Terminal.askRunway()
-
-        self.departureRunway += departureRunway
-        self.arrivalRunway += arrivalRunway
-        self.mixteRunway += mixteRunway
-
-
-    def delRunway(self):
-        '''
-        Permet de supprimer des pistes
-        '''
-        nbrDepartureRunway, nbrArrivalRunway, nbrMixteRunway = Terminal.askRunway()
-
-        self.departureRunway -= self.nbrDepartureRunway
-        self.arrivalRunway -= self.nbrArrivalRunway
-        self.mixteRunway -= self.nbrMixteRunway
-
-        if self.departureRunway < 0:
-            self.departureRunway = 0
-
-        if self.arrivalRunway < 0:
-            self.arrivalRunway = 0
-
-        if self.mixteRunway < 0:
-            self.mixteRunway = 0
+        self.departureRunway = nbrDepRunway
+        self.arrivalRunway = nbrArrRunway
+        self.mixteRunway = nbrMixteRunway
 
 
     # NEXT EVENT
@@ -333,14 +306,20 @@ class Airport:
         Permet de créer un avion de manière aléatoire
         (évenement aléatoire) 
         '''
-        nbr = int(randint(0, 40))
+        nbr = int(random.randint(0, 40))
 
         if len(self.dicoModel) > 0 and len(self.airlines) > 0:
+            listKeyModel = self.dicoModel.keys()
+            model = random.choice(list(listKeyModel))
+            
+            listKeyAirlines = self.airlines.keys()
+            airlines = random.choice(list(listKeyAirlines))
+            
             if nbr == 8:
-                newPlane = Terminal.randomDeparturePlane()
+                self.randomPlane(airlines, model, self.departureList)
 
             if nbr == 3:
-                newPlane = Terminal.randomArrivalPlane()
+                self.randomPlane(airlines, model, self.arrivalList)
 
 
     # DAY / UPDATE
@@ -498,6 +477,6 @@ class Airport:
             self.statAirlines = loadStat["company"]
             self.statModel = loadStat["model"]
         except:
-            print ("Il n'y a aucun fichier de sauvegarde enregistré.")
+            print ("Le fichier de sauvegarde est corrompu.")
 
         return True
