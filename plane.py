@@ -79,12 +79,12 @@ class Plane:
             return False
 
     def __str__(self):
-        res = ((str(self.ID).ljust(9, ' ')) +
-               (str(self.company).ljust(20, ' ')) +
-               (str(self.passengers).ljust(5, ' ')) +
-               (str(self.fuel).ljust(6, ' ')) +
-               (str(self.consumption).ljust(5, ' ')) +
-               (str(self.model).ljust(8, ' '))
+        res = ((str(self.ID).ljust(8, ' ')) + '| ' +
+               (str(self.company).ljust(20, ' ')) + '| ' +
+               (str(self.passengers).ljust(5, ' ')) + '| ' +
+               (str(self.fuel).ljust(5, ' ')) + '| ' +
+               (str(self.consumption).ljust(4, ' ')) + '| ' +
+               (str(self.model).ljust(6, ' '))
                )
         return res
 

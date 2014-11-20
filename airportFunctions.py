@@ -13,6 +13,7 @@ permet fonctionnement en terminal et en GUI
 
 import random
 from plane import Plane
+from model import Model
 import json  # pour le système de sauvegarde
 
 IDmax = 9999  # valeur maximun de l'ID
@@ -27,6 +28,7 @@ class Airport:
         self.departureList = []  # avions en attente de décollage
         self.arrivalList = []  # avions en attente de d'atterissage
         # autres avions (déjà atterri, décollé ou crashé)
+
         self.historyList = []
        
         # dictionnaire de toutes les compagnies, avec leur ID
@@ -40,7 +42,7 @@ class Airport:
         self.arrivalRunway = 0  # nbr de pistes d'atterrissage
         self.mixteRunway = 0  # nbr de piste d'atterrissage et de décollage
         
-        self.dicoModel = {}  # dico des différents modèles d'avions
+        self.modelList = []  # dico des différents modèles d'avions
 
         self.statPlaneGlobal = 0  # nbr total d'avions
         self.statPlaneDep = 0  # nbr d'avions au décollage
@@ -114,18 +116,19 @@ class Airport:
         '''
         permet d'ajouter un nouveau modèle d'avion
         '''
-        modCar = [
+        newModel = Model(model,
             modFuel,
             modConso,
-            modPass]  # liste des caractéristique du modèle
-        self.dicoModel[model] = modCar
+            modPass)  # liste des caractéristique du modèle
+        self.modelList.append(newModel)
         self.statModel += 1
+        return newModel
         
     def delModel(self, model):
         '''
         Permet de supprimer un modèle d'avion
         '''
-        del self.dicoModel[model]
+        self.modelList.remove(model)
         self.statModel -= 1
 
 
@@ -135,10 +138,11 @@ class Airport:
         Permet la création d'un avion au départ avec des données aléatoires.
         utilise l'ID et le modèle passés en paramètres 
         '''
-        modMaxPass = self.dicoModel[model][2]
+        nameModel = model.getName()
+        modMaxPass = model.getPassenger()
         passengers = random.randint(1, modMaxPass)
-        fuel = self.dicoModel[model][0]
-        consumption = self.dicoModel[model][1]   
+        fuel = model.getFuel()
+        consumption = model.getConso()   
 
 
         company = self.airlines[airlines]
@@ -159,7 +163,7 @@ class Airport:
             passengers,
             fuel,
             consumption,
-            model,
+            nameModel,
             time,
             statut)
         self.addPlane(newPlane)
@@ -308,9 +312,9 @@ class Airport:
         '''
         nbr = int(random.randint(0, 40))
 
-        if len(self.dicoModel) > 0 and len(self.airlines) > 0:
-            listKeyModel = self.dicoModel.keys()
-            model = random.choice(list(listKeyModel))
+        if len(self.modelList) > 0 and len(self.airlines) > 0:
+            indiceModel = random.randint(0, len(self.modelList))
+            model = self.modelList[indiceModel-1]
             
             listKeyAirlines = self.airlines.keys()
             airlines = random.choice(list(listKeyAirlines))
@@ -391,6 +395,7 @@ class Airport:
         saveDeparturePlane = []
         saveArrivalPlane = []
         saveHistoryPlane = []
+        saveModel = []
 
         for plane in self.departureList:
             savePlane = plane.__dict__
@@ -403,6 +408,11 @@ class Airport:
         for plane in self.historyList:
             savePlane = plane.__dict__
             saveHistoryPlane.append(savePlane)
+
+        for model in self.modelList:
+            save = model.__dict__
+            saveModel.append(save)
+
 
         saveRunways = {"departureRunway": self.departureRunway,
                         "arrivalRunway": self.arrivalRunway,
@@ -418,7 +428,7 @@ class Airport:
                      "company": self.statAirlines,
                      "model": self.statModel}
 
-        save = json.dumps({"models": self.dicoModel,
+        save = json.dumps({"models": saveModel,
                            "airlines": self.airlines,
                            "runways": saveRunways,
                            "departurePlanes": saveDeparturePlane,
@@ -441,7 +451,6 @@ class Airport:
             saveFile = open(filename, "r")
             save = json.load(saveFile)
 
-            self.dicoModel = save["models"]
             self.airlines = save["airlines"]
 
             loadRunways = save["runways"]
@@ -463,6 +472,11 @@ class Airport:
             for plane in loadHistoryPlane:
                 newplane = Plane.fromjson(plane)
                 self.historyList.append(newplane)
+
+            loadModel = save["models"]
+            for model in loadModel:
+                newModel = Model.fromjson(model)
+                self.modelList.append(newModel)
 
             loadTime = save["time"]
             self.tick = loadTime["time"]
