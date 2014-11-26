@@ -283,7 +283,7 @@ class Terminal:
             airport.departureList,
             airport.arrivalList,
             airport.historyList]
-        text = "-----{:^9} {:^20} {:^5} {:^7} {:^5} {:^7} {:^5} ".format(
+        text = "-----{:^9} {:^20} {:^5} {:^7} {:^7} {:^6} {:^5} ".format(
                                                         "ID",
                                                         "Compagnie",
                                                         "Pass.",
@@ -461,7 +461,7 @@ class Terminal:
                   str(airport.convTickToTuple(tick)[1]) +
                   ".")
         elif tick is None:
-            print("Arriv.", end='  ')
+            print("Arri.", end='  ')
         else:
             print((str(tick[0])).rjust(2, '0') +
                   'h' +
