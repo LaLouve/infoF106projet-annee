@@ -56,20 +56,15 @@ class Terminal:
                     except:
                         ok = False
                         print("\nVous n'avez pas entré un nombre.")
-
                 model = airport.modelList[indice]
-                modelName = model.getName()
-                modMaxPass = model.getPassenger()
-                fuel = model.getFuel()
-                consumption = model.getConso()
-
 
             elif answer == 'n':
                 model = self.askAddModel()
-                modelName = model.getName()
-                modMaxPass = model.getPassenger()
-                fuel = model.getFuel()
-                consumption = model.getConso()
+            
+            modelName = str(model.getName())
+            modMaxPass = int(model.getPassenger())
+            fuel = int(model.getFuel())
+            consumption = int(model.getConso())
 
         #Informations de l'avion
         ok = False
@@ -82,6 +77,7 @@ class Terminal:
                 numberID = int(input("les 4 chiffres de l'ID: "))
                 ID = (letterID + (str(numberID)))
                 company = (str(input('Compagnie: '))).lower()
+                
                 passOK = False
                 while not passOK:
                     passengers = int(input("Nombre de passagers: "))
@@ -89,8 +85,11 @@ class Terminal:
                         print(
                             "Le nombre de passagers dépasse"
                             " la capacité de ce modèle d'avion.")
+                    elif passengers < 0:
+                        print("Vous avez entré un nombre négatif.")
                     else:
                         passOK = True
+
                 ok = True
 
             except:
@@ -421,6 +420,35 @@ class Terminal:
 
 
     #RUNWAYS
+    def checkRunways(self):
+        ok = True
+        
+        if airport.departureRunway == 0 and\
+           airport.arrivalRunway == 0 and\
+           airport.mixteRunway == 0:
+            ok = False
+            print(
+                "\nVotre aéroport n'a aucune piste,"
+                " vous ne pouvez faire décoller ou atterrir des avions."
+                "\nVeuillez en ajouter.")
+        
+        elif airport.departureRunway == 0 and\
+                airport.mixteRunway == 0:
+            ok = False
+            print(
+                "\nVotre aéroport n'a aucune piste"
+                " pour faire décoller des avions."
+                "\nVeuillez en ajouter.")
+        
+        elif airport.arrivalRunway == 0 and\
+                airport.mixteRunway == 0:
+            ok = False
+            print(
+                "\nVotre aéroport n'a aucune piste"
+                " pour faire atterrir des avions."
+                "\nVeuillez en ajouter.")
+        return ok
+
     def askRunway(self):
         '''
         Demande le nombre de pistes à modifier 
@@ -500,14 +528,13 @@ class Terminal:
             print("\nIl n'y a pas de sauvegarde enregistrée.")
 
         if saveFile is not None:
-            answerOK = False
-            while not answerOK:
+            answer = ''
+            while answer != 'o' and answer != 'n':
                 answer = str(
                     input("\n"
                           "Voulez-vous utiliser la sauvegarde? (Si non, une nouvelle simulation commencera)"
                           "(O)ui/(N)on\n ")).lower()
-                if answer == 'o' or answer == 'n':
-                    answerOK = True
+
             if answer == 'n':
                 os.remove(filename)
                 self.askRunway()
@@ -539,14 +566,16 @@ class Terminal:
                                                       airport.statModel)
         print(text)
 
-    
+
+
     # USER MENU
     def userMenu(self):
         '''
         Menu principal de l'utilisateur.
         Permet le choix des actions à effectuer
         '''
-        answer = 0
+        answer = ''
+
         while answer != 'q':
             print("\nMenu des actions, que voulez-vous faire?")
             self.showDay()
@@ -613,6 +642,9 @@ class Terminal:
             elif answer == 'l':
                 self.askRunway()
 
+            elif answer == 'l':
+                self.askRunway()
+
             elif answer == 'm':
                 self.showModel()
 
@@ -630,6 +662,7 @@ class Terminal:
 
             elif answer == 'r':
                 airport.loadSystem("save.txt")
+
 
             elif answer != 'q':
                 print("\nVous n'avez pas entré une lettre correcte, rééssayez")

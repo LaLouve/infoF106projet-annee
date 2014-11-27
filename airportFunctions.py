@@ -70,9 +70,7 @@ class Airport:
             statut)
         IDletter = ID[:-4]
         # ajouter la compagnie à la liste si elle n'y est pas déjà
-        print(self.airlinesDico)
         if IDletter not in self.airlinesDico:
-            print("AJOUT")
             self.addAirlines(IDletter, company)
         self.statPlaneGlobal += 1 #statistiques
         self.statPassengers += int(passengers) #statistiques
