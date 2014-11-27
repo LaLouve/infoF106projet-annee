@@ -32,14 +32,12 @@ class Terminal:
             consumption = model.getConso()
 
         else:
-            answerOK = False
-            while not answerOK:
+            answer = 0
+            while answer != 'o' and answer != 'n':
                 answer = str(
                     input("\n"
                           "Voulez-vous utiliser un modèle d'avion enregistré?"
                           " (O)ui/(N)on ")).lower()
-                if answer == 'o' or answer == 'n':
-                    answerOK = True
 
             if answer == 'o':
                 self.showModel()
@@ -183,7 +181,7 @@ class Terminal:
         '''
         Affiche les ifnormations des avions de toutes les listes
         '''
-        text = "-----{:^9} {:^20} {:^5} {:^7} {:^5} {:^7} {:^5} ".format(
+        text = "-----{:^9} {:^20} {:^5} {:^7} {:^5} {:^6} {:^5} ".format(
                                                                 "ID",
                                                                 "Compagnie",
                                                                 "Pass.",
@@ -218,13 +216,13 @@ class Terminal:
             IDletter = (
                 str(input("Entrez l'ID de la compagnie (2 ou 3 lettres): "))
             ).upper()
-            if IDletter not in airport.airlines:
+            if IDletter not in airport.airlinesDico:
                 ok = True
             else:
                 print('Cet ID est déjà utilisé par une autre compangnie.')
 
-            if (company) not in airport.airlines:
-                airport.addAirlines(company, IDletter)
+            if (company) not in airport.airlinesDico:
+                airport.addAirlines(IDletter, company)
             else:
                 print('Cette compangie existe déjà')
         return IDletter
@@ -239,7 +237,7 @@ class Terminal:
             end=' ')
         companyID = (str(input())).upper()
 
-        if companyID in airport.airlines:
+        if companyID in airport.airlinesDico:
             airport.delAirlines(companyID)
         else:
             print("Vous n'avez pas entré un ID correct")
@@ -248,13 +246,13 @@ class Terminal:
         '''
         Demande d'afficher les informations d'une compagnie
         '''
-        if len(airport.airlines) == 0:
+        if len(airport.airlinesDico) == 0:
             print("\nIl n'y a aucune compagnie enregistrée")
         else:
             self.showAirlines()
             companyID = (
                 str(input("\nEntrez l'ID de la compagnie: "))).upper()
-            if companyID in airport.airlines:
+            if companyID in airport.airlinesDico:
                 self.showAirlinesInfo(companyID)
             else:
                 print("\nLa compagnie demandée n'est pas enregistrée")
@@ -263,27 +261,28 @@ class Terminal:
         '''
         afficher les différentes compagnies existantes avec leur ID
         '''
-        if len(airport.airlines) == 0:
+        if len(airport.airlinesDico) == 0:
             print("\nIl n'y a aucune compagnie enregistrée")
         else:
             print('\nListe des compagnies enregistrées:')
             count = 1
-            listKey = airport.airlines.keys()
+            listKey = airport.airlinesDico.keys()
             for key in listKey:
                 print('n°' + (str(count)).ljust(2, ' ') + ': ', end=' ')
-                print(str(airport.airlines[key]).center(20, ' '), key)
+                print(airport.airlinesDico[key])
                 count += 1
 
     def showAirlinesInfo(self, companyID):
         '''
         Afficher les informations d'une compagnie
         '''
-        company = airport.airlines[companyID]
+        company = airport.airlinesDico[companyID]
         planeLists = [
             airport.departureList,
             airport.arrivalList,
             airport.historyList]
-        text = "-----{:^9} {:^20} {:^5} {:^7} {:^7} {:^6} {:^5} ".format(
+
+        text = "-----{:^9} {:^20} {:^5} {:^7} {:^5} {:^6} {:^5}" .format(
                                                         "ID",
                                                         "Compagnie",
                                                         "Pass.",
@@ -294,11 +293,12 @@ class Terminal:
         if len(airport.departureList) > 0 or len(airport.arrivalList) > 0\
             or len(airport.historyList) > 0:
             count = 1
-            print('\nListe des avions de la compagnie', company,':')
-            print(text, " Statut")
+            companyName = company.getName()
+            print('\nListe des avions de la compagnie', companyName,':')
+            print(text, "  Statut")
             for lists in planeLists:
                 for plane in lists:
-                    if plane.getCompany() == company:
+                    if plane.getCompany() == companyName:
                         print('n°' +
                               (str(count)).ljust(2, ' ') +
                               ':', str(plane), end='|')
@@ -363,7 +363,7 @@ class Terminal:
             print ("\nIl n'y a pas de modèle à supprimer.")
         else:
             self.showModel()
-            print('\nQuel avion voulez-vous supprimer?')
+            print('\nQuel modèle voulez-vous supprimer?')
 
             ok = False
             while not ok:
@@ -398,14 +398,14 @@ class Terminal:
             model = self.askAddModel()
 
         else:
-            indice = random.randint(0, len(airport.modelList))
-            model = airport.modelList[indice-1]
+            indice = random.randint(0, len(airport.modelList) -1)
+            model = airport.modelList[indice]
 
-        if len(airport.airlines) == 0:
+        if len(airport.airlinesDico) == 0:
             print("\nIl n'y a aucune compagnie enregistrée.")
             IDletter = self.askAddAirlines()
         else:
-            listKeyAirlines = airport.airlines.keys()
+            listKeyAirlines = airport.airlinesDico.keys()
             IDletter = random.choice(list(listKeyAirlines))
 
         newPlane = airport.randomPlane(IDletter, model, planeList)

@@ -14,6 +14,7 @@ permet fonctionnement en terminal et en GUI
 import random
 from plane import Plane
 from model import Model
+from airline import Airline
 import json  # pour le système de sauvegarde
 
 IDmax = 9999  # valeur maximun de l'ID
@@ -31,8 +32,8 @@ class Airport:
 
         self.historyList = []
        
-        # dictionnaire de toutes les compagnies, avec leur ID
-        self.airlines = {}
+        # Dictionnaire des compagnies {ID : obj Airline}  
+        self.airlinesDico = {}
         
         # entier représentant les minutes écoulées (min: 0, max: 1439)
         self.tick = 0
@@ -42,7 +43,7 @@ class Airport:
         self.arrivalRunway = 0  # nbr de pistes d'atterrissage
         self.mixteRunway = 0  # nbr de piste d'atterrissage et de décollage
         
-        self.modelList = []  # dico des différents modèles d'avions
+        self.modelList = []  # Liste des différents modèles d'avions
 
         self.statPlaneGlobal = 0  # nbr total d'avions
         self.statPlaneDep = 0  # nbr d'avions au décollage
@@ -68,9 +69,11 @@ class Airport:
             time,
             statut)
         IDletter = ID[:-4]
-        # ajouter la compagnie au dictionnaire si elle n'y est pas déjà
-        if (company) not in self.airlines:
-            self.addAirlines(company, IDletter)
+        # ajouter la compagnie à la liste si elle n'y est pas déjà
+        print(self.airlinesDico)
+        if IDletter not in self.airlinesDico:
+            print("AJOUT")
+            self.addAirlines(IDletter, company)
         self.statPlaneGlobal += 1 #statistiques
         self.statPassengers += int(passengers) #statistiques
         return newPlane
@@ -96,18 +99,19 @@ class Airport:
 
 
     # AIRLINES
-    def addAirlines(self, company, IDletter):
+    def addAirlines(self, ID, company):
         '''
         ajout d'une compangnie au dictionnaire des compagnies
         '''
-        self.airlines[IDletter] = company
+        newAirline = Airline(ID, company)
+        self.airlinesDico[ID] = newAirline
         self.statAirlines += 1
 
     def delAirlines(self, companyID):
         '''
         Supprime la compangnie demandée
         '''
-        self.airlines.pop(companyID)
+        self.airlinesDico.pop(companyID)
         self.statAirlines -= 1
 
 
@@ -133,7 +137,7 @@ class Airport:
 
 
     # RANDOM PLANE
-    def randomPlane(self, airlines, model, planeList):
+    def randomPlane(self, IDletter, model, planeList):
         '''
         Permet la création d'un avion au départ avec des données aléatoires.
         utilise l'ID et le modèle passés en paramètres 
@@ -145,10 +149,10 @@ class Airport:
         consumption = model.getConso()   
 
 
-        company = self.airlines[airlines]
+        company = (self.airlinesDico[IDletter]).getName()
         number = str(random.randint(1, IDmax))
         IDnumber = number.rjust(4, '0')
-        ID = (airlines + IDnumber)
+        ID = (IDletter + IDnumber)
 
         if planeList == self.departureList:
             time = (random.randint(0, 23), random.randint(0, 59))
@@ -244,20 +248,14 @@ class Airport:
         mostPrior = None
 
         if arrivalPlane is not None and arrivalPlane.ratio() == 1:
-            mostPrior = arrivalPlane
-            mostPrior.setStatut('Landed')
-            self.arrivalList.remove(mostPrior)
+            mostPrior = self.nextArrival()
             
         elif departurePlane is not None and\
                 self.convTupleToTick(departurePlane.getTime()) <= self.tick:
-            mostPrior = departurePlane
-            mostPrior.setStatut('Take Off')
-            self.departureList.remove(mostPrior)
+            mostPrior = self.nextDeparture()
 
         elif arrivalPlane is not None:
-            mostPrior = arrivalPlane
-            mostPrior.setStatut('Landed')
-            self.arrivalList.remove(mostPrior)
+            mostPrior = self.nextArrival()
 
         if mostPrior is not None:
             self.historyList.append(mostPrior)
@@ -312,11 +310,11 @@ class Airport:
         '''
         nbr = int(random.randint(0, 40))
 
-        if len(self.modelList) > 0 and len(self.airlines) > 0:
+        if len(self.modelList) > 0 and len(self.airlinesDico) > 0:
             indiceModel = random.randint(0, len(self.modelList))
             model = self.modelList[indiceModel-1]
             
-            listKeyAirlines = self.airlines.keys()
+            listKeyAirlines = self.airlinesDico.keys()
             airlines = random.choice(list(listKeyAirlines))
             
             if nbr == 8:
@@ -396,6 +394,7 @@ class Airport:
         saveArrivalPlane = []
         saveHistoryPlane = []
         saveModel = []
+        saveAirlines = []
 
         for plane in self.departureList:
             savePlane = plane.__dict__
@@ -413,6 +412,12 @@ class Airport:
             save = model.__dict__
             saveModel.append(save)
 
+        keyAirlines = self.airlinesDico.keys()
+        for airline in keyAirlines:
+            save = self.airlinesDico[airline].__dict__
+            saveAirlines.append(save)
+
+
 
         saveRunways = {"departureRunway": self.departureRunway,
                         "arrivalRunway": self.arrivalRunway,
@@ -429,7 +434,7 @@ class Airport:
                      "model": self.statModel}
 
         save = json.dumps({"models": saveModel,
-                           "airlines": self.airlines,
+                           "airlines": saveAirlines,
                            "runways": saveRunways,
                            "departurePlanes": saveDeparturePlane,
                            "arrivalPlanes": saveArrivalPlane,
@@ -450,8 +455,6 @@ class Airport:
         try:
             saveFile = open(filename, "r")
             save = json.load(saveFile)
-
-            self.airlines = save["airlines"]
 
             loadRunways = save["runways"]
             self.arrivalRunway = loadRunways["arrivalRunway"]
@@ -477,6 +480,12 @@ class Airport:
             for model in loadModel:
                 newModel = Model.fromjson(model)
                 self.modelList.append(newModel)
+
+            loadAirlines = save["airlines"]
+            for airline in loadAirlines:
+                newAirline = Airline.fromjson(airline)
+                IDairline = newAirline.getID()
+                self.airlinesDico[IDairline] = newAirline
 
             loadTime = save["time"]
             self.tick = loadTime["time"]
