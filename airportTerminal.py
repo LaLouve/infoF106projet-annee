@@ -41,21 +41,8 @@ class Terminal:
 
             if answer == 'o':
                 self.showModel()
-                ok = False
-                while not ok:
-                    try:
-                        indice = int(input('Entrez sa position dans'
-                                      ' la liste des modèles: ')) - 1
-                        if indice < len(airport.modelList) and\
-                            indice >= 0:
-                            ok = True
-                        else:
-                            ok = False
-                            print("\nVous n'avez pas entré"
-                                  " le numéro d'un modèle.")
-                    except:
-                        ok = False
-                        print("\nVous n'avez pas entré un nombre.")
+                maxVal = len(airport.modelList)
+                indice = self.askIndice(maxVal, "modèles")
                 model = airport.modelList[indice]
 
             elif answer == 'n':
@@ -137,23 +124,10 @@ class Terminal:
             self.showPlanesInfo(airport.departureList)
             print('\nQuel avion voulez-vous supprimer?')
 
-            ok = False
-            while not ok:
-                try:
-                    indice = int(input('Entrez sa position dans'
-                                  ' la liste des avions au départ: ')) - 1
-                    if indice < len(airport.departureList) and\
-                        indice >= 0:
-                        ok = True
-                    else:
-                        ok = False
-                        print("\nVous n'avez pas entré"
-                              " le numéro d'un avion.")
-                except:
-                    ok = False
-                    print("\nVous n'avez pas entré un nombre.")
-
+            maxVal = len(airport.departureList)
+            indice = self.askIndice(maxVal, "avions au départ")
             plane = airport.departureList[indice]
+            
             airport.delPlane(plane)
             print("\nL'avion", plane.getID(), "a été supprimé")
  
@@ -364,23 +338,10 @@ class Terminal:
             self.showModel()
             print('\nQuel modèle voulez-vous supprimer?')
 
-            ok = False
-            while not ok:
-                try:
-                    indice = int(input('Entrez sa position dans'
-                                  ' la liste des modèles: ')) - 1
-                    if indice < len(airport.modelList) and\
-                        indice >= 0:
-                        ok = True
-                    else:
-                        ok = False
-                        print("\nVous n'avez pas entré"
-                              " le numéro d'un modèle.")
-                except:
-                    ok = False
-                    print("\nVous n'avez pas entré un nombre.")
-
+            maxVal = len(airport.modelList)
+            indice = self.askIndice(maxVal, "modèles")
             model = airport.modelList[indice]
+            
             airport.delModel(model)
             print("\nLe modèle", model.getName(), "a été supprimé")
 
@@ -567,6 +528,26 @@ class Terminal:
         print(text)
 
 
+    def askIndice(self, maxVal, inputStr):
+        '''
+        Demande un indice permettant de selectionner un objet dans la liste
+        '''
+        ok = False
+        text = ('Entrez sa position dans la liste des {}: ').format(inputStr)
+        while not ok:
+            try:
+                indice = int(input(text)) - 1
+                if indice < maxVal and\
+                    indice >= 0:
+                    ok = True
+                else:
+                    ok = False
+                    print("\nVous n'avez pas entré"
+                          " le numéro d'un", inputStr,".")
+            except:
+                ok = False
+                print("\nVous n'avez pas entré un nombre.")
+        return indice
 
     # USER MENU
     def userMenu(self):
