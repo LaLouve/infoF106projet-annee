@@ -26,10 +26,6 @@ class Terminal:
                 "\nIl n'y a aucun modèle d'avion enregistré,"
                 " veuillez en créer un.")
             model = self.askAddModel()
-            modelName = model.getName()
-            modMaxPass = model.getPassenger()
-            fuel = model.getFuel()
-            consumption = model.getConso()
 
         else:
             answer = 0
@@ -48,23 +44,51 @@ class Terminal:
             elif answer == 'n':
                 model = self.askAddModel()
             
-            modelName = str(model.getName())
-            modMaxPass = int(model.getPassenger())
-            fuel = int(model.getFuel())
-            consumption = int(model.getConso())
+        modelName = str(model.getName())
+        modMaxPass = int(model.getPassenger())
+        fuel = int(model.getFuel())
+        consumption = int(model.getConso())
+
+        # Compagnie
+        if len(airport.airlinesDico) == 0:
+            print("\nIl n'y a aucune compangie aérienne enregistrée,"
+                  " veuillez en créer une.")
+            letterID = self.askAddAirlines()
+
+
+        else:
+            answer = 0
+            while answer != 'o' and answer != 'n':
+                answer = str(
+                    input("\n"
+                          "Voulez-vous utiliser une compangie enregistré?"
+                          " (O)ui/(N)on ")).lower()
+
+            if answer == 'o':
+                self.showAirlines()
+                listKeyAirlines = list(airport.airlinesDico.keys())
+                
+                maxVal = len(listKeyAirlines)
+                indice = self.askIndice(maxVal, "compangies")
+                
+                letterID = listKeyAirlines[indice]
+
+
+            elif answer == 'n':
+                letterID = self.askAddAirlines()
+        
+        company = airport.airlinesDico[letterID]
+        companyName = company.getName()
 
         #Informations de l'avion
         ok = False
         print("\nInformations de l'avion:")
         while not ok:
             try:
-                letterID = (
-                    str(input("\nLes 2 ou 3 premières lettres de l'ID: "))
-                ).upper()
                 numberID = int(input("les 4 chiffres de l'ID: "))
                 ID = (letterID + (str(numberID)))
-                company = (str(input('Compagnie: '))).lower()
                 
+
                 passOK = False
                 while not passOK:
                     passengers = int(input("Nombre de passagers: "))
@@ -76,12 +100,12 @@ class Terminal:
                         print("Vous avez entré un nombre négatif.")
                     else:
                         passOK = True
-
                 ok = True
-
             except:
                 print("\nVous avez entré une donnée incorrecte!")
 
+         
+        # Time
         if planeType == 'departure':
             timeOK = False
             while not timeOK:
@@ -99,7 +123,7 @@ class Terminal:
 
         newplane = airport.createPlane(
             ID,
-            company,
+            companyName,
             passengers,
             fuel,
             consumption,
@@ -205,15 +229,15 @@ class Terminal:
         suppression d'une compagnie
         '''
         self.showAirlines()
-        print(
-            "\nEntrez l'ID de la compagnie que vous voulez supprimer: ",
-            end=' ')
-        companyID = (str(input())).upper()
+        listKeyAirlines = list(airport.airlinesDico.keys())
+        
+        maxVal = len(listKeyAirlines)
+        indice = self.askIndice(maxVal, "compangies")
+        
+        letterID = listKeyAirlines[indice]
 
-        if companyID in airport.airlinesDico:
-            airport.delAirlines(companyID)
-        else:
-            print("Vous n'avez pas entré un ID correct")
+        airport.delAirlines(letterID)
+
    
     def askAirlinesInfo(self):
         '''
@@ -369,15 +393,8 @@ class Terminal:
             IDletter = random.choice(list(listKeyAirlines))
 
         newPlane = airport.randomPlane(IDletter, model, planeList)
+        self.showEvent(newPlane)
         
-        if planeList == airport.departureList:
-            print("\nL'avion",
-                    newPlane.getID(),
-                    "a été ajouté à la liste des avions au décollage")
-        else:
-            print("\nL'avion",
-                    newPlane.getID(),
-                    "a été ajouté à la liste des avions à l'attérissage")
 
 
     #RUNWAYS
@@ -472,6 +489,7 @@ class Terminal:
                 correct = True
             except:
                 print("\nVous n'avez pas entré un nombre correct!\n")
+        print()
         return (heure * 60 + minutes)
 
     
@@ -548,6 +566,37 @@ class Terminal:
                 ok = False
                 print("\nVous n'avez pas entré un nombre.")
         return indice
+
+
+    def showEvent(self, plane):
+        if type(plane) == int:
+            print(" Le crash de l'avion a entrainé la mort de", plane, "personnes.")
+        
+        elif plane != None:
+            
+            if plane.getStatut() == 'Take Off':
+                print("-L'avion", plane.getID(), "a décollé.")
+
+            elif plane.getStatut() == 'Landed':
+                print("-L'avion", plane.getID(), "a atterri.")
+
+            elif plane.getStatut() == 'Crashed':
+                print("-L'avion", plane.getID(), "n'a malheureusement pas pu "
+                      "atterrir à temps.")
+
+            elif plane.getStatut() == 'Delayed':
+                print("-L'avion", plane.getID(), "a du retard.")
+
+            elif plane.getStatut() == 'In Time':
+                print("-L'avion", plane.getID(),
+                    "a été ajouté à la liste des avions au décollage")
+
+            else:
+                print("-L'avion",
+                    plane.getID(),
+                    "a été ajouté à la liste des avions à l'attérissage")
+
+
 
     # USER MENU
     def userMenu(self):
@@ -639,10 +688,10 @@ class Terminal:
                 self.showStatistics()
 
             elif answer == 's':
-                airport.saveSystem("save.txt")
+                airport.saveSystem()
 
             elif answer == 'r':
-                airport.loadSystem("save.txt")
+                airport.loadSystem()
 
 
             elif answer != 'q':

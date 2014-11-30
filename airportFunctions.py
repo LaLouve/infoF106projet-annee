@@ -286,17 +286,15 @@ class Airport:
 
         arrivalPlane = self.priorityArrival()
 
-        if arrivalPlane is not None and arrivalPlane.ratio() == 1:
-            mostPrior = arrivalPlane
-            mostPrior.setStatut('Landed')
-            self.arrivalList.remove(mostPrior)
-
-        elif arrivalPlane is not None:
-            mostPrior = arrivalPlane
-            mostPrior.setStatut('Landed')
-            self.arrivalList.remove(mostPrior)
-
+        if arrivalPlane is not None: 
+            if arrivalPlane.ratio() == 1:
+                mostPrior = arrivalPlane
+            else:
+                mostPrior = arrivalPlane
+        
         if mostPrior is not None:
+            mostPrior.setStatut('Landed')
+            self.arrivalList.remove(mostPrior)
             self.historyList.append(mostPrior)
 
         return (mostPrior)
@@ -307,6 +305,7 @@ class Airport:
         (évenement aléatoire) 
         '''
         nbr = int(random.randint(0, 40))
+        plane = None
 
         if len(self.modelList) > 0 and len(self.airlinesDico) > 0:
             indiceModel = random.randint(0, len(self.modelList))
@@ -316,10 +315,12 @@ class Airport:
             airlines = random.choice(list(listKeyAirlines))
             
             if nbr == 8:
-                self.randomPlane(airlines, model, self.departureList)
+                plane = self.randomPlane(airlines, model, self.departureList)
 
             if nbr == 3:
-                self.randomPlane(airlines, model, self.arrivalList)
+                plane = self.randomPlane(airlines, model, self.arrivalList)
+
+        return plane
 
 
     # DAY / UPDATE
@@ -353,8 +354,10 @@ class Airport:
                 self.arrivalList.remove(plane)
                 self.historyList.append(plane)
                 self.statCrash += 1
-                self.statDeath += passengers
-                crashedPlane.append(plane)
+                death = random.randint(1, passengers) #nombre de morts lors du crash
+                self.statDeath += death
+                event = (plane, death)
+                crashedPlane.append(event)
 
         for plane in self.departureList:
             if plane.isDelayed(self.tick):
@@ -382,7 +385,7 @@ class Airport:
 
 
     # SAVE
-    def saveSystem(self, filename):
+    def saveSystem(self, filename = "save.txt"):
         '''
         Sauvegarde l'état courant du système à l'aide de json.
         Sauve les modèles, les compangies, le nombre de pistes, les avions (dans
@@ -445,7 +448,7 @@ class Airport:
 
         return True
 
-    def loadSystem(self, filename):
+    def loadSystem(self, filename = "save.txt"):
         '''
         Converti le text du fichier de sauvegarde en données utilisables
         par le simulateur.
