@@ -10,10 +10,10 @@ fichier: model.py
 class Model:
 
     def __init__(self,
-                name,
-                fuel,
-                conso,
-                passenger):
+                 name,
+                 fuel,
+                 conso,
+                 passenger):
 
         self.name = name
         self.fuel = int(fuel)

@@ -8,7 +8,7 @@ fichier: airportFunctions.py
 
 
 contient toutes les fonctions de bases du programme
-permet fonctionnement en terminal et en GUI 
+permet fonctionnement en terminal et en GUI
 '''
 
 import random
@@ -31,18 +31,18 @@ class Airport:
         # autres avions (déjà atterri, décollé ou crashé)
 
         self.historyList = []
-       
-        # Dictionnaire des compagnies {ID : obj Airline}  
+
+        # Dictionnaire des compagnies {ID : obj Airline}
         self.airlinesDico = {}
-        
+
         # entier représentant les minutes écoulées (min: 0, max: 1439)
         self.tick = 0
-        self.day = 1 
-        
+        self.day = 1
+
         self.departureRunway = 0  # nbr de pistes de décollage
         self.arrivalRunway = 0  # nbr de pistes d'atterrissage
         self.mixteRunway = 0  # nbr de piste d'atterrissage et de décollage
-        
+
         self.modelList = []  # Liste des différents modèles d'avions
 
         self.statPlaneGlobal = 0  # nbr total d'avions
@@ -55,7 +55,16 @@ class Airport:
         self.statModel = 0  # nbr de modèles
 
     # PLANE
-    def createPlane(self, ID, company, passengers, fuel, consumption, model, time, statut):
+    def createPlane(
+            self,
+            ID,
+            company,
+            passengers,
+            fuel,
+            consumption,
+            model,
+            time,
+            statut):
         '''
         creation d'un avion
         '''
@@ -72,8 +81,8 @@ class Airport:
         # ajouter la compagnie à la liste si elle n'y est pas déjà
         if IDletter not in self.airlinesDico:
             self.addAirlines(IDletter, company)
-        self.statPlaneGlobal += 1 #statistiques
-        self.statPassengers += int(passengers) #statistiques
+        self.statPlaneGlobal += 1  # statistiques
+        self.statPassengers += int(passengers)  # statistiques
         return newPlane
 
     def addPlane(self, plane):
@@ -95,7 +104,6 @@ class Airport:
         plane.setStatut("Deleted")
         self.historyList.append(plane)
 
-
     # AIRLINES
     def addAirlines(self, ID, company):
         '''
@@ -112,20 +120,19 @@ class Airport:
         self.airlinesDico.pop(companyID)
         self.statAirlines -= 1
 
-
     # MODEL
     def addModel(self, model, modFuel, modConso, modPass):
         '''
         permet d'ajouter un nouveau modèle d'avion
         '''
         newModel = Model(model,
-            modFuel,
-            modConso,
-            modPass)  # liste des caractéristique du modèle
+                         modFuel,
+                         modConso,
+                         modPass)  # liste des caractéristique du modèle
         self.modelList.append(newModel)
         self.statModel += 1
         return newModel
-        
+
     def delModel(self, model):
         '''
         Permet de supprimer un modèle d'avion
@@ -133,19 +140,17 @@ class Airport:
         self.modelList.remove(model)
         self.statModel -= 1
 
-
     # RANDOM PLANE
     def randomPlane(self, IDletter, model, planeList):
         '''
         Permet la création d'un avion au départ avec des données aléatoires.
-        utilise l'ID et le modèle passés en paramètres 
+        utilise l'ID et le modèle passés en paramètres
         '''
         nameModel = model.getName()
         modMaxPass = model.getPassenger()
         passengers = random.randint(1, modMaxPass)
         fuel = model.getFuel()
-        consumption = model.getConso()   
-
+        consumption = model.getConso()
 
         company = (self.airlinesDico[IDletter]).getName()
         number = str(random.randint(1, IDmax))
@@ -172,7 +177,6 @@ class Airport:
 
         return newPlane
 
-
     # RUNWAYS
     def modifRunways(self, nbrDepRunway, nbrArrRunway, nbrMixteRunway):
         '''
@@ -181,7 +185,6 @@ class Airport:
         self.departureRunway = nbrDepRunway
         self.arrivalRunway = nbrArrRunway
         self.mixteRunway = nbrMixteRunway
-
 
     # NEXT EVENT
     def priorityDeparture(self):
@@ -247,7 +250,7 @@ class Airport:
 
         if arrivalPlane is not None and arrivalPlane.ratio() == 1:
             mostPrior = self.nextArrival()
-            
+
         elif departurePlane is not None and\
                 self.convTupleToTick(departurePlane.getTime()) <= self.tick:
             mostPrior = self.nextDeparture()
@@ -286,12 +289,12 @@ class Airport:
 
         arrivalPlane = self.priorityArrival()
 
-        if arrivalPlane is not None: 
+        if arrivalPlane is not None:
             if arrivalPlane.ratio() == 1:
                 mostPrior = arrivalPlane
             else:
                 mostPrior = arrivalPlane
-        
+
         if mostPrior is not None:
             mostPrior.setStatut('Landed')
             self.arrivalList.remove(mostPrior)
@@ -302,18 +305,18 @@ class Airport:
     def eventRandom(self):
         '''
         Permet de créer un avion de manière aléatoire
-        (évenement aléatoire) 
+        (évenement aléatoire)
         '''
         nbr = int(random.randint(0, 40))
         plane = None
 
         if len(self.modelList) > 0 and len(self.airlinesDico) > 0:
             indiceModel = random.randint(0, len(self.modelList))
-            model = self.modelList[indiceModel-1]
-            
+            model = self.modelList[indiceModel - 1]
+
             listKeyAirlines = self.airlinesDico.keys()
             airlines = random.choice(list(listKeyAirlines))
-            
+
             if nbr == 8:
                 plane = self.randomPlane(airlines, model, self.departureList)
 
@@ -321,7 +324,6 @@ class Airport:
                 plane = self.randomPlane(airlines, model, self.arrivalList)
 
         return plane
-
 
     # DAY / UPDATE
     def newDay(self):
@@ -354,7 +356,9 @@ class Airport:
                 self.arrivalList.remove(plane)
                 self.historyList.append(plane)
                 self.statCrash += 1
-                death = random.randint(1, passengers) #nombre de morts lors du crash
+                death = random.randint(
+                    1,
+                    passengers)  # nombre de morts lors du crash
                 self.statDeath += death
                 event = (plane, death)
                 crashedPlane.append(event)
@@ -367,7 +371,6 @@ class Airport:
         self.tick += 1
 
         return crashedPlane, delayedPlane
-
 
     # TIME (conversion)
     def convTupleToTick(self, tupple):
@@ -383,13 +386,12 @@ class Airport:
         return ((str(time // 60)).rjust(2, '0'),
                 (str(time % 60)).rjust(2, '0'))
 
-
     # SAVE
-    def saveSystem(self, filename = "save.txt"):
+    def saveSystem(self, filename="save.txt"):
         '''
         Sauvegarde l'état courant du système à l'aide de json.
         Sauve les modèles, les compangies, le nombre de pistes, les avions (dans
-        leurs listes respectives), l'heure et les statistiques de l'aéroport. 
+        leurs listes respectives), l'heure et les statistiques de l'aéroport.
         '''
         saveDeparturePlane = []
         saveArrivalPlane = []
@@ -418,21 +420,19 @@ class Airport:
             save = self.airlinesDico[airline].__dict__
             saveAirlines.append(save)
 
-
-
         saveRunways = {"departureRunway": self.departureRunway,
-                        "arrivalRunway": self.arrivalRunway,
-                        "mixteRunway": self.mixteRunway}
+                       "arrivalRunway": self.arrivalRunway,
+                       "mixteRunway": self.mixteRunway}
 
         saveTime = {"time": self.tick, "day": self.day}
 
         saveStat = {"plane global": self.statPlaneGlobal,
-                     "plane dep": self.statPlaneDep,
-                     "plane arr": self.statPlaneArr,
-                     "passengers": self.statPassengers,
-                     "death": self.statDeath,
-                     "company": self.statAirlines,
-                     "model": self.statModel}
+                    "plane dep": self.statPlaneDep,
+                    "plane arr": self.statPlaneArr,
+                    "passengers": self.statPassengers,
+                    "death": self.statDeath,
+                    "company": self.statAirlines,
+                    "model": self.statModel}
 
         save = json.dumps({"models": saveModel,
                            "airlines": saveAirlines,
@@ -448,7 +448,7 @@ class Airport:
 
         return True
 
-    def loadSystem(self, filename = "save.txt"):
+    def loadSystem(self, filename="save.txt"):
         '''
         Converti le text du fichier de sauvegarde en données utilisables
         par le simulateur.
@@ -501,6 +501,6 @@ class Airport:
             self.statAirlines = loadStat["company"]
             self.statModel = loadStat["model"]
         except:
-            print ("Le fichier de sauvegarde est corrompu.")
+            print("Le fichier de sauvegarde est corrompu.")
 
         return True

@@ -15,7 +15,7 @@ airport = airportFunctions.Airport()
 
 class Terminal:
 
-    #PLANE
+    # PLANE
     def askAddPlane(self, planeType):
         '''
         Demande les informations nécéssaires à la création d'un nouvel avion
@@ -43,7 +43,7 @@ class Terminal:
 
             elif answer == 'n':
                 model = self.askAddModel()
-            
+
         modelName = str(model.getName())
         modMaxPass = int(model.getPassenger())
         fuel = int(model.getFuel())
@@ -54,7 +54,6 @@ class Terminal:
             print("\nIl n'y a aucune compangie aérienne enregistrée,"
                   " veuillez en créer une.")
             letterID = self.askAddAirlines()
-
 
         else:
             answer = 0
@@ -67,27 +66,24 @@ class Terminal:
             if answer == 'o':
                 self.showAirlines()
                 listKeyAirlines = list(airport.airlinesDico.keys())
-                
+
                 maxVal = len(listKeyAirlines)
                 indice = self.askIndice(maxVal, "compangies")
-                
                 letterID = listKeyAirlines[indice]
-
 
             elif answer == 'n':
                 letterID = self.askAddAirlines()
-        
+
         company = airport.airlinesDico[letterID]
         companyName = company.getName()
 
-        #Informations de l'avion
+        # Informations de l'avion
         ok = False
         print("\nInformations de l'avion:")
         while not ok:
             try:
                 numberID = int(input("les 4 chiffres de l'ID: "))
                 ID = (letterID + (str(numberID)))
-                
 
                 passOK = False
                 while not passOK:
@@ -104,14 +100,13 @@ class Terminal:
             except:
                 print("\nVous avez entré une donnée incorrecte!")
 
-         
         # Time
         if planeType == 'departure':
             timeOK = False
             while not timeOK:
                 heure = int(input('Heure de départ (heure): '))
                 minutes = int(input('minutes: '))
-                if 0 <= heure <= 23  and 0 <= minutes <= 59: 
+                if 0 <= heure <= 23 and 0 <= minutes <= 59:
                     time = (heure, minutes)
                     timeOK = True
                 else:
@@ -142,7 +137,7 @@ class Terminal:
 
     def askDelPlane(self):
         if len(airport.departureList) == 0:
-            print ("\nIl n'y a pas d'avion à supprimer.")
+            print("\nIl n'y a pas d'avion à supprimer.")
         else:
             print('\nListe des avions au départ:\n')
             self.showPlanesInfo(airport.departureList)
@@ -151,10 +146,10 @@ class Terminal:
             maxVal = len(airport.departureList)
             indice = self.askIndice(maxVal, "avions au départ")
             plane = airport.departureList[indice]
-            
+
             airport.delPlane(plane)
             print("\nL'avion", plane.getID(), "a été supprimé")
- 
+
     def showPlanesInfo(self, planeList):
         '''
         afficher les informations sur les avions
@@ -169,23 +164,23 @@ class Terminal:
                       ':', str(plane), end='|')
                 self.showTime(plane.getTime())
                 if plane.getStatut() is not None:
-                    print('|'+ str(plane.getStatut()))
+                    print('|' + str(plane.getStatut()))
                 else:
                     print()
                 count += 1
-                
+
     def showAllInfo(self):
         '''
         Affiche les ifnormations des avions de toutes les listes
         '''
         text = "-----{:^9} {:^20} {:^5} {:^7} {:^5} {:^6} {:^5} ".format(
-                                                                "ID",
-                                                                "Compagnie",
-                                                                "Pass.",
-                                                                "Fuel",
-                                                                "Cons.",
-                                                                "Modèle",
-                                                                "Time")
+            "ID",
+            "Compagnie",
+            "Pass.",
+            "Fuel",
+            "Cons.",
+            "Modèle",
+            "Time")
         print('\n\nDEPARTURE')
         print(text, " Statut")
         self.showPlanesInfo(airport.departureList)
@@ -198,8 +193,7 @@ class Terminal:
         print(text, " Statut")
         self.showPlanesInfo(airport.historyList)
 
-
-    #AIRLINES
+    # AIRLINES
     def askAddAirlines(self):
         '''
         ajout d'une compangnie au dictionnaire des compagnies
@@ -230,15 +224,14 @@ class Terminal:
         '''
         self.showAirlines()
         listKeyAirlines = list(airport.airlinesDico.keys())
-        
+
         maxVal = len(listKeyAirlines)
         indice = self.askIndice(maxVal, "compangies")
-        
+
         letterID = listKeyAirlines[indice]
 
         airport.delAirlines(letterID)
 
-   
     def askAirlinesInfo(self):
         '''
         Demande d'afficher les informations d'une compagnie
@@ -253,7 +246,7 @@ class Terminal:
                 self.showAirlinesInfo(companyID)
             else:
                 print("\nLa compagnie demandée n'est pas enregistrée")
-   
+
     def showAirlines(self):
         '''
         afficher les différentes compagnies existantes avec leur ID
@@ -280,18 +273,18 @@ class Terminal:
             airport.historyList]
 
         text = "-----{:^9} {:^20} {:^5} {:^7} {:^5} {:^6} {:^5}" .format(
-                                                        "ID",
-                                                        "Compagnie",
-                                                        "Pass.",
-                                                        "Fuel",
-                                                        "Cons.",
-                                                        "Modèle",
-                                                        "Time")
+            "ID",
+            "Compagnie",
+            "Pass.",
+            "Fuel",
+            "Cons.",
+            "Modèle",
+            "Time")
         if len(airport.departureList) > 0 or len(airport.arrivalList) > 0\
-            or len(airport.historyList) > 0:
+                or len(airport.historyList) > 0:
             count = 1
             companyName = company.getName()
-            print('\nListe des avions de la compagnie', companyName,':')
+            print('\nListe des avions de la compagnie', companyName, ':')
             print(text, "  Statut")
             for lists in planeLists:
                 for plane in lists:
@@ -308,17 +301,16 @@ class Terminal:
         else:
             print('Cette compagnie n\'a aucun avion.')
 
-
-    #MODEL
+    # MODEL
     def showModel(self):
         '''
         Permet d'afficher les différents modèles d'avion enregistrés
         '''
         print("Liste des modèles:")
         text = "----{:^9} {:^9} {:^10} {:^10}".format("Name",
-                                              "Fuel",
-                                              "Cons.",
-                                              "Passagers")
+                                                      "Fuel",
+                                                      "Cons.",
+                                                      "Passagers")
         print(text)
 
         if len(airport.modelList) == 0:
@@ -357,7 +349,7 @@ class Terminal:
         Demande de supprimer un modèle
         '''
         if len(airport.modelList) == 0:
-            print ("\nIl n'y a pas de modèle à supprimer.")
+            print("\nIl n'y a pas de modèle à supprimer.")
         else:
             self.showModel()
             print('\nQuel modèle voulez-vous supprimer?')
@@ -365,24 +357,22 @@ class Terminal:
             maxVal = len(airport.modelList)
             indice = self.askIndice(maxVal, "modèles")
             model = airport.modelList[indice]
-            
+
             airport.delModel(model)
             print("\nLe modèle", model.getName(), "a été supprimé")
-
 
     # RANDOM PLANE
     def askRandomPlane(self, planeList):
         '''
         Vérifie si il existe au moins un compagnie et un modèle
-        si oui, fait un choix parmis ceux-ci 
-        appelle la fonction airport.randomPlane() afin de créer l'avion 
+        si oui, fait un choix parmis ceux-ci
+        appelle la fonction airport.randomPlane() afin de créer l'avion
         '''
         if len(airport.modelList) == 0:
             print("\nIl n'y a aucun modèle d'avion enregistré.")
             model = self.askAddModel()
-
         else:
-            indice = random.randint(0, len(airport.modelList) -1)
+            indice = random.randint(0, len(airport.modelList) - 1)
             model = airport.modelList[indice]
 
         if len(airport.airlinesDico) == 0:
@@ -394,13 +384,11 @@ class Terminal:
 
         newPlane = airport.randomPlane(IDletter, model, planeList)
         self.showEvent(newPlane)
-        
 
-
-    #RUNWAYS
+    # RUNWAYS
     def checkRunways(self):
         ok = True
-        
+
         if airport.departureRunway == 0 and\
            airport.arrivalRunway == 0 and\
            airport.mixteRunway == 0:
@@ -409,7 +397,7 @@ class Terminal:
                 "\nVotre aéroport n'a aucune piste,"
                 " vous ne pouvez faire décoller ou atterrir des avions."
                 "\nVeuillez en ajouter.")
-        
+
         elif airport.departureRunway == 0 and\
                 airport.mixteRunway == 0:
             ok = False
@@ -417,7 +405,7 @@ class Terminal:
                 "\nVotre aéroport n'a aucune piste"
                 " pour faire décoller des avions."
                 "\nVeuillez en ajouter.")
-        
+
         elif airport.arrivalRunway == 0 and\
                 airport.mixteRunway == 0:
             ok = False
@@ -429,7 +417,7 @@ class Terminal:
 
     def askRunway(self):
         '''
-        Demande le nombre de pistes à modifier 
+        Demande le nombre de pistes à modifier
         '''
         ok = False
         while not ok:
@@ -454,7 +442,6 @@ class Terminal:
         print("Pistes pour le décollage:", airport.departureRunway)
         print("Pistes pour l'atterissage:", airport.arrivalRunway)
         print("Pistes mixtes:", airport.mixteRunway)
-
 
     # TIME
     def showTime(self, tick):
@@ -492,8 +479,7 @@ class Terminal:
         print()
         return (heure * 60 + minutes)
 
-    
-    # SAVE 
+    # SAVE
     def askNewGame(self, filename):
         '''
         Vérifie si une sauvegarde existe et propose de l'utiliser.
@@ -510,9 +496,10 @@ class Terminal:
             answer = ''
             while answer != 'o' and answer != 'n':
                 answer = str(
-                    input("\n"
-                          "Voulez-vous utiliser la sauvegarde? (Si non, une nouvelle simulation commencera)"
-                          "(O)ui/(N)on\n ")).lower()
+                    input(
+                        "\n"
+                        "Voulez-vous utiliser la sauvegarde? (Si non, une nouvelle simulation commencera)"
+                        "(O)ui/(N)on\n ")).lower()
 
             if answer == 'n':
                 os.remove(filename)
@@ -521,7 +508,6 @@ class Terminal:
                 airport.loadSystem(filename)
         else:
             self.askRunway()
-
 
     # STATISTICS
     def showStatistics(self):
@@ -545,7 +531,6 @@ class Terminal:
                                                       airport.statModel)
         print(text)
 
-
     def askIndice(self, maxVal, inputStr):
         '''
         Demande un indice permettant de selectionner un objet dans la liste
@@ -556,24 +541,26 @@ class Terminal:
             try:
                 indice = int(input(text)) - 1
                 if indice < maxVal and\
-                    indice >= 0:
+                        indice >= 0:
                     ok = True
                 else:
                     ok = False
                     print("\nVous n'avez pas entré"
-                          " le numéro d'un", inputStr,".")
+                          " le numéro d'un", inputStr, ".")
             except:
                 ok = False
                 print("\nVous n'avez pas entré un nombre.")
         return indice
 
-
     def showEvent(self, plane):
         if type(plane) == int:
-            print(" Le crash de l'avion a entrainé la mort de", plane, "personnes.")
-        
-        elif plane != None:
-            
+            print(
+                " Le crash de l'avion a entrainé la mort de",
+                plane,
+                "personnes.")
+
+        elif plane is not None:
+
             if plane.getStatut() == 'Take Off':
                 print("-L'avion", plane.getID(), "a décollé.")
 
@@ -589,14 +576,11 @@ class Terminal:
 
             elif plane.getStatut() == 'In Time':
                 print("-L'avion", plane.getID(),
-                    "a été ajouté à la liste des avions au décollage")
+                      "a été ajouté à la liste des avions au décollage")
 
             else:
-                print("-L'avion",
-                    plane.getID(),
-                    "a été ajouté à la liste des avions à l'attérissage")
-
-
+                print("-L'avion",plane.getID(),
+                      "a été ajouté à la liste des avions à l'attérissage")
 
     # USER MENU
     def userMenu(self):
@@ -652,11 +636,11 @@ class Terminal:
                 self.askRandomPlane(airport.departureList)
 
             elif answer == 'f':
-                self.askRandomPlane(airport.arrivalList)                    
-            
+                self.askRandomPlane(airport.arrivalList)
+
             elif answer == 'g':
                 self.askAirlinesInfo()
-           
+
             elif answer == 'h':
                 self.showAirlines()
 
@@ -692,7 +676,6 @@ class Terminal:
 
             elif answer == 'r':
                 airport.loadSystem()
-
 
             elif answer != 'q':
                 print("\nVous n'avez pas entré une lettre correcte, rééssayez")

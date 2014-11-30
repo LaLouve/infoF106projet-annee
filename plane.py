@@ -7,7 +7,6 @@ Partie 4
 fichier: plane.py
 '''
 
-
 class Plane:
 
     def __init__(
@@ -99,4 +98,12 @@ class Plane:
         time = json["time"]
         statut = json["statut"]
 
-        return Plane(ID, company, passengers, fuel, consumption, model, time, statut)
+        return Plane(
+            ID,
+            company,
+            passengers,
+            fuel,
+            consumption,
+            model,
+            time,
+            statut)

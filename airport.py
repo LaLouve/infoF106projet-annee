@@ -16,9 +16,9 @@ def mainLoop():
     Boucle principale pour le fonctionnement du programme en terminal
 
     Vérifie si une sauvegarde est présente
-    Appelle le menu des actions 
+    Appelle le menu des actions
     Vérifie si l'aéroport posséde des pistes
-    Effectue l'évenement suivant (attérissage/décollage) en fonction 
+    Effectue l'évenement suivant (attérissage/décollage) en fonction
     du nombre de pistes présentes
     Met à jour les informations des avions
     '''
@@ -29,23 +29,23 @@ def mainLoop():
     while True:
         nbrTick = terminal.userMenu()
         terminal.checkRunways()
-        
+
         for i in range(nbrTick):
             plane = airport.eventRandom()
             terminal.showEvent(plane)
-            
+
             for j in range(airport.departureRunway):
                 plane = airport.nextDeparture()
                 terminal.showEvent(plane)
-            
+
             for k in range(airport.arrivalRunway):
                 plane = airport.nextArrival()
                 terminal.showEvent(plane)
-            
+
             for l in range(airport.mixteRunway):
                 plane = airport.nextEvent()
                 terminal.showEvent(plane)
-            
+
             crashedPlane, delayedPlane = airport.updateStatus()
             for info in crashedPlane:
                 plane = info[0]
@@ -55,7 +55,7 @@ def mainLoop():
 
             for plane in delayedPlane:
                 terminal.showEvent(plane)
-            
+
             if airport.tick == 1440:
                 airport.newDay()
 
