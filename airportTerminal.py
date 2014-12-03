@@ -78,39 +78,46 @@ class Terminal:
         companyName = company.getName()
 
         # Informations de l'avion
-        ok = False
         print("\nInformations de l'avion:")
-        while not ok:
-            try:
-                numberID = int(input("les 4 chiffres de l'ID: "))
-                ID = (letterID + (str(numberID)))
+        # ID
+        IDnumber = self.askIDnumbers()
+        ID = (letterID + IDnumber)
+        while not airport.checkID(ID):
+            print("Cet ID est déjà utilisé par un avion.")
+            IDnumber = self.askIDnumbers()
+            ID = (letterID + IDnumber)
 
-                passOK = False
-                while not passOK:
-                    passengers = int(input("Nombre de passagers: "))
-                    if passengers > int(modMaxPass):
-                        print(
-                            "Le nombre de passagers dépasse"
-                            " la capacité de ce modèle d'avion.")
-                    elif passengers < 0:
-                        print("Vous avez entré un nombre négatif.")
-                    else:
-                        passOK = True
-                ok = True
+        # Passagers
+        passOK = False
+        while not passOK:
+            try:
+                passengers = int(input("Nombre de passagers: "))
+                if passengers > int(modMaxPass):
+                    print(
+                        "Le nombre de passagers dépasse"
+                        " la capacité de ce modèle d'avion.")
+                elif passengers < 0:
+                    print("Vous avez entré un nombre négatif.")
+                else:
+                    passOK = True
             except:
-                print("\nVous avez entré une donnée incorrecte!")
+                print("Vous avez entré une donnée incorrecte.")
 
         # Time
         if planeType == 'departure':
             timeOK = False
             while not timeOK:
-                heure = int(input('Heure de départ (heure): '))
-                minutes = int(input('minutes: '))
-                if 0 <= heure <= 23 and 0 <= minutes <= 59:
-                    time = (heure, minutes)
-                    timeOK = True
-                else:
-                    print("Vous avez entré une heure incorrecte!")
+                try:
+                    heure = int(input('Heure de départ (heure): '))
+                    minutes = int(input('minutes: '))
+                    if 0 <= heure <= 23 and 0 <= minutes <= 59:
+                        time = (heure, minutes)
+                        timeOK = True
+                    else:
+                        print("Vous avez entré une heure incorrecte!")
+                except:
+                    print("Vous avez entré une donnée incorrecte.")
+
             statut = 'In Time'
         else:
             time = None
@@ -135,7 +142,28 @@ class Terminal:
             newplane.getID(),
             typeText))
 
+    def askIDnumbers(self):
+        '''
+        demande et renvoie les choffres de l'ID
+        '''
+        ok = False
+        while not ok:
+            try:
+                numberID = int(input("les 4 chiffres de l'ID: "))
+                
+                if len(str(numberID)) != 4:
+                    print("Vous n'avez pas un entré un nombre composé de 4 chiffres")
+                else:
+                    ok = True
+            except:
+                print("Vous n'avez pas entré un nombre.")
+        return str(numberID)
+
+
     def askDelPlane(self):
+        '''
+        demande l'avion à supprimé
+        '''
         if len(airport.departureList) == 0:
             print("\nIl n'y a pas d'avion à supprimer.")
         else:

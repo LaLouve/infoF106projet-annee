@@ -104,6 +104,19 @@ class Airport:
         plane.setStatut("Deleted")
         self.historyList.append(plane)
 
+    def checkID(self, planeID):
+        '''
+        Renvoie True si l'ID n'est pas encore utilisé
+        '''
+        planeLists = [self.departureList, self.arrivalList, self.historyList]
+        ok = True
+        
+        for liste in planeLists:
+            for plane in liste:
+                if planeID == plane.getID():
+                    ok = False
+        return ok
+
     # AIRLINES
     def addAirlines(self, ID, company):
         '''
@@ -156,6 +169,10 @@ class Airport:
         number = str(random.randint(1, IDmax))
         IDnumber = number.rjust(4, '0')
         ID = (IDletter + IDnumber)
+        while not self.checkID(ID):
+            number = str(random.randint(1, IDmax))
+            IDnumber = number.rjust(4, '0')
+            ID = (IDletter + IDnumber)
 
         if planeList == self.departureList:
             time = (random.randint(0, 23), random.randint(0, 59))
