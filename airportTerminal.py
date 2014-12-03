@@ -159,7 +159,6 @@ class Terminal:
                 print("Vous n'avez pas entré un nombre.")
         return str(numberID)
 
-
     def askDelPlane(self):
         '''
         demande l'avion à supprimé
@@ -220,6 +219,7 @@ class Terminal:
         print('\nHISTORY')
         print(text, " Statut")
         self.showPlanesInfo(airport.historyList)
+
 
     # AIRLINES
     def askAddAirlines(self):
@@ -345,6 +345,7 @@ class Terminal:
         else:
             print('Cette compagnie n\'a aucun avion.')
 
+
     # MODEL
     def showModel(self):
         '''
@@ -417,6 +418,7 @@ class Terminal:
                 print("\nDes avions utilisent le modèle", model.getName(),
                       ". Il est impossible de le supprimer")
     
+
     # RANDOM PLANE
     def askRandomPlane(self, planeList):
         '''
@@ -440,6 +442,7 @@ class Terminal:
 
         newPlane = airport.randomPlane(IDletter, model, planeList)
         self.showEvent(newPlane)
+
 
     # RUNWAYS
     def checkRunways(self):
@@ -499,6 +502,7 @@ class Terminal:
         print("Pistes pour l'atterissage:", airport.arrivalRunway)
         print("Pistes mixtes:", airport.mixteRunway)
 
+
     # TIME
     def showTime(self, tick):
         '''
@@ -535,6 +539,7 @@ class Terminal:
         print()
         return (heure * 60 + minutes)
 
+
     # SAVE
     def askNewGame(self, filename):
         '''
@@ -564,6 +569,7 @@ class Terminal:
                 airport.loadSystem(filename)
         else:
             self.askRunway()
+
 
     # STATISTICS
     def showStatistics(self):
@@ -637,6 +643,7 @@ class Terminal:
             else:
                 print("-L'avion",plane.getID(),
                       "a été ajouté à la liste des avions à l'attérissage")
+
 
     # USER MENU
     def userMenu(self):

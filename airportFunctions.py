@@ -110,12 +110,13 @@ class Airport:
         '''
         planeLists = [self.departureList, self.arrivalList, self.historyList]
         ok = True
-        
+
         for liste in planeLists:
             for plane in liste:
                 if planeID == plane.getID():
                     ok = False
         return ok
+
 
     # AIRLINES
     def addAirlines(self, ID, company):
@@ -132,6 +133,7 @@ class Airport:
         '''
         self.airlinesDico.pop(companyID)
         self.statAirlines -= 1
+
 
     # MODEL
     def addModel(self, model, modFuel, modConso, modPass):
@@ -152,6 +154,7 @@ class Airport:
         '''
         self.modelList.remove(model)
         self.statModel -= 1
+
 
     # RANDOM PLANE
     def randomPlane(self, IDletter, model, planeList):
@@ -194,6 +197,7 @@ class Airport:
 
         return newPlane
 
+
     # RUNWAYS
     def modifRunways(self, nbrDepRunway, nbrArrRunway, nbrMixteRunway):
         '''
@@ -202,6 +206,7 @@ class Airport:
         self.departureRunway = nbrDepRunway
         self.arrivalRunway = nbrArrRunway
         self.mixteRunway = nbrMixteRunway
+
 
     # NEXT EVENT
     def priorityDeparture(self):
@@ -342,6 +347,7 @@ class Airport:
 
         return plane
 
+
     # DAY / UPDATE
     def newDay(self):
         '''
@@ -389,6 +395,7 @@ class Airport:
 
         return crashedPlane, delayedPlane
 
+
     # TIME (conversion)
     def convTupleToTick(self, tupple):
         '''
@@ -402,6 +409,7 @@ class Airport:
         '''
         return ((str(time // 60)).rjust(2, '0'),
                 (str(time % 60)).rjust(2, '0'))
+
 
     # SAVE
     def saveSystem(self, filename="save.txt"):
