@@ -212,10 +212,11 @@ class Terminal:
             else:
                 print('Cet ID est déjà utilisé par une autre compangnie.')
 
-            if (company) not in airport.airlinesDico:
-                airport.addAirlines(IDletter, company)
-            else:
-                print('Cette compangie existe déjà')
+        if (company) not in airport.airlinesDico:
+            airport.addAirlines(IDletter, company)
+            print("\nla compagnie", company, "a été ajoutée.")
+        else:
+            print('\nCette compangie existe déjà')
         return IDletter
 
     def askDelAirlines(self):
@@ -229,8 +230,23 @@ class Terminal:
         indice = self.askIndice(maxVal, "compangies")
 
         letterID = listKeyAirlines[indice]
+        airlines = airport.airlinesDico[letterID]
 
-        airport.delAirlines(letterID)
+        # Vérifie si la compagnie est utilisée par des avions actif
+        # Si oui, ne supprime pas la compagnie
+        empty = True
+        planeLists = [airport.departureList, airport.arrivalList]
+        for liste in planeLists:
+            for plane in liste:
+                if plane.getCompany() == airlines.getName():
+                    empty = False
+        if empty:        
+            airport.delAirlines(letterID)
+            print("\nLa compangie", airlines.getName(), "a été supprimée.")
+        else:
+            print("\nLa compagnie", airlines.getName(), 
+                  "contient encore des avions au décollage ou à l'attérissage. "
+                  "Il est impossible de la supprimer.")
 
     def askAirlinesInfo(self):
         '''
