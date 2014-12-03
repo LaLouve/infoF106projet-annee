@@ -358,9 +358,21 @@ class Terminal:
             indice = self.askIndice(maxVal, "modèles")
             model = airport.modelList[indice]
 
-            airport.delModel(model)
-            print("\nLe modèle", model.getName(), "a été supprimé")
-
+            # Vérifie si des avions actifs utilisent ce modèle
+            # Si oui la suppression est impossible
+            empty = True
+            planeLists = [airport.departureList, airport.arrivalList]
+            for liste in planeLists:
+                for plane in liste:
+                    if plane.getModel() == model.getName():
+                        empty = False
+            if empty:
+                airport.delModel(model)
+                print("\nLe modèle", model.getName(), "a été supprimé")
+            else:
+                print("\nDes avions utilisent le modèle", model.getName(),
+                      ". Il est impossible de le supprimer")
+    
     # RANDOM PLANE
     def askRandomPlane(self, planeList):
         '''
