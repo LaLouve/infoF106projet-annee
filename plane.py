@@ -78,6 +78,13 @@ class Plane:
             return False
 
     def __str__(self):
+
+        # Vérifie la longeur de self.company et self.model
+        if len(self.company) > 20:
+            self.company = str(self.company[:19]) + '.'
+        if len(self.model) > 5:
+            self.model = str(self.model[:4] + '.')
+
         res = ((str(self.ID).ljust(8, ' ')) + '| ' +
                (str(self.company).ljust(20, ' ')) + '| ' +
                (str(self.passengers).ljust(5, ' ')) + '| ' +

@@ -528,4 +528,6 @@ class Airport:
         except:
             print("Le fichier de sauvegarde est corrompu.")
 
+        saveFile.close
+
         return True
