@@ -26,38 +26,41 @@ def mainLoop():
     terminal = airportTerminal.Terminal()
     terminal.askNewGame("save.txt")
 
-    while True:
+    nbrTick = 1
+
+    while nbrTick > 0:
         nbrTick = terminal.userMenu()
         terminal.checkRunways()
 
-        for i in range(nbrTick):
-            plane = airport.eventRandom()
-            terminal.showEvent(plane)
-
-            for j in range(airport.departureRunway):
-                plane = airport.nextDeparture()
+        if nbrTick != None:
+            for i in range(nbrTick):
+                plane = airport.eventRandom()
                 terminal.showEvent(plane)
 
-            for k in range(airport.arrivalRunway):
-                plane = airport.nextArrival()
-                terminal.showEvent(plane)
+                for j in range(airport.departureRunway):
+                    plane = airport.nextDeparture()
+                    terminal.showEvent(plane)
 
-            for l in range(airport.mixteRunway):
-                plane = airport.nextEvent()
-                terminal.showEvent(plane)
+                for k in range(airport.arrivalRunway):
+                    plane = airport.nextArrival()
+                    terminal.showEvent(plane)
 
-            crashedPlane, delayedPlane = airport.updateStatus()
-            for info in crashedPlane:
-                plane = info[0]
-                death = info[1]
-                terminal.showEvent(plane)
-                terminal.showEvent(death)
+                for l in range(airport.mixteRunway):
+                    plane = airport.nextEvent()
+                    terminal.showEvent(plane)
 
-            for plane in delayedPlane:
-                terminal.showEvent(plane)
+                crashedPlane, delayedPlane = airport.updateStatus()
+                for info in crashedPlane:
+                    plane = info[0]
+                    death = info[1]
+                    terminal.showEvent(plane)
+                    terminal.showEvent(death)
 
-            if airport.tick == 1440:
-                airport.newDay()
+                for plane in delayedPlane:
+                    terminal.showEvent(plane)
+
+                if airport.tick == 1440:
+                    airport.newDay()
 
 
 if __name__ == "__main__":

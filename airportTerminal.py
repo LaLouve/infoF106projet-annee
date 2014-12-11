@@ -559,8 +559,8 @@ class Terminal:
                 answer = str(
                     input(
                         "\n"
-                        "Voulez-vous utiliser la sauvegarde? (Si non, une nouvelle simulation commencera)"
-                        "(O)ui/(N)on\n ")).lower()
+                        "Voulez-vous utiliser la sauvegarde? \n(Si non, une nouvelle simulation commencera)"
+                        "\n(O)ui/(N)on: ")).lower()
 
             if answer == 'n':
                 os.remove(filename)
@@ -638,11 +638,11 @@ class Terminal:
 
             elif plane.getStatut() == 'In Time':
                 print("-L'avion", plane.getID(),
-                      "a été ajouté à la liste des avions au décollage")
+                      "a été ajouté à la liste des avions au décollage.")
 
             else:
                 print("-L'avion",plane.getID(),
-                      "a été ajouté à la liste des avions à l'attérissage")
+                      "a été ajouté à la liste des avions à l'attérissage.")
 
 
     # USER MENU
@@ -653,7 +653,8 @@ class Terminal:
         '''
         answer = ''
 
-        while answer != 'q':
+        ok = ['q', 't']
+        while answer not in ok:
             print("\nMenu des actions, que voulez-vous faire?")
             self.showDay()
             print("Il est", end=' ')
@@ -677,7 +678,8 @@ class Terminal:
                   "\n\n-Afficher les statistiques de l'aéroport: (P)"
                   "\n-Sauvegarde: (S)"
                   "\n-Restauration: (R)"
-                  "\n-Quitter le menu: (Q)"
+                  "\n-Quitter le menu et faire avancer la simulation: (T)"
+                  "\n-Quitter la simulation: (Q)"
                   "\n---------------------------------------------------------"
                   "\n(Entrez la lettre correpsondant à l'action)")
 
@@ -740,7 +742,11 @@ class Terminal:
             elif answer == 'r':
                 airport.loadSystem()
 
-            elif answer != 'q':
+            elif answer == 'q':
+                nbrTick = 0
+                print("\nFin de la simulation.")
+                
+            elif answer != 't':
                 print("\nVous n'avez pas entré une lettre correcte, rééssayez")
 
             else:
