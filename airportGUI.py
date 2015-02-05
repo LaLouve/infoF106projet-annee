@@ -354,41 +354,78 @@ class PrincipalWindow:
         departureFrame.pack(side=TOP)
         textDep = "Departure runways: {}".format(
             airport.departureRunway)
-        textLabelDep = textDep.ljust(25, ' ')
+        textLabelDep = textDep.ljust(20, ' ')
         self.departureLabel = Label(
             departureFrame,
             bd=3,
             bg=mainColor,
             text=textLabelDep)
-        self.departureLabel.pack(side=RIGHT)
-        self.departureLabel.bind(
-            "<Double-Button-1>",
-            self.mod_depRunway_button)
+        self.departureLabel.pack(side=LEFT)
+        Button(
+            departureFrame,
+            text='-',
+            relief=GROOVE,
+            width=1,
+            bg=buttonColor,
+            command=lambda: self.minusRunway("departure")).pack(side=RIGHT)
+        Button(
+            departureFrame,
+            text='+',
+            relief=GROOVE,
+            width=1,
+            bg=buttonColor,
+            command=lambda: self.plusRunway("departure")).pack(side=RIGHT)
 
         arrivalFrame = Frame(mainLabel, bd=6, bg=mainColor)
         arrivalFrame.pack(side=TOP)
         textArr = "Arrival runways: {}".format(
             airport.arrivalRunway)
-        textLabelArr = textArr.ljust(29, ' ')
+        textLabelArr = textArr.ljust(20, ' ')
         self.arrivalLabel = Label(
             arrivalFrame,
             bd=3,
             bg=mainColor,
             text=textLabelArr)
-        self.arrivalLabel.pack(side=RIGHT)
-        self.arrivalLabel.bind("<Double-Button-1>", self.mod_arrRunway_button)
+        self.arrivalLabel.pack(side=LEFT)
+        Button(
+            arrivalFrame,
+            text='-',
+            relief=GROOVE,
+            width=1,
+            bg=buttonColor,
+            command=lambda: self.minusRunway("arrival")).pack(side=RIGHT)
+        Button(
+            arrivalFrame,
+            text='+',
+            relief=GROOVE,
+            width=1,
+            bg=buttonColor,
+            command=lambda: self.plusRunway("arrival")).pack(side=RIGHT)
 
         mixteFrame = Frame(mainLabel, bd=6, bg=mainColor)
         mixteFrame.pack(side=TOP)
         textMix = "Mixte runways: {}".format(airport.mixteRunway)
-        textLabelMix = textMix.ljust(27, ' ')
+        textLabelMix = textMix.ljust(20, ' ')
         self.mixteLabel = Label(
             mixteFrame,
             bd=3,
             bg=mainColor,
             text=textLabelMix)
-        self.mixteLabel.pack(side=RIGHT)
-        self.mixteLabel.bind("<Double-Button-1>", self.mod_mixRunway_button)
+        self.mixteLabel.pack(side=LEFT)
+        Button(
+            mixteFrame,
+            text='-',
+            relief=GROOVE,
+            width=1,
+            bg=buttonColor,
+            command=lambda: self.minusRunway("mixte")).pack(side=RIGHT)
+        Button(
+            mixteFrame,
+            text='+',
+            relief=GROOVE,
+            width=1,
+            bg=buttonColor,
+            command=lambda: self.plusRunway("mixte")).pack(side=RIGHT)
 
 
     def infoArrivalPlane(self):
@@ -410,13 +447,57 @@ class PrincipalWindow:
     >>>> avec le nom de runway en param
     >>>> mettre un bouton + et un - à chaque runway
     >>>> ou deux boutons pour tous et devoir selectionner celle qu'on veut 
-    '''
+    
     def mod_depRunway_button(self):
         pass
     def mod_arrRunway_button(self):
         pass
     def mod_mixRunway_button(self):
         pass
+    '''
+    def plusRunway(self, runway):
+        if runway == 'departure':
+            airport.departureRunway += 1
+            text = "Departure runways: {}".format(airport.departureRunway)
+            textLabel = text.ljust(20, ' ')
+            self.departureLabel.configure(text=textLabel)
+
+        elif runway == 'arrival':
+            airport.arrivalRunway += 1
+            text = "Arrival runways: {}".format(airport.arrivalRunway)
+            textLabel = text.ljust(20, ' ')
+            self.arrivalLabel.configure(text=textLabel)
+
+        elif runway == 'mixte':
+            airport.mixteRunway += 1
+            text = "Mixte runways: {}".format(airport.mixteRunway)
+            textLabel = text.ljust(20, ' ')
+            self.mixteLabel.configure(text=textLabel)
+
+    def minusRunway(self, runway):
+        if runway == 'departure':
+            airport.departureRunway -= 1
+            if airport.departureRunway < 0:
+                airport.departureRunway = 0
+            text = "Departure runways: {}".format(airport.departureRunway)
+            textLabel = text.ljust(20, ' ')
+            self.departureLabel.configure(text=textLabel)
+
+        elif runway == 'arrival':
+            airport.arrivalRunway -= 1
+            if airport.arrivalRunway < 0:
+                airport.arrivalRunway = 0
+            text = "Arrival runways: {}".format(airport.arrivalRunway)
+            textLabel = text.ljust(20, ' ')
+            self.arrivalLabel.configure(text=textLabel)
+
+        elif runway == 'mixte':
+            airport.mixteRunway -= 1
+            if airport.mixteRunway < 0:
+                airport.mixteRunway = 0
+            text = "Mixte runways: {}".format(airport.mixteRunway)
+            textLabel = text.ljust(20, ' ')
+            self.mixteLabel.configure(text=textLabel)
 
     def showHelp(self):
         pass  
@@ -439,7 +520,7 @@ class PrincipalWindow:
     def infoModel(self):
         pass
 
-        
+
     def showStat(self):
         '''
         Affiche les statistiques de l'aéroport
