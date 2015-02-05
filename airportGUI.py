@@ -320,16 +320,15 @@ class PrincipalWindow:
             bd=2,
             width=6)
         self.nbrMin.pack(side=LEFT)
-        Label(setTime, bg=mainColor, text='min').pack(side=RIGHT)
+        Label(setTime, bg=mainColor, text='min').pack(side=LEFT)
         Button(
-            column4top,
+            setTime,
             text='Step',
             relief=GROOVE,
-            width=6,
             bg=buttonColor,
             command=lambda: self.stepButton(
                 self.nbrMin.get())).pack(
-            side=BOTTOM)
+            side=RIGHT)
 
         # partie centrale, permet l'espacement des parties haute et basse
         column4Mid = Frame(column4, height=25, bg=mainColor)
@@ -352,9 +351,9 @@ class PrincipalWindow:
 
         departureFrame = Frame(mainLabel, bd=6, bg=mainColor)
         departureFrame.pack(side=TOP)
-        textDep = "Departure runways: {}".format(
+        textDep = "Departure: {}".format(
             airport.departureRunway)
-        textLabelDep = textDep.ljust(20, ' ')
+        textLabelDep = textDep.ljust(15, ' ')
         self.departureLabel = Label(
             departureFrame,
             bd=3,
@@ -378,9 +377,9 @@ class PrincipalWindow:
 
         arrivalFrame = Frame(mainLabel, bd=6, bg=mainColor)
         arrivalFrame.pack(side=TOP)
-        textArr = "Arrival runways: {}".format(
+        textArr = "Arrival: {}".format(
             airport.arrivalRunway)
-        textLabelArr = textArr.ljust(20, ' ')
+        textLabelArr = textArr.ljust(15, ' ')
         self.arrivalLabel = Label(
             arrivalFrame,
             bd=3,
@@ -404,8 +403,8 @@ class PrincipalWindow:
 
         mixteFrame = Frame(mainLabel, bd=6, bg=mainColor)
         mixteFrame.pack(side=TOP)
-        textMix = "Mixte runways: {}".format(airport.mixteRunway)
-        textLabelMix = textMix.ljust(20, ' ')
+        textMix = "Mixte: {}".format(airport.mixteRunway)
+        textLabelMix = textMix.ljust(15, ' ')
         self.mixteLabel = Label(
             mixteFrame,
             bd=3,
@@ -442,65 +441,59 @@ class PrincipalWindow:
         pass
     def deletePlaneButton(self):
         pass
-    '''
-    >>>> mettre tout ça sur deux fonctions une + une -
-    >>>> avec le nom de runway en param
-    >>>> mettre un bouton + et un - à chaque runway
-    >>>> ou deux boutons pour tous et devoir selectionner celle qu'on veut 
-    
-    def mod_depRunway_button(self):
-        pass
-    def mod_arrRunway_button(self):
-        pass
-    def mod_mixRunway_button(self):
-        pass
-    '''
+
+    # Fonctions de modifications des pistes (runways)
     def plusRunway(self, runway):
+        '''
+        Incrémente d'un la valeur de la piste passée en paramètre 
+        '''
         if runway == 'departure':
             airport.departureRunway += 1
-            text = "Departure runways: {}".format(airport.departureRunway)
-            textLabel = text.ljust(20, ' ')
+            text = "Departure: {}".format(airport.departureRunway)
+            textLabel = text.ljust(15, ' ')
             self.departureLabel.configure(text=textLabel)
 
         elif runway == 'arrival':
             airport.arrivalRunway += 1
-            text = "Arrival runways: {}".format(airport.arrivalRunway)
-            textLabel = text.ljust(20, ' ')
+            text = "Arrival: {}".format(airport.arrivalRunway)
+            textLabel = text.ljust(15, ' ')
             self.arrivalLabel.configure(text=textLabel)
 
         elif runway == 'mixte':
             airport.mixteRunway += 1
-            text = "Mixte runways: {}".format(airport.mixteRunway)
-            textLabel = text.ljust(20, ' ')
+            text = "Mixte: {}".format(airport.mixteRunway)
+            textLabel = text.ljust(15, ' ')
             self.mixteLabel.configure(text=textLabel)
 
     def minusRunway(self, runway):
+        '''
+        Décrémente d'un la valeur de la piste pasée en paramètre
+        '''
         if runway == 'departure':
             airport.departureRunway -= 1
             if airport.departureRunway < 0:
                 airport.departureRunway = 0
-            text = "Departure runways: {}".format(airport.departureRunway)
-            textLabel = text.ljust(20, ' ')
+            text = "Departure: {}".format(airport.departureRunway)
+            textLabel = text.ljust(15, ' ')
             self.departureLabel.configure(text=textLabel)
 
         elif runway == 'arrival':
             airport.arrivalRunway -= 1
             if airport.arrivalRunway < 0:
                 airport.arrivalRunway = 0
-            text = "Arrival runways: {}".format(airport.arrivalRunway)
-            textLabel = text.ljust(20, ' ')
+            text = "Arrival: {}".format(airport.arrivalRunway)
+            textLabel = text.ljust(15, ' ')
             self.arrivalLabel.configure(text=textLabel)
 
         elif runway == 'mixte':
             airport.mixteRunway -= 1
             if airport.mixteRunway < 0:
                 airport.mixteRunway = 0
-            text = "Mixte runways: {}".format(airport.mixteRunway)
-            textLabel = text.ljust(20, ' ')
+            text = "Mixte: {}".format(airport.mixteRunway)
+            textLabel = text.ljust(15, ' ')
             self.mixteLabel.configure(text=textLabel)
 
-    def showHelp(self):
-        pass  
+ 
     def historyButton(self):
         pass
     def addAirline(self):
@@ -520,7 +513,7 @@ class PrincipalWindow:
     def infoModel(self):
         pass
 
-
+    #Statistiques
     def showStat(self):
         '''
         Affiche les statistiques de l'aéroport
@@ -560,6 +553,7 @@ class PrincipalWindow:
             anchor=CENTER)
         message.pack()
 
+    # Historique des avions
     def showHistory(self):
         '''
         Affiche la liste "history" dans une nouvelle fenêtre
@@ -602,6 +596,40 @@ class PrincipalWindow:
         scrollbar.pack(side=RIGHT, fill=Y)
         listBoxArea.pack()
         self.listBoxHistory.pack()
+
+    # Help
+    def showHelp(self):
+        '''
+        Permet d'afficher la fenêtre d'aide du programme
+        ''' 
+        help = Toplevel(root, bg=mainColor)
+        help.title("Help")
+        Label(
+            help,
+            bd=6,
+            bg='white',
+            text="Bienvenue dans le simulateur de gestion d'aéroport",
+            font=tkFont.Font(
+                size=9)).pack(
+            side=TOP)
+
+        textFile = open("help.txt", "r")
+        text = ''
+        
+        line = textFile.readline()
+
+        while line != '':
+            if line[0] != '#':
+                text += line
+            line = textFile.readline()
+
+        message = Message(
+            help,
+            text=text,
+            bd=5,
+            bg='white',
+            anchor=CENTER)
+        message.pack()
 
     # fonction de sauvegarde/restauration
     def saveSystem(self, event=None):

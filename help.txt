@@ -1,11 +1,9 @@
-'''
-Dervaux Florence, N° de matricule : 000396246, groupe 1
-
-Projet d'année: Simulation de la gestion du trafic aérien d’un aéroport
-Partie 4
-
-fichier: help.txt
-'''
+#Dervaux Florence, N° de matricule : 000396246, groupe 1
+#Projet d'année: Simulation de la gestion du trafic aérien d’un aéroport
+#Partie 4
+#fichier: help.txt
+#
+#Les lignes commencant par '#' ne seront pas utilisées pour afficher l'aide dans le programme
 
 
 Fonctionnement du programme:
