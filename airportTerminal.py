@@ -526,6 +526,16 @@ class Terminal:
         '''
         print('Jour numéro', airport.day)
 
+    def newDay(self):
+        '''
+        appelle la fonction nécéssaire pour initialisé un nouveau jour
+        '''
+        airport.newDay()
+        print("\nNouveau jour!\nLes avions n'ayant pas pu attérire ou décoller "
+            "durant la journée sont déplacés dans l'historique avec le statut "
+            "\"Deleted\"")
+
+
     def askTime(self):
         correct = False
         while not correct:

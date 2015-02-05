@@ -60,7 +60,7 @@ def mainLoop():
                     terminal.showEvent(plane)
 
                 if airport.tick == 1440:
-                    airport.newDay()
+                    terminal.newDay()
 
 
 if __name__ == "__main__":

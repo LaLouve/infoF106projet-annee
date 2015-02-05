@@ -101,7 +101,7 @@ class Airport:
         supression d'un avion de departureList
         '''
         self.departureList.remove(plane)
-        plane.setStatut("Deleted")
+        plane.setStatut("Canceled")
         self.historyList.append(plane)
 
     def checkID(self, planeID):
@@ -356,9 +356,16 @@ class Airport:
         '''
         self.tick = 0
         self.day += 1
+
+        planeLists = [self.departureList, self.arrivalList]
+        for liste in planeLists:
+            for plane in liste:
+                plane.setStatut("Deleted")
+                self.historyList.append(plane)
+
         self.departureList = []
         self.arrivalList = []
-        return self.tick, self.day, self.departureList, self.arrivalList
+        #return self.tick, self.day, self.departureList, self.arrivalList
 
     def updateStatus(self):
         '''
