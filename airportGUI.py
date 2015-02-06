@@ -23,18 +23,21 @@ from tkinter import messagebox
 # permet de selectionner un fichier pour la sauvegarde/restauration
 import tkinter.filedialog as filedialog
 
-from random import randint
+import random
 
 airport = airportFunctions.Airport()
 
 # Variables globales
-mainColor = "white"
+mainColor = 'white'
 buttonColor = "#C0C0C0"
 
 
 class PrincipalWindow:
 
     def __init__(self, root):
+
+        # FENÊTRE PRINCIPALE
+
         self.root = root
 
         # désactivation du bouton "del" dans la colone des départs
@@ -71,7 +74,7 @@ class PrincipalWindow:
         listBoxArea = Frame(
             column1,
             bd=8,
-            bg=mainColor)  # création de list_box et de la scrollbar associée
+            bg=mainColor)  # création de listBox et de la scrollbar associée
         scrollbar = Scrollbar(
             listBoxArea,
             bg=buttonColor,
@@ -104,7 +107,7 @@ class PrincipalWindow:
             text="Add Random",
             relief=GROOVE,
             bg=buttonColor,
-            command=self.addArrivalRandom).pack(
+            command=lambda: self.addRandomPlane('arrival')).pack(
             side=LEFT)
 
 
@@ -122,30 +125,30 @@ class PrincipalWindow:
         listBoxArea = Frame(
             column2,
             bd=8,
-            bg=mainColor)  # création de list_box et de la scrollbar associée
+            bg=mainColor)  # création de listBox et de la scrollbar associée
         scrollbar = Scrollbar(
             listBoxArea,
             bg=buttonColor,
             activebackground='grey',
             troughcolor=mainColor,
             orient=VERTICAL)
-        self.listBoxAirlines = Listbox(
+        self.listBoxDeparture = Listbox(
             listBoxArea,
             height=25,
             width=25,
             bd=2,
             yscrollcommand=scrollbar.set)
-        self.listBoxAirlines.bind(
+        self.listBoxDeparture.bind(
             "<<ListboxSelect>>",
             self.checkPlaneDelete)
-        self.listBoxAirlines.bind(
+        self.listBoxDeparture.bind(
             "<Double-Button-1>",
             self.infoDeparturePlane)
-        for plane in airport.departureList: self.listBoxAirlines.insert(END, plane.getID())
-        scrollbar.config(command=self.listBoxAirlines.yview)
+        for plane in airport.departureList: self.listBoxDeparture.insert(END, plane.getID())
+        scrollbar.config(command=self.listBoxDeparture.yview)
         scrollbar.pack(side=RIGHT, fill=Y)
         listBoxArea.pack()
-        self.listBoxAirlines.pack()
+        self.listBoxDeparture.pack()
 
         Button(
             column2,
@@ -159,7 +162,7 @@ class PrincipalWindow:
             text="Add Random",
             relief=GROOVE,
             bg=buttonColor,
-            command=self.addDepartureRandom).pack(
+            command=lambda: self.addRandomPlane('departure')).pack(
             side=LEFT)
         self.delPlaneButton = Button(
             column2,
@@ -189,7 +192,7 @@ class PrincipalWindow:
         listBoxArea = Frame(
             column3top,
             bd=8,
-            bg=mainColor)  # création de list_box et de la scrollbar associée
+            bg=mainColor)  # création de listBox et de la scrollbar associée
         scrollbar = Scrollbar(
             listBoxArea,
             bg=buttonColor,
@@ -246,7 +249,7 @@ class PrincipalWindow:
         listBoxArea = Frame(
             column3bottom,
             bd=8,
-            bg=mainColor)  # création de list_box et de la scrollbar associée
+            bg=mainColor)  # création de listBox et de la scrollbar associée
         scrollbar = Scrollbar(
             listBoxArea,
             bg=buttonColor,
@@ -427,16 +430,189 @@ class PrincipalWindow:
             command=lambda: self.plusRunway("mixte")).pack(side=RIGHT)
 
 
+
+    # FONCTIONS
+
+
+    # Plane
+    def addPlane(self, planeList):
+        '''
+        fenêtre demandant les informations de l'avion à ajouter
+        valable pour les départs et les arrivées
+        '''
+        self.addWindow = Toplevel(bg=mainColor)
+        self.addWindow.title("Add Plane")
+
+        addFrame = Frame(
+            self.addWindow,
+            bd=15,
+            bg=mainColor)  # frame principale
+        addFrame.pack()
+
+        Label(
+            addFrame,
+            bd=4,
+            bg=mainColor,
+            text='Airline').grid(
+            row=0,
+            column=0)
+        airline = Menubutton(
+            addFrame,
+            text="Airline",
+            bd=2,
+            bg=mainColor,
+            relief=RAISED,
+            width=13)
+        airline.grid(row=0, column=1)
+
+        Label(
+            addFrame,
+            bd=4,
+            bg=mainColor,
+            text='Model').grid(
+            row=1, column=0)
+        modelChoice = Menubutton(
+            addFrame,
+            text="Model",
+            bd=2,
+            bg=mainColor,
+            relief=RAISED,
+            width=13)
+        modelChoice.grid(row=1, column=1)
+        modelChoice.menu = Menu(modelChoice, tearoff=0)
+        modelChoice["menu"]  =  modelChoice.menu
+        modelChoice.grid()
+
+        for model in airport.modelList:
+            print(model)
+            modelVar = model
+            modelChoice.add_checkbutton(label=model.getName, variable=modelVar)
+
+
+
+        Label(addFrame, bd=4, bg=mainColor, text='ID').grid(row=2, column=0)
+        IDnumber = Entry(
+            addFrame,
+            bd=2,
+            bg=mainColor,
+            textvariable=int,
+            justify=CENTER,
+            relief=SUNKEN,
+            width=13)
+        IDnumber.grid(row=2, column=1)
+        
+        Label(
+            addFrame,
+            bd=4,
+            bg=mainColor,
+            text='Passengers').grid(
+            row=3,
+            column=0)
+        passengers = Entry(
+            addFrame,
+            bd=2,
+            bg=mainColor,
+            textvariable=int,
+            justify=CENTER,
+            relief=SUNKEN,
+            width=13)
+        passengers.grid(row=3, column=1)
+
+        if planeList == "departure":
+            Label(
+                addFrame,
+                bd=4,
+                bg=mainColor,
+                text='Time').grid(
+                row=5,
+                column=0)
+            timeFrame = Frame(
+                addFrame,
+                bd=4,
+                bg=mainColor)  # frame secondaire, contient l'entrée de l'heure
+            timeFrame.grid(row=5, column=1)
+            heure = Entry(
+                timeFrame,
+                bd=2,
+                bg=mainColor,
+                textvariable=int,
+                justify=CENTER,
+                relief=SUNKEN,
+                width=6)
+            heure.grid(row=0, column=0)
+            minute = Entry(
+                timeFrame,
+                bd=2,
+                bg=mainColor,
+                textvariable=int,
+                justify=CENTER,
+                relief=SUNKEN,
+                width=6)
+            minute.grid(row=0, column=1)
+        
+        else:
+            heure = None
+            minute = None
+
+        Button(
+            addFrame,
+            text="Add",
+            relief=GROOVE,
+            bg='#C0C0C0',
+            command=lambda: self.getPlane(
+                IDletter,
+                IDnumber,
+                airline,
+                passengers,
+                heure,
+                minute,
+                planeList)).grid(
+            row=7,
+            column=1)
+
+    def getPlane(self, IDletter, IDnumber, company, passengers, heure, min, planeList):
+        print("pinky pinky")
+
+
+    def addRandomPlane(self, planeList):
+        '''
+        Ajoute un avion aléatoire au départ
+        '''
+        IDletter = False
+        model = False
+        if len(airport.airlinesDico) == 0:
+            text = "Il n'y a aucune compangie enregistrée, \nveuillez en ajouter une via le bouton 'Company'"
+            message = messagebox.showwarning('No airlines', text)
+        else:
+            listKeyAirlines = airport.airlinesDico.keys()
+            IDletter = random.choice(list(listKeyAirlines))
+
+        if len(airport.modelList) == 0:
+            text = "Il n'y a aucun modèle enregistré, \nveuillez en ajouter un via le bouton 'Model'"
+            message = messagebox.showwarning('No model', text)
+        else:
+            indice = random.randint(0, len(airport.modelList) - 1)
+            model = airport.modelList[indice]
+
+        if IDletter and model:
+            if planeList == "departure":
+                plane = airport.randomPlane(IDletter, model, airport.departureList)
+                self.listBoxDeparture.insert(END, plane.getID())
+            else:
+                plane = airport.randomPlane(IDletter, model, airport.arrivalList)
+                self.listBoxArrivals.insert(END, plane.getID())
+
+            text = "L'avion {} a été ajouté".format(plane.getID())
+            message = messagebox.showinfo('Plane Added', text)
+
+
     def infoArrivalPlane(self):
         pass
     def infoDeparturePlane(self):
         pass
     def infoHistoryPlane(self):
         pass
-    def addArrivalRandom(self):
-        pass
-    def addDepartureRandom(self):
-        pass
+
     def checkPlaneDelete(self):
         pass
     def deletePlaneButton(self):
@@ -518,10 +694,11 @@ class PrincipalWindow:
         '''
         Affiche les statistiques de l'aéroport
         '''
-        self.statWindow = Toplevel(bg=mainColor)
+        statWindow = Toplevel(bg=mainColor)
+        statWindow.title("Statistics")
 
         principal = LabelFrame(
-            self.statWindow,
+            statWindow,
             bd=4,
             relief=RIDGE,
             bg=mainColor,
@@ -559,6 +736,7 @@ class PrincipalWindow:
         Affiche la liste "history" dans une nouvelle fenêtre
         '''
         historyWindow = Toplevel(bg=mainColor)
+        historyWindow.title("History")
         column = Frame(
             historyWindow,
             bd=3,
@@ -575,7 +753,7 @@ class PrincipalWindow:
         listBoxArea = Frame(
             column,
             bd=8,
-            bg=mainColor)  # création de list_box et de la scrollbar associée
+            bg=mainColor)  # création de listBox et de la scrollbar associée
         scrollbar = Scrollbar(
             listBoxArea,
             bg=buttonColor,
@@ -607,7 +785,7 @@ class PrincipalWindow:
         Label(
             help,
             bd=6,
-            bg='white',
+            bg=mainColor,
             text="Bienvenue dans le simulateur de gestion d'aéroport",
             font=tkFont.Font(
                 size=9)).pack(
@@ -627,7 +805,7 @@ class PrincipalWindow:
             help,
             text=text,
             bd=5,
-            bg='white',
+            bg=mainColor,
             anchor=CENTER)
         message.pack()
 
