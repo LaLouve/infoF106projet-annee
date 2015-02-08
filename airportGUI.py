@@ -224,7 +224,9 @@ class PrincipalWindow:
         self.listBoxAirlines.bind("<<ListboxSelect>>", self.checkAirlineDelete) # active la sélection à la souris pour supprimer une compangnie
         self.listBoxAirlines.bind("<Double-Button-1>", self.infoAirline) # active le double clic pour obtenir la liste d'avions d'une compagnie
 
+        self.airlinesList = []  # Liste des ID des compangnies, simplifie la sélection dans la listbox
         for airlineID in airport.airlinesDico:
+            self.airlinesList.append[airlineID]
             airline = airport.airlinesDico[airlineID] 
             self.listBoxAirlines.insert(END, airline.getName())
 
@@ -565,7 +567,7 @@ class PrincipalWindow:
             addFrame,
             text="Add",
             relief=GROOVE,
-            bg='#C0C0C0',
+            bg=buttonColor,
             command=lambda: self.getPlane(
                 IDletter,
                 IDnumber,
@@ -707,19 +709,19 @@ class PrincipalWindow:
         principalFrame = Frame(
             self.addModelWindow,
             bd=3,
-            bg='white')  # frame du label
+            bg=mainColor)  # frame du label
         principalFrame.grid(row=0, column=1)
 
         entryFrame = Frame(
             self.addModelWindow,
             bd=5,
-            bg='white')  # frame des entry
+            bg=mainColor)  # frame des entry
         entryFrame.grid(row=1, column=1)
 
         labelPrincipal = Label(
             principalFrame,
             bd=6,
-            bg='white',
+            bg=mainColor,
             text='Add Model',
             font=tkFont.Font(
                 size=10))
@@ -728,13 +730,13 @@ class PrincipalWindow:
         labelModel = Label(
             entryFrame,
             bd=4,
-            bg='white',
+            bg=mainColor,
             text='Name')
         labelModel.grid(row=0, column=0)
         model = Entry(
             entryFrame,
             bd=2,
-            bg='white',
+            bg=mainColor,
             textvariable=str,
             justify=CENTER,
             relief=SUNKEN,
@@ -744,13 +746,13 @@ class PrincipalWindow:
         labelFuel = Label(
             entryFrame,
             bd=4,
-            bg='white',
+            bg=mainColor,
             text='Fuel')
         labelFuel.grid(row=1, column=0)
         fuel = Entry(
             entryFrame,
             bd=2,
-            bg='white',
+            bg=mainColor,
             textvariable=int,
             justify=CENTER,
             relief=SUNKEN,
@@ -760,13 +762,13 @@ class PrincipalWindow:
         labelCons = Label(
             entryFrame,
             bd=4,
-            bg='white',
+            bg=mainColor,
             text='Consumption')
         labelCons.grid(row=2, column=0)
         consumption = Entry(
             entryFrame,
             bd=2,
-            bg='white',
+            bg=mainColor,
             textvariable=int,
             justify=CENTER,
             relief=SUNKEN,
@@ -776,27 +778,27 @@ class PrincipalWindow:
         labelPassengers = Label(
             entryFrame,
             bd=4,
-            bg='white',
+            bg=mainColor,
             text='Passengers')
         labelPassengers.grid(row=3, column=0)
         passengers = Entry(
             entryFrame,
             bd=2,
-            bg='white',
+            bg=mainColor,
             textvariable=int,
             justify=CENTER,
             relief=SUNKEN,
             width=12)
         passengers.grid(row=3, column=1)
 
-        buttonFrame = Frame(self.addModelWindow, bd=5, bg='white')
+        buttonFrame = Frame(self.addModelWindow, bd=5, bg=mainColor)
         buttonFrame.grid(row=2, column=1)
         buttonOK = Button(
             buttonFrame,
             text='OK',
             relief=GROOVE,
             width=6,
-            bg='#C0C0C0',
+            bg=buttonColor,
             command=lambda: self.addModelButton(model, fuel, consumption, passengers)).grid(
             row=0,
             column=0)
@@ -879,18 +881,18 @@ class PrincipalWindow:
         principal = Frame(
             self.infoModelWindow,
             bd=3,
-            bg='white')  # création de la frame principale
+            bg=mainColor)  # création de la frame principale
         principal.grid(row=0, column=0)
 
         frame_name = Frame(
             principal,
             bd=5,
-            bg='white')  # frame secondaire, contient l'id
+            bg=mainColor)  # frame secondaire, contient l'id
         frame_name.grid(row=0, column=0)
         label_name = Label(
             frame_name,
             bd=3,
-            bg='white',
+            bg=mainColor,
             text='Model',
             font=tkFont.Font(
                 size=9)).grid(
@@ -899,7 +901,7 @@ class PrincipalWindow:
         info_name = Label(
             frame_name,
             bd=3,
-            bg='white',
+            bg=mainColor,
             text=name).grid(
             row=1,
             column=0)
@@ -907,12 +909,12 @@ class PrincipalWindow:
         frame_fuel = Frame(
             principal,
             bd=5,
-            bg='white')  # frame secondaire, contient l'id
+            bg=mainColor)  # frame secondaire, contient l'id
         frame_fuel.grid(row=0, column=1)
         labelFuel = Label(
             frame_fuel,
             bd=3,
-            bg='white',
+            bg=mainColor,
             text='Fuel',
             font=tkFont.Font(
                 size=9)).grid(
@@ -921,7 +923,7 @@ class PrincipalWindow:
         info_fuel = Label(
             frame_fuel,
             bd=3,
-            bg='white',
+            bg=mainColor,
             text=fuel).grid(
             row=1,
             column=0)
@@ -929,12 +931,12 @@ class PrincipalWindow:
         frame_cons = Frame(
             principal,
             bd=5,
-            bg='white')  # frame secondaire, contient l'id
+            bg=mainColor)  # frame secondaire, contient l'id
         frame_cons.grid(row=0, column=2)
         labelCons = Label(
             frame_cons,
             bd=3,
-            bg='white',
+            bg=mainColor,
             text='Consumption',
             font=tkFont.Font(
                 size=9)).grid(
@@ -943,7 +945,7 @@ class PrincipalWindow:
         info_cons = Label(
             frame_cons,
             bd=3,
-            bg='white',
+            bg=mainColor,
             text=consumption).grid(
             row=1,
             column=0)
@@ -951,12 +953,12 @@ class PrincipalWindow:
         frame_passengers = Frame(
             principal,
             bd=5,
-            bg='white')  # frame secondaire, contient l'id
+            bg=mainColor)  # frame secondaire, contient l'id
         frame_passengers.grid(row=0, column=3)
         labelPassengers = Label(
             frame_passengers,
             bd=3,
-            bg='white',
+            bg=mainColor,
             text='Passengers',
             font=tkFont.Font(
                 size=9)).grid(
@@ -965,19 +967,19 @@ class PrincipalWindow:
         info_passengers = Label(
             frame_passengers,
             bd=3,
-            bg='white',
+            bg=mainColor,
             text=passengers).grid(
             row=1,
             column=0)
 
-        buttonFrame = Frame(principal, bd=5, bg='white')
+        buttonFrame = Frame(principal, bd=5, bg=mainColor)
         buttonFrame.grid(row=1, column=2)
         button_OK = Button(
             buttonFrame,
             text='OK',
             relief=GROOVE,
             width=6,
-            bg='#C0C0C0',
+            bg=buttonColor,
             command=self.modelButtonOK).grid(
             row=0,
             column=0)
