@@ -226,7 +226,7 @@ class PrincipalWindow:
 
         self.airlinesList = []  # Liste des ID des compangnies, simplifie la sélection dans la listbox
         for airlineID in airport.airlinesDico:
-            self.airlinesList.append[airlineID]
+            self.airlinesList.append(airlineID)
             airline = airport.airlinesDico[airlineID] 
             self.listBoxAirlines.insert(END, airline.getName())
 
@@ -645,59 +645,131 @@ class PrincipalWindow:
         pass
 
 
-    # Fonctions de modifications des pistes (runways)
-    def plusRunway(self, runway):
+
+    # Airlines
+    def addAirline(self):
         '''
-        Incrémente d'un la valeur de la piste passée en paramètre 
+        Permet d'ajouter une compagnie. Ouvre une nouvelle fenêtre demandant
+        le nom et l'id de la nouvelle compagnie
         '''
-        if runway == 'departure':
-            airport.departureRunway += 1
-            text = "Departure: {}".format(airport.departureRunway)
-            textLabel = text.ljust(15, ' ')
-            self.departureLabel.configure(text=textLabel)
+        self.addAirlineWindow = Toplevel(bg=mainColor)
+        self.addAirlineWindow.title("Add Airlines")
+        
+        labelFrame = Frame(
+            self.addAirlineWindow,
+            bd=3,
+            bg=mainColor)  # frame des label
+        labelFrame.grid(row=0, column=1)
+        
+        Label(
+            labelFrame,
+            bd=6,
+            bg=mainColor,
+            text='Add Airlines',
+            font=tkFont.Font(
+                size=10)).grid(
+            row=0,
+            column=1)
 
-        elif runway == 'arrival':
-            airport.arrivalRunway += 1
-            text = "Arrival: {}".format(airport.arrivalRunway)
-            textLabel = text.ljust(15, ' ')
-            self.arrivalLabel.configure(text=textLabel)
+        entryFrame = Frame(
+            self.addAirlineWindow,
+            bd=5,
+            bg=mainColor)  # frame des entry
+        entryFrame.grid(row=1, column=1)
 
-        elif runway == 'mixte':
-            airport.mixteRunway += 1
-            text = "Mixte: {}".format(airport.mixteRunway)
-            textLabel = text.ljust(15, ' ')
-            self.mixteLabel.configure(text=textLabel)
+        Label(
+            entryFrame,
+            bd=4,
+            bg=mainColor,
+            text='Full Name').grid(
+            row=0,
+            column=0)
+        airline = Entry(
+            entryFrame,
+            bd=2,
+            bg=mainColor,
+            textvariable=str,
+            justify=CENTER,
+            relief=SUNKEN,
+            width=12)
+        airline.grid(row=0, column=1)
 
-    def minusRunway(self, runway):
+        Label(entryFrame, bd=4, bg=mainColor, text='ID').grid(row=1, column=0)
+        airlineID = Entry(
+            entryFrame,
+            bd=2,
+            bg=mainColor,
+            textvariable=str,
+            justify=CENTER,
+            relief=SUNKEN,
+            width=12)
+        airlineID.grid(row=1, column=1)
+
+        Button(
+            self.addAirlineWindow,
+            text='Add',
+            relief=GROOVE,
+            width=10,
+            bg=buttonColor,
+            command=lambda: self.addAirlinesButton(
+                (airline.get()).lower(),
+                (airlineID.get()).upper())).grid(
+            row=3,
+            column=1)
+
+    def addAirlinesButton(self, airline, airlineID):
         '''
-        Décrémente d'un la valeur de la piste pasée en paramètre
+        Ajoute la compagnie au dictionnaire des compagnies
         '''
-        if runway == 'departure':
-            airport.departureRunway -= 1
-            if airport.departureRunway < 0:
-                airport.departureRunway = 0
-            text = "Departure: {}".format(airport.departureRunway)
-            textLabel = text.ljust(15, ' ')
-            self.departureLabel.configure(text=textLabel)
+        if airlineID not in airport.airlinesDico:
+            objAirline = airport.addAirlines(airlineID, airline)
+            self.airlinesList.append(airlineID)
 
-        elif runway == 'arrival':
-            airport.arrivalRunway -= 1
-            if airport.arrivalRunway < 0:
-                airport.arrivalRunway = 0
-            text = "Arrival: {}".format(airport.arrivalRunway)
-            textLabel = text.ljust(15, ' ')
-            self.arrivalLabel.configure(text=textLabel)
+            text = "La compagnie {} a été ajoutée".format(airline)
+            message = messagebox.showinfo('Company added', text)
+           
+            self.addAirlineWindow.destroy()
 
-        elif runway == 'mixte':
-            airport.mixteRunway -= 1
-            if airport.mixteRunway < 0:
-                airport.mixteRunway = 0
-            text = "Mixte: {}".format(airport.mixteRunway)
-            textLabel = text.ljust(15, ' ')
-            self.mixteLabel.configure(text=textLabel)
+            self.listBoxAirlines.insert(END, airline)
+
+        else:
+            text = "La compagnie {} existe déjà".format(company)
+            message = messagebox.showwarning('Company already exist', text)
+
+    def delAirline(self):
+        '''
+        Permet de supprimer une compagnie
+        '''
+        item = self.listBoxAirlines.curselection()
+        self.listBoxAirlines.delete(item)
+
+        numAirline = item[0]
+        airlineID = self.airlinesList[numAirline]
+        airline = airport.airlinesDico[airlineID]
+
+        text = "La compagnie '{}' a été supprimé".format(airline.getName())
+        message = messagebox.showwarning("Company deleted", text)
+        airport.delAirlines(airlineID)
+
+    def checkAirlineDelete(self, event=None):
+        '''
+        Vérifie si un avion est sélectionné dans la liste des avions
+        au départ et rend le boutton 'del' actif si oui
+        '''
+        if self.listBoxAirlines.curselection():
+            self.delAirlineButton.configure(state=NORMAL)
+        else:
+            self.delAirlineButton.configure(state=DISABLED)
+
+    def showInfoAirline(self):
+        pass
+    def infoAirline(self):
+        pass
+    def airlineButtonOK(self):
+        pass
 
 
-    #Model
+    # Model
     def addModel(self):
         '''
         Ouvre une fenêtre permetant à l'utilisateur d'entrer les informations
@@ -991,6 +1063,57 @@ class PrincipalWindow:
         self.infoModelWindow.destroy()
 
 
+    # Fonctions de modifications des pistes (runways)
+    def plusRunway(self, runway):
+        '''
+        Incrémente d'un la valeur de la piste passée en paramètre 
+        '''
+        if runway == 'departure':
+            airport.departureRunway += 1
+            text = "Departure: {}".format(airport.departureRunway)
+            textLabel = text.ljust(15, ' ')
+            self.departureLabel.configure(text=textLabel)
+
+        elif runway == 'arrival':
+            airport.arrivalRunway += 1
+            text = "Arrival: {}".format(airport.arrivalRunway)
+            textLabel = text.ljust(15, ' ')
+            self.arrivalLabel.configure(text=textLabel)
+
+        elif runway == 'mixte':
+            airport.mixteRunway += 1
+            text = "Mixte: {}".format(airport.mixteRunway)
+            textLabel = text.ljust(15, ' ')
+            self.mixteLabel.configure(text=textLabel)
+
+    def minusRunway(self, runway):
+        '''
+        Décrémente d'un la valeur de la piste pasée en paramètre
+        '''
+        if runway == 'departure':
+            airport.departureRunway -= 1
+            if airport.departureRunway < 0:
+                airport.departureRunway = 0
+            text = "Departure: {}".format(airport.departureRunway)
+            textLabel = text.ljust(15, ' ')
+            self.departureLabel.configure(text=textLabel)
+
+        elif runway == 'arrival':
+            airport.arrivalRunway -= 1
+            if airport.arrivalRunway < 0:
+                airport.arrivalRunway = 0
+            text = "Arrival: {}".format(airport.arrivalRunway)
+            textLabel = text.ljust(15, ' ')
+            self.arrivalLabel.configure(text=textLabel)
+
+        elif runway == 'mixte':
+            airport.mixteRunway -= 1
+            if airport.mixteRunway < 0:
+                airport.mixteRunway = 0
+            text = "Mixte: {}".format(airport.mixteRunway)
+            textLabel = text.ljust(15, ' ')
+            self.mixteLabel.configure(text=textLabel)
+
 
     #Statistiques
     def showStat(self):
@@ -1158,19 +1281,7 @@ class PrincipalWindow:
         '''
         return (str(tick // 60).rjust(2, '0') + "h" + str(tick % 60).rjust(2, '0'))
 
-    
 
-    ### TO DO ###
-    def historyButton(self):
-        pass
-    def addAirline(self):
-        pass
-    def delAirline(self):
-        pass
-    def checkAirlineDelete(self, event=None):
-        pass
-    def infoAirline(self):
-        pass
 
 
 if __name__ == "__main__":
