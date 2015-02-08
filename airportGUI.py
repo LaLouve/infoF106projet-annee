@@ -27,6 +27,17 @@ import tkinter.filedialog as filedialog
 import random
 
 airport = airportFunctions.Airport()
+'''
+   /\                                                                           /\     
+  /  \                                                                         /  \   
+ /    \                                                                       /    \   
+/      \  Chargement des données sauvées dans save.txt pour faciliter les    /      \   
+--------  test!!!!!                                                          --------
+   |               SUPPRIMER AVANT DE REMETTRE AU PROF!!!!!!!                   |
+   |                                                                            |
+   V                                                                            V
+'''
+airport.loadSystem()
 
 # Variables globales
 mainColor = 'white'
@@ -267,7 +278,7 @@ class PrincipalWindow:
             yscrollcommand=scrollbar.set)
 
         self.listBoxModel.bind("<<ListboxSelect>>", self.checkModelDelete) # active la sélection à la souris pour supprimer un modèle
-        self.listBoxModel.bind("<Double-Button-1>", self.infoModel) # active le double-clic pour obtenir les informations d'un modèle
+        self.listBoxModel.bind("<Double-Button-1>", self.showInfoModel) # active le double-clic pour obtenir les informations d'un modèle
 
         for model in airport.modelList:
             self.listBoxModel.insert(END, model.getName())
@@ -849,7 +860,7 @@ class PrincipalWindow:
         '''
         item = self.listBoxModel.curselection()
         numModel = item[0]
-        model = self.listModel[numModel]
+        model = airport.modelList[numModel]
 
         self.infoModel(model)
 
@@ -860,10 +871,10 @@ class PrincipalWindow:
         self.infoModelWindow = Toplevel(bg=mainColor)
         self.infoModelWindow.title("Model Info")
 
-
-        fuel = airport.modelList[model][0]
-        consumption = airport.modelList[model][1]
-        passengers = airport.modelList[model][2]
+        name = model.getName()
+        fuel = model.getFuel()
+        consumption = model.getConso()
+        passengers = model.getPassenger()
 
         principal = Frame(
             self.infoModelWindow,
@@ -889,7 +900,7 @@ class PrincipalWindow:
             frame_name,
             bd=3,
             bg='white',
-            text=model).grid(
+            text=name).grid(
             row=1,
             column=0)
 
@@ -967,9 +978,15 @@ class PrincipalWindow:
             relief=GROOVE,
             width=6,
             bg='#C0C0C0',
-            command=lambda: self.modelButtonOK()).grid(
+            command=self.modelButtonOK).grid(
             row=0,
             column=0)
+
+    def modelButtonOK(self):
+        '''
+        Detruit la fenêtre (Toplevel) contenant les informations du model
+        '''
+        self.infoModelWindow.destroy()
 
 
 
