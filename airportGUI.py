@@ -15,6 +15,7 @@ from model import Model
 # outils d'interface graphique
 from tkinter import *
 
+
 # permet la mise en forme des textes des label, boutons, ect. par exemple
 # changer la taille et la police d'écriture
 import tkinter.font as tkFont
@@ -87,9 +88,12 @@ class PrincipalWindow:
             width=25,
             bd=2,
             yscrollcommand=scrollbar.set)
-        self.listBoxArrivals.bind("<Double-Button-1>", self.infoArrivalPlane)
+
+        self.listBoxArrivals.bind("<Double-Button-1>", self.infoArrivalPlane) # active le double-clic pour obtenir les infos d'un avion
+
         for plane in airport.arrivalList:
             self.listBoxArrivals.insert(END, plane.getID())
+
         scrollbar.config(command=self.listBoxArrivals.yview)
         scrollbar.pack(side=RIGHT, fill=Y)
         listBoxArea.pack()
@@ -138,13 +142,13 @@ class PrincipalWindow:
             width=25,
             bd=2,
             yscrollcommand=scrollbar.set)
-        self.listBoxDeparture.bind(
-            "<<ListboxSelect>>",
-            self.checkPlaneDelete)
-        self.listBoxDeparture.bind(
-            "<Double-Button-1>",
-            self.infoDeparturePlane)
-        for plane in airport.departureList: self.listBoxDeparture.insert(END, plane.getID())
+
+        self.listBoxDeparture.bind("<<ListboxSelect>>", self.checkPlaneDelete) # active la sélection à la souris pour supprimer un avion
+        self.listBoxDeparture.bind("<Double-Button-1>", self.infoDeparturePlane) # active le double-clic pour obtenir les infos d'un avion
+
+        for plane in airport.departureList: 
+            self.listBoxDeparture.insert(END, plane.getID())
+
         scrollbar.config(command=self.listBoxDeparture.yview)
         scrollbar.pack(side=RIGHT, fill=Y)
         listBoxArea.pack()
@@ -205,15 +209,14 @@ class PrincipalWindow:
             width=25,
             bd=2,
             yscrollcommand=scrollbar.set)
-        self.listBoxAirlines.bind(
-            "<<ListboxSelect>>",
-            self.checkAirlineDelete)
-        self.listBoxAirlines.bind(
-            "<Double-Button-1>",
-            self.infoAirline)
+
+        self.listBoxAirlines.bind("<<ListboxSelect>>", self.checkAirlineDelete) # active la sélection à la souris pour supprimer une compangnie
+        self.listBoxAirlines.bind("<Double-Button-1>", self.infoAirline) # active le double clic pour obtenir la liste d'avions d'une compagnie
+
         for airlineID in airport.airlinesDico:
             airline = airport.airlinesDico[airlineID] 
             self.listBoxAirlines.insert(END, airline.getName())
+
         scrollbar.config(command=self.listBoxAirlines.yview)
         scrollbar.pack(side=RIGHT, fill=Y)
         listBoxArea.pack()
@@ -224,7 +227,7 @@ class PrincipalWindow:
             text="Add",
             relief=GROOVE,
             bg=buttonColor,
-            command=self.addAirline()).pack(side=LEFT)
+            command=self.addAirline).pack(side=LEFT)
 
         self.delAirlineButton = Button(
             column3top,
@@ -232,7 +235,7 @@ class PrincipalWindow:
             relief=GROOVE,
             bg=buttonColor,
             state=DISABLED,
-            command=self.delAirline())
+            command=self.delAirline)
         self.delAirlineButton.pack(side=LEFT)
 
         # Partie basse de la troisème colonne, contient les modèles
@@ -262,14 +265,13 @@ class PrincipalWindow:
             width=25,
             bd=2,
             yscrollcommand=scrollbar.set)
-        self.listBoxModel.bind(
-            "<<ListboxSelect>>",
-            self.checkModelDelete)
-        self.listBoxModel.bind(
-            "<Double-Button-1>",
-            self.infoModel)
+
+        self.listBoxModel.bind("<<ListboxSelect>>", self.checkModelDelete) # active la sélection à la souris pour supprimer un modèle
+        self.listBoxModel.bind("<Double-Button-1>", self.infoModel) # active le double-clic pour obtenir les informations d'un modèle
+
         for model in airport.modelList:
             self.listBoxModel.insert(END, model.getName())
+
         scrollbar.config(command=self.listBoxModel.yview)
         scrollbar.pack(side=RIGHT, fill=Y)
         listBoxArea.pack()
@@ -280,7 +282,7 @@ class PrincipalWindow:
             text="Add",
             relief=GROOVE,
             bg=buttonColor,
-            command=self.addModel()).pack(side=LEFT)
+            command=self.addModel).pack(side=LEFT)
 
         self.delModelButton = Button(
             column3bottom,
@@ -288,7 +290,7 @@ class PrincipalWindow:
             relief=GROOVE,
             bg=buttonColor,
             state=DISABLED,
-            command=self.delModel())
+            command=self.delModel)
         self.delModelButton.pack(side=LEFT)
 
 
@@ -306,8 +308,7 @@ class PrincipalWindow:
             bd=6,
             bg=mainColor,
             text=self.generalTime,
-            font=tkFont.Font(
-                size=16))
+            font=tkFont.Font(size=16))
         self.clock.pack(side=TOP)
 
         setTime = Frame(
@@ -329,9 +330,7 @@ class PrincipalWindow:
             text='Step',
             relief=GROOVE,
             bg=buttonColor,
-            command=lambda: self.stepButton(
-                self.nbrMin.get())).pack(
-            side=RIGHT)
+            command=lambda: self.stepButton(self.nbrMin.get())).pack(side=RIGHT)
 
         # partie centrale, permet l'espacement des parties haute et basse
         column4Mid = Frame(column4, height=25, bg=mainColor)
@@ -433,18 +432,17 @@ class PrincipalWindow:
 
     # FONCTIONS
 
-
     # Plane
     def addPlane(self, planeList):
         '''
         fenêtre demandant les informations de l'avion à ajouter
         valable pour les départs et les arrivées
         '''
-        self.addWindow = Toplevel(bg=mainColor)
-        self.addWindow.title("Add Plane")
+        self.addPlaneWindow = Toplevel(bg=mainColor)
+        self.addPlaneWindow.title("Add Plane")
 
         addFrame = Frame(
-            self.addWindow,
+            self.addPlaneWindow,
             bd=15,
             bg=mainColor)  # frame principale
         addFrame.pack()
@@ -487,8 +485,6 @@ class PrincipalWindow:
             print(model)
             modelVar = model
             modelChoice.add_checkbutton(label=model.getName, variable=modelVar)
-
-
 
         Label(addFrame, bd=4, bg=mainColor, text='ID').grid(row=2, column=0)
         IDnumber = Entry(
@@ -573,13 +569,13 @@ class PrincipalWindow:
     def getPlane(self, IDletter, IDnumber, company, passengers, heure, min, planeList):
         print("pinky pinky")
 
-
     def addRandomPlane(self, planeList):
         '''
         Ajoute un avion aléatoire au départ
         '''
         IDletter = False
         model = False
+
         if len(airport.airlinesDico) == 0:
             text = "Il n'y a aucune compangie enregistrée, \nveuillez en ajouter une via le bouton 'Company'"
             message = messagebox.showwarning('No airlines', text)
@@ -605,6 +601,28 @@ class PrincipalWindow:
             text = "L'avion {} a été ajouté".format(plane.getID())
             message = messagebox.showinfo('Plane Added', text)
 
+    def deletePlaneButton(self):
+        '''
+        Supprime l'avion choisi par un simple clic dans la liste des avions
+        au départ
+        '''
+        item = self.listBoxDeparture.curselection()
+        self.listBoxDeparture.delete(item)
+        numPlane = item[0]
+        plane = airport.departureList[numPlane]
+        airport.delPlane(plane)
+        text = "L'avion {} a été supprimé".format(plane.getID())
+        message = messagebox.showwarning("Plane deleted", text)
+
+    def checkPlaneDelete(self, event=None):
+        '''
+        Vérifie si un avion est sélectionné dans la liste des avions
+        au départ et rend le boutton 'del' actif si oui
+        '''
+        if self.listBoxDeparture.curselection():
+            self.delPlaneButton.configure(state=NORMAL)
+        else:
+            self.delPlaneButton.configure(state=DISABLED)
 
     def infoArrivalPlane(self):
         pass
@@ -613,10 +631,6 @@ class PrincipalWindow:
     def infoHistoryPlane(self):
         pass
 
-    def checkPlaneDelete(self):
-        pass
-    def deletePlaneButton(self):
-        pass
 
     # Fonctions de modifications des pistes (runways)
     def plusRunway(self, runway):
@@ -669,25 +683,295 @@ class PrincipalWindow:
             textLabel = text.ljust(15, ' ')
             self.mixteLabel.configure(text=textLabel)
 
- 
-    def historyButton(self):
-        pass
-    def addAirline(self):
-        pass
-    def delAirline(self):
-        pass
-    def checkAirlineDelete(self):
-        pass
-    def infoAirline(self):
-        pass
+
+    #Model
     def addModel(self):
-        pass
+        '''
+        Ouvre une fenêtre permetant à l'utilisateur d'entrer les informations
+        du modèle qu'il veut ajouter
+        '''
+        self.addModelWindow = Toplevel(bg=mainColor)
+        self.addModelWindow.title("Add Model")
+
+        principalFrame = Frame(
+            self.addModelWindow,
+            bd=3,
+            bg='white')  # frame du label
+        principalFrame.grid(row=0, column=1)
+
+        entryFrame = Frame(
+            self.addModelWindow,
+            bd=5,
+            bg='white')  # frame des entry
+        entryFrame.grid(row=1, column=1)
+
+        labelPrincipal = Label(
+            principalFrame,
+            bd=6,
+            bg='white',
+            text='Add Model',
+            font=tkFont.Font(
+                size=10))
+        labelPrincipal.grid(row=0, column=1)
+
+        labelModel = Label(
+            entryFrame,
+            bd=4,
+            bg='white',
+            text='Name')
+        labelModel.grid(row=0, column=0)
+        model = Entry(
+            entryFrame,
+            bd=2,
+            bg='white',
+            textvariable=str,
+            justify=CENTER,
+            relief=SUNKEN,
+            width=12)
+        model.grid(row=0, column=1)
+
+        labelFuel = Label(
+            entryFrame,
+            bd=4,
+            bg='white',
+            text='Fuel')
+        labelFuel.grid(row=1, column=0)
+        fuel = Entry(
+            entryFrame,
+            bd=2,
+            bg='white',
+            textvariable=int,
+            justify=CENTER,
+            relief=SUNKEN,
+            width=12)
+        fuel.grid(row=1, column=1)
+
+        labelCons = Label(
+            entryFrame,
+            bd=4,
+            bg='white',
+            text='Consumption')
+        labelCons.grid(row=2, column=0)
+        consumption = Entry(
+            entryFrame,
+            bd=2,
+            bg='white',
+            textvariable=int,
+            justify=CENTER,
+            relief=SUNKEN,
+            width=12)
+        consumption.grid(row=2, column=1)
+
+        labelPassengers = Label(
+            entryFrame,
+            bd=4,
+            bg='white',
+            text='Passengers')
+        labelPassengers.grid(row=3, column=0)
+        passengers = Entry(
+            entryFrame,
+            bd=2,
+            bg='white',
+            textvariable=int,
+            justify=CENTER,
+            relief=SUNKEN,
+            width=12)
+        passengers.grid(row=3, column=1)
+
+        buttonFrame = Frame(self.addModelWindow, bd=5, bg='white')
+        buttonFrame.grid(row=2, column=1)
+        buttonOK = Button(
+            buttonFrame,
+            text='OK',
+            relief=GROOVE,
+            width=6,
+            bg='#C0C0C0',
+            command=lambda: self.addModelButton(model, fuel, consumption, passengers)).grid(
+            row=0,
+            column=0)
+
+    def addModelButton(self, newModel, newFuel, newConsumption, newPassengers):
+        '''
+        Vérifie les données entrées par l'utilisateur et ajoute le modèle si
+        elles sont correctes
+        '''
+        model = str(newModel.get()).upper()
+        fuel = newFuel.get()
+        consumption = newConsumption.get()
+        passengers = newPassengers.get()
+
+        if fuel.isdigit() and consumption.isdigit() and passengers.isdigit():
+            modFuel = int(fuel)
+            modConso = int(consumption)
+            modPass = int(passengers)
+            airport.addModel(model, modFuel, modConso, modPass)
+
+            self.addModelWindow.destroy()
+
+            self.listBoxModel.insert(END, model)
+            
+            txt = "Le modèle {} a été ajouté.".format(model)
+            messagebox.showinfo('Add', txt)
+
+            
+        else:
+            text = "Les données entrées ne sont pas correctes!\nVeuillez les vérifier"
+            message = messagebox.showerror('Error', text)
+
     def delModel(self):
-        pass
-    def checkModelDelete(self):
-        pass
-    def infoModel(self):
-        pass
+        '''
+        Supprime le modèle sélectionné
+        '''
+        item = self.listBoxModel.curselection()
+        
+        self.listBoxModel.delete(item)
+
+        numModel = item[0]
+        model = airport.modelList[numModel]
+        airport.delModel(model)
+
+        name = model.getName()
+        text = "Le modèle '{}' a été supprimé".format(name)
+        message = messagebox.showwarning("Model deleted", text)
+        
+    def checkModelDelete(self, event=None):
+        '''
+        Active le bouton "Delete" lorsqu'un modèle est selectionné
+        '''
+        if self.listBoxModel.curselection():
+            self.delModelButton.configure(state=NORMAL)
+        else:
+            self.delModelButton.configure(state=DISABLED)
+
+    def showInfoModel(self, event=None):
+        '''
+        Appelle la fonction d'affichage du modèle sélectionné
+        '''
+        item = self.listBoxModel.curselection()
+        numModel = item[0]
+        model = self.listModel[numModel]
+
+        self.infoModel(model)
+
+    def infoModel(self, model):
+        '''
+        Affiche les informations du modèle
+        '''
+        self.infoModelWindow = Toplevel(bg=mainColor)
+        self.infoModelWindow.title("Model Info")
+
+
+        fuel = airport.modelList[model][0]
+        consumption = airport.modelList[model][1]
+        passengers = airport.modelList[model][2]
+
+        principal = Frame(
+            self.infoModelWindow,
+            bd=3,
+            bg='white')  # création de la frame principale
+        principal.grid(row=0, column=0)
+
+        frame_name = Frame(
+            principal,
+            bd=5,
+            bg='white')  # frame secondaire, contient l'id
+        frame_name.grid(row=0, column=0)
+        label_name = Label(
+            frame_name,
+            bd=3,
+            bg='white',
+            text='Model',
+            font=tkFont.Font(
+                size=9)).grid(
+            row=0,
+            column=0)
+        info_name = Label(
+            frame_name,
+            bd=3,
+            bg='white',
+            text=model).grid(
+            row=1,
+            column=0)
+
+        frame_fuel = Frame(
+            principal,
+            bd=5,
+            bg='white')  # frame secondaire, contient l'id
+        frame_fuel.grid(row=0, column=1)
+        labelFuel = Label(
+            frame_fuel,
+            bd=3,
+            bg='white',
+            text='Fuel',
+            font=tkFont.Font(
+                size=9)).grid(
+            row=0,
+            column=0)
+        info_fuel = Label(
+            frame_fuel,
+            bd=3,
+            bg='white',
+            text=fuel).grid(
+            row=1,
+            column=0)
+
+        frame_cons = Frame(
+            principal,
+            bd=5,
+            bg='white')  # frame secondaire, contient l'id
+        frame_cons.grid(row=0, column=2)
+        labelCons = Label(
+            frame_cons,
+            bd=3,
+            bg='white',
+            text='Consumption',
+            font=tkFont.Font(
+                size=9)).grid(
+            row=0,
+            column=0)
+        info_cons = Label(
+            frame_cons,
+            bd=3,
+            bg='white',
+            text=consumption).grid(
+            row=1,
+            column=0)
+
+        frame_passengers = Frame(
+            principal,
+            bd=5,
+            bg='white')  # frame secondaire, contient l'id
+        frame_passengers.grid(row=0, column=3)
+        labelPassengers = Label(
+            frame_passengers,
+            bd=3,
+            bg='white',
+            text='Passengers',
+            font=tkFont.Font(
+                size=9)).grid(
+            row=0,
+            column=0)
+        info_passengers = Label(
+            frame_passengers,
+            bd=3,
+            bg='white',
+            text=passengers).grid(
+            row=1,
+            column=0)
+
+        buttonFrame = Frame(principal, bd=5, bg='white')
+        buttonFrame.grid(row=1, column=2)
+        button_OK = Button(
+            buttonFrame,
+            text='OK',
+            relief=GROOVE,
+            width=6,
+            bg='#C0C0C0',
+            command=lambda: self.modelButtonOK()).grid(
+            row=0,
+            column=0)
+
+
 
     #Statistiques
     def showStat(self):
@@ -729,6 +1013,7 @@ class PrincipalWindow:
             bg=mainColor,
             anchor=CENTER)
         message.pack()
+
 
     # Historique des avions
     def showHistory(self):
@@ -775,6 +1060,7 @@ class PrincipalWindow:
         listBoxArea.pack()
         self.listBoxHistory.pack()
 
+
     # Help
     def showHelp(self):
         '''
@@ -808,6 +1094,7 @@ class PrincipalWindow:
             bg=mainColor,
             anchor=CENTER)
         message.pack()
+
 
     # fonction de sauvegarde/restauration
     def saveSystem(self, event=None):
@@ -852,7 +1139,19 @@ class PrincipalWindow:
         '''
         return (str(tick // 60).rjust(2, '0') + "h" + str(tick % 60).rjust(2, '0'))
 
+    
 
+    ### TO DO ###
+    def historyButton(self):
+        pass
+    def addAirline(self):
+        pass
+    def delAirline(self):
+        pass
+    def checkAirlineDelete(self, event=None):
+        pass
+    def infoAirline(self):
+        pass
 
 
 if __name__ == "__main__":
