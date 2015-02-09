@@ -637,17 +637,266 @@ class PrincipalWindow:
         else:
             self.delPlaneButton.configure(state=DISABLED)
 
-    def infoArrivalPlane(self):
-        pass
-    def infoDeparturePlane(self):
-        pass
-    def infoHistoryPlane(self):
-        pass
-    def infoAirlinePlane(self):
-        pass
-    def infoModelPlane(self):
-        pass
 
+    # Affichage des informations de avions
+    def infoArrivalPlane(self, event=None):
+        '''
+        Affiche les informations d'un avion se trouvant dans la liste
+        "Arrival"
+        '''
+        item = self.listBoxArrivals.curselection()
+        num = item[0]
+        plane = airport.arrivalList[num]
+        self.infoPlane(airport.arrivalList, plane)
+
+    def infoDeparturePlane(self, event=None):
+        '''
+        Affiche les informations d'un avion se trouvant dans la liste
+        "Departure"
+        '''
+        item = self.listBoxDeparture.curselection()
+        num = item[0]
+        plane = airport.departureList[num]
+        self.infoPlane(airport.departureList, plane)
+
+    def infoHistoryPlane(self, event=None):
+        '''
+        Affiche les informations d'un avion se trouvant dans la liste
+        "History"
+        '''
+        item = self.listBoxHistory.curselection()
+        num = item[0]
+        plane = airport.historyList[num]
+        self.infoPlane(airport.historyList, plane)
+
+    def infoAirlinePlane(self, event=None):
+        '''
+        Affiche les informations d'un avion se trouvant dans la liste
+        des avions d'une compagnie
+        '''
+        item = self.listBoxAirlinePlane.curselection()
+        num = item[0]
+        plane = self.listAirlinePlane[num]
+        self.infoPlane(self.listAirlinePlane, plane)
+
+    def infoModelPlane(self, event=None):
+        '''
+        Affiche les informations d'un avion se trouvant dans la liste
+        des avions d'une compagnie
+        '''
+        item = self.listBoxModelPlane.curselection()
+        num = item[0]
+        plane = self.listModelPlane[num]
+        self.infoPlane(self.listModelPlane, plane)
+
+    def infoPlane(self, planeList, plane):
+        '''
+        fenêtre d'affichage des informations d'un avion
+        '''
+        self.infoPlaneWindow = Toplevel(bg=mainColor)
+        self.infoPlaneWindow.title("Plane Info")
+
+        principal = Frame(
+            self.infoPlaneWindow,
+            bd=3,
+            bg='white')  # création de la frame principale
+        principal.grid(row=0, column=0)
+
+        IDframe = Frame(principal,
+            bd=5,
+            bg='white')  # frame secondaire, contient l'id
+        IDframe.grid(row=0, column=0)
+        Label(IDframe,
+            bd=3,
+            bg='white',
+            text='ID',
+            font=tkFont.Font(
+                size=9)).grid(
+            row=0,
+            column=0)
+        Label(IDframe,
+            bd=3,
+            bg='white',
+            text=plane.getID()).grid(
+            row=1,
+            column=0)
+
+        airlineFrame = Frame(principal,
+            bd=5,
+            bg='white')  # frame secondaire, contient la compagnie
+        airlineFrame.grid(row=0, column=1)
+        Label(airlineFrame,
+            bd=3,
+            bg='white',
+            text='Company',
+            font=tkFont.Font(
+                size=9)).grid(
+            row=0,
+            column=0)
+        Label(airlineFrame,
+            bd=3,
+            bg='white',
+            text=plane.getCompany()).grid(
+            row=1,
+            column=0)
+
+        passengerFrame = Frame(principal,
+            bd=5,
+            bg='white')  # frame secondaire, contient le nombre de passagers
+        passengerFrame.grid(row=0, column=2)
+        Label(passengerFrame,
+            bd=3,
+            bg='white',
+            text='Passengers',
+            font=tkFont.Font(
+                size=9)).grid(
+            row=0,
+            column=0)
+        Label(passengerFrame,
+            bd=3,
+            bg='white',
+            text=plane.getPassengers()).grid(
+            row=1,
+            column=0)
+
+        fuelFrame = Frame(
+            principal,
+            bd=5,
+            bg='white')  # frame secondaire, contient le fuel
+        fuelFrame.grid(row=0, column=3)
+        Label(fuelFrame,
+            bd=3,
+            bg='white',
+            text='Fuel',
+            font=tkFont.Font(
+                size=9)).grid(
+            row=0,
+            column=0)
+        Label(fuelFrame,
+            bd=3,
+            bg='white',
+            text=plane.getFuel()).grid(
+            row=1,
+            column=0)
+
+        consumptionFrame = Frame(
+            principal,
+            bd=5,
+            bg='white')  # frame secondaire, contient la consommation
+        consumptionFrame.grid(row=0, column=4)
+        Label(consumptionFrame,
+            bd=3,
+            bg='white',
+            text='Consumption',
+            font=tkFont.Font(
+                size=10)).grid(
+            row=0,
+            column=0)
+        Label(consumptionFrame,
+            bd=3,
+            bg='white',
+            text=plane.getConsumption()).grid(
+            row=1,
+            column=0)
+
+        modelFrame = Frame(principal,
+            bd=5,
+            bg='white')  # frame secondaire, contient la consommation
+        modelFrame.grid(row=0, column=6)
+        Label(modelFrame,
+            bd=3,
+            bg='white',
+            text='Model',
+            font=tkFont.Font(
+                size=10)).grid(
+            row=0,
+            column=0)
+        Label(modelFrame,
+            bd=3,
+            bg='white',
+            text=plane.getModel()).grid(
+            row=1,
+            column=0)
+
+        if plane.getStatut():
+            timeFrame = Frame(principal,
+                bd=5,
+                bg='white')  # frame secondaire, contient l'heure
+            timeFrame.grid(row=0, column=7)
+            Label(timeFrame,
+                bd=3,
+                bg='white',
+                text='time',
+                font=tkFont.Font(
+                    size=9)).grid(
+                row=0,
+                column=0)
+
+            time = plane.getTime()
+            text = self.time(airport.convTupleToTick(time))
+            Label(timeFrame,
+                bd=3,
+                bg='white',
+                text=text).grid(
+                row=1,
+                column=0)
+
+            statusFrame = Frame(
+                principal,
+                bd=5,
+                bg='white')  # frame secondaire, contient le statut
+            statusFrame.grid(row=0, column=8)
+            Label(statusFrame,
+                bd=3,
+                bg='white',
+                text='statut',
+                font=tkFont.Font(
+                    size=9)).grid(
+                row=0,
+                column=0)
+            Label(statusFrame,
+                bd=3,
+                bg='white',
+                text=plane.getStatut()).grid(
+                row=1,
+                column=0)
+        else:
+            ratioFrame = Frame(principal,
+                bd=5,
+                bg='white')  # frame secondaire, contient le ration (nbr de tour)
+            ratioFrame.grid(row=0, column=5)
+            Label(ratioFrame,
+                bd=3,
+                bg='white',
+                text='Ratio',
+                font=tkFont.Font(
+                    size=9)).grid(
+                row=0,
+                column=0)
+            Label(ratioFrame,
+                bd=3,
+                bg='white',
+                text=plane.ratio()).grid(
+                row=1,
+                column=0)
+
+        buttonFrame = Frame(principal, bd=5, bg='white')
+        buttonFrame.grid(row=1, column=3)
+        Button(
+            buttonFrame,
+            text='OK',
+            relief=GROOVE,
+            width=6,
+            bg=buttonColor,
+            command=self.planeButtonOK).grid(
+            row=0,
+            column=0)
+
+    def planeButtonOK(self):
+        '''
+        Ferme la fenêtre d'affichage des informations de l'avion
+        '''
+        self.infoPlaneWindow.destroy()
 
 
     # Airlines
@@ -835,7 +1084,7 @@ class PrincipalWindow:
             bd=2,
             yscrollcommand=scrollbar.set)
         
-        self.listBoxAirlinePlane.bind("<Double-Button-1>", self.infoAirlinePlane)
+        self.listBoxAirlinePlane.bind("<Double-Button-1>", self.infoAirlinePlane) # active le double-clic pour obtenir les infos d'un avion
         
         planeLists = [airport.departureList, airport.arrivalList, airport.historyList]
 
@@ -1170,7 +1419,7 @@ class PrincipalWindow:
             bd=2,
             yscrollcommand=scrollbar.set)
         
-        self.listBoxModelPlane.bind("<Double-Button-1>", self.infoModelPlane)
+        self.listBoxModelPlane.bind("<Double-Button-1>", self.infoModelPlane)# active le double-clic pour obtenir les infos d'un avion
         
         planeLists = [airport.departureList, airport.arrivalList, airport.historyList]
 
