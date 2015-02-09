@@ -645,6 +645,8 @@ class PrincipalWindow:
         pass
     def infoAirlinePlane(self):
         pass
+    def infoModelPlane(self):
+        pass
 
 
 
@@ -857,7 +859,6 @@ class PrincipalWindow:
             command=self.airlineButtonOK).pack(
             side=BOTTOM)
 
-
     def airlineButtonOK(self):
         '''
         Détruit la fenêtre d'informations de la compagnie
@@ -1055,7 +1056,7 @@ class PrincipalWindow:
         nameFrame = Frame(
             planeFrame,
             bd=5,
-            bg=mainColor)  # frame secondaire, contient l'id
+            bg=mainColor)  
         nameFrame.grid(row=0, column=0)
         Label(
             nameFrame,
@@ -1077,7 +1078,7 @@ class PrincipalWindow:
         fuelFrame = Frame(
             planeFrame,
             bd=5,
-            bg=mainColor)  # frame secondaire, contient l'id
+            bg=mainColor)  
         fuelFrame.grid(row=0, column=1)
         Label(
             fuelFrame,
@@ -1099,7 +1100,7 @@ class PrincipalWindow:
         consFrame = Frame(
             planeFrame,
             bd=5,
-            bg=mainColor)  # frame secondaire, contient l'id
+            bg=mainColor)  
         consFrame.grid(row=0, column=2)
         labelCons = Label(
             consFrame,
@@ -1121,9 +1122,9 @@ class PrincipalWindow:
         passengerFrame = Frame(
             planeFrame,
             bd=5,
-            bg=mainColor)  # frame secondaire, contient l'id
+            bg=mainColor)  
         passengerFrame.grid(row=0, column=3)
-        labelPassengers = Label(
+        Label(
             passengerFrame,
             bd=3,
             bg=mainColor,
@@ -1140,8 +1141,52 @@ class PrincipalWindow:
             row=1,
             column=0)
 
-        buttonFrame = Frame(planeFrame, bd=5, bg=mainColor)
-        buttonFrame.grid(row=1, column=2)
+        text = "{} planes".format(name)
+        planeFrame = LabelFrame(
+            self.infoModelWindow,
+            bd=5,
+            relief=RIDGE,
+            bg=mainColor,
+            text=text,
+            font=tkFont.Font(
+                size=10))  # création de list_box et de la scrollbar associée
+        planeFrame.grid(row=1, column=0)
+        listBoxArea = Frame(
+            planeFrame,
+            bd=8,
+            bg=mainColor)
+        listBoxArea.pack()
+
+        scrollbar = Scrollbar(
+            listBoxArea,
+            bg=buttonColor,
+            activebackground='grey',
+            troughcolor='#F5F5F5',
+            orient=VERTICAL)
+        self.listBoxModelPlane = Listbox(
+            listBoxArea,
+            height=10,
+            width=25,
+            bd=2,
+            yscrollcommand=scrollbar.set)
+        
+        self.listBoxModelPlane.bind("<Double-Button-1>", self.infoModelPlane)
+        
+        planeLists = [airport.departureList, airport.arrivalList, airport.historyList]
+
+        self.listModelPlane = [] # Liste des avions du modèle, simplifie la sélection dans la listbox
+        for lists in planeLists:
+            for plane in lists:
+                if plane.getModel() == name:
+                    self.listBoxModelPlane.insert(END, plane.getID())
+                    self.listModelPlane.append(plane)
+
+        scrollbar.config(command=self.listBoxModelPlane.yview)
+        scrollbar.pack(side=RIGHT, fill=Y)
+        self.listBoxModelPlane.pack()
+
+        buttonFrame = Frame(self.infoModelWindow, bd=5, bg=mainColor)
+        buttonFrame.grid(row=2, column=0)
         Button(
             buttonFrame,
             text='OK',
