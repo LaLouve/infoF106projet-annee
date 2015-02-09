@@ -222,7 +222,7 @@ class PrincipalWindow:
             yscrollcommand=scrollbar.set)
 
         self.listBoxAirlines.bind("<<ListboxSelect>>", self.checkAirlineDelete) # active la sélection à la souris pour supprimer une compangnie
-        self.listBoxAirlines.bind("<Double-Button-1>", self.infoAirline) # active le double clic pour obtenir la liste d'avions d'une compagnie
+        self.listBoxAirlines.bind("<Double-Button-1>", self.showInfoAirline) # active le double clic pour obtenir la liste d'avions d'une compagnie
 
         self.airlinesList = []  # Liste des ID des compangnies, simplifie la sélection dans la listbox
         for airlineID in airport.airlinesDico:
@@ -643,6 +643,8 @@ class PrincipalWindow:
         pass
     def infoHistoryPlane(self):
         pass
+    def infoAirlinePlane(self):
+        pass
 
 
 
@@ -761,12 +763,106 @@ class PrincipalWindow:
         else:
             self.delAirlineButton.configure(state=DISABLED)
 
-    def showInfoAirline(self):
-        pass
-    def infoAirline(self):
-        pass
+    def showInfoAirline(self, event=None):
+        '''
+        Appelle la fonction d'affichage des informations et avions de la 
+        compangie sélectionnée
+        '''
+        item = self.listBoxAirlines.curselection()
+        numAirline = item[0]
+        airlineID = self.airlinesList[numAirline]
+
+        self.infoAirline(airlineID)
+
+    def infoAirline(self, airlineID):
+        '''
+        Affiche les avions et informations d'une compagnie
+        '''
+        self.infoAirlineWindow = Toplevel(bg=mainColor)
+        self.infoAirlineWindow.title("Company Info")
+
+        airline = airport.airlinesDico[airlineID]
+        nameAirline = airline.getName()
+        textName = "Name: {}".format(nameAirline)
+        textID = "ID: {}".format(airlineID)
+
+        principalFrame = Frame(self.infoAirlineWindow, 
+            bd=5,
+            bg=mainColor)
+        principalFrame.pack()
+
+        infoFrame = Frame(principalFrame,
+            bd=5,
+            bg=mainColor)
+        infoFrame.pack()
+
+        Label(infoFrame,
+            bd=3,
+            bg=mainColor,
+            text=textName).pack()
+        Label(infoFrame,
+            bd=3,
+            bg=mainColor,
+            text=textID).pack()
+
+        textLabel = "planes of {} :".format(nameAirline)
+        planeFrame = LabelFrame(
+            principalFrame,
+            bd=5,
+            bg=mainColor,
+            relief=RIDGE,
+            text=textLabel,
+            font=tkFont.Font(
+                size=10))
+        planeFrame.pack()
+
+        listBoxArea = Frame(
+            planeFrame,
+            bd=8,
+            bg=mainColor)  # création de list_box et de la scrollbar associée
+        scrollbar = Scrollbar(
+            listBoxArea,
+            bg=buttonColor,
+            activebackground='grey',
+            troughcolor='#F5F5F5',
+            orient=VERTICAL)
+        self.listBoxAirlinePlane = Listbox(
+            listBoxArea,
+            height=10,
+            width=25,
+            bd=2,
+            yscrollcommand=scrollbar.set)
+        
+        self.listBoxAirlinePlane.bind("<Double-Button-1>", self.infoAirlinePlane)
+        
+        planeLists = [airport.departureList, airport.arrivalList, airport.historyList]
+
+        self.listAirlinePlane = [] # Liste des avions de la compangnies, simplifie la sélection dans la listbox
+        for lists in planeLists:
+            for plane in lists:
+                if plane.getCompany() == nameAirline:
+                    self.listBoxAirlinePlane.insert(END, plane.getID())
+                    self.listAirlinePlane.append(plane)
+
+        scrollbar.config(command=self.listBoxAirlinePlane.yview)
+        scrollbar.pack(side=RIGHT, fill=Y)
+        listBoxArea.pack()
+        self.listBoxAirlinePlane.pack()
+        
+        Button(principalFrame,
+            text='OK',
+            relief=GROOVE,
+            width=6,
+            bg=buttonColor,
+            command=self.airlineButtonOK).pack(
+            side=BOTTOM)
+
+
     def airlineButtonOK(self):
-        pass
+        '''
+        Détruit la fenêtre d'informations de la compagnie
+        '''
+        self.infoAirlineWindow.destroy()
 
 
     # Model
@@ -950,19 +1046,19 @@ class PrincipalWindow:
         consumption = model.getConso()
         passengers = model.getPassenger()
 
-        principal = Frame(
+        planeFrame = Frame(
             self.infoModelWindow,
             bd=3,
             bg=mainColor)  # création de la frame principale
-        principal.grid(row=0, column=0)
+        planeFrame.grid(row=0, column=0)
 
-        frame_name = Frame(
-            principal,
+        nameFrame = Frame(
+            planeFrame,
             bd=5,
             bg=mainColor)  # frame secondaire, contient l'id
-        frame_name.grid(row=0, column=0)
-        label_name = Label(
-            frame_name,
+        nameFrame.grid(row=0, column=0)
+        Label(
+            nameFrame,
             bd=3,
             bg=mainColor,
             text='Model',
@@ -970,21 +1066,21 @@ class PrincipalWindow:
                 size=9)).grid(
             row=0,
             column=0)
-        info_name = Label(
-            frame_name,
+        Label(
+            nameFrame,
             bd=3,
             bg=mainColor,
             text=name).grid(
             row=1,
             column=0)
 
-        frame_fuel = Frame(
-            principal,
+        fuelFrame = Frame(
+            planeFrame,
             bd=5,
             bg=mainColor)  # frame secondaire, contient l'id
-        frame_fuel.grid(row=0, column=1)
-        labelFuel = Label(
-            frame_fuel,
+        fuelFrame.grid(row=0, column=1)
+        Label(
+            fuelFrame,
             bd=3,
             bg=mainColor,
             text='Fuel',
@@ -992,21 +1088,21 @@ class PrincipalWindow:
                 size=9)).grid(
             row=0,
             column=0)
-        info_fuel = Label(
-            frame_fuel,
+        Label(
+            fuelFrame,
             bd=3,
             bg=mainColor,
             text=fuel).grid(
             row=1,
             column=0)
 
-        frame_cons = Frame(
-            principal,
+        consFrame = Frame(
+            planeFrame,
             bd=5,
             bg=mainColor)  # frame secondaire, contient l'id
-        frame_cons.grid(row=0, column=2)
+        consFrame.grid(row=0, column=2)
         labelCons = Label(
-            frame_cons,
+            consFrame,
             bd=3,
             bg=mainColor,
             text='Consumption',
@@ -1014,21 +1110,21 @@ class PrincipalWindow:
                 size=9)).grid(
             row=0,
             column=0)
-        info_cons = Label(
-            frame_cons,
+        Label(
+            consFrame,
             bd=3,
             bg=mainColor,
             text=consumption).grid(
             row=1,
             column=0)
 
-        frame_passengers = Frame(
-            principal,
+        passengerFrame = Frame(
+            planeFrame,
             bd=5,
             bg=mainColor)  # frame secondaire, contient l'id
-        frame_passengers.grid(row=0, column=3)
+        passengerFrame.grid(row=0, column=3)
         labelPassengers = Label(
-            frame_passengers,
+            passengerFrame,
             bd=3,
             bg=mainColor,
             text='Passengers',
@@ -1036,17 +1132,17 @@ class PrincipalWindow:
                 size=9)).grid(
             row=0,
             column=0)
-        info_passengers = Label(
-            frame_passengers,
+        Label(
+            passengerFrame,
             bd=3,
             bg=mainColor,
             text=passengers).grid(
             row=1,
             column=0)
 
-        buttonFrame = Frame(principal, bd=5, bg=mainColor)
+        buttonFrame = Frame(planeFrame, bd=5, bg=mainColor)
         buttonFrame.grid(row=1, column=2)
-        button_OK = Button(
+        Button(
             buttonFrame,
             text='OK',
             relief=GROOVE,
@@ -1123,7 +1219,7 @@ class PrincipalWindow:
         statWindow = Toplevel(bg=mainColor)
         statWindow.title("Statistics")
 
-        principal = LabelFrame(
+        planeFrame = LabelFrame(
             statWindow,
             bd=4,
             relief=RIDGE,
@@ -1131,7 +1227,7 @@ class PrincipalWindow:
             text='Statistics',
             font=tkFont.Font(
                 size=11))
-        principal.pack()
+        planeFrame.pack()
 
         text = "\n- Nombre total d'avions: {}"\
             "\n\n- Nombre d'avions au décollage\nou ayant décollés: {}"\
@@ -1149,7 +1245,7 @@ class PrincipalWindow:
                                                           airport.statAirlines,
                                                           airport.statModel)
         message = Message(
-            principal,
+            planeFrame,
             text=text,
             bd=5,
             bg=mainColor,
