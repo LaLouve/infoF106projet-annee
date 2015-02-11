@@ -1784,6 +1784,9 @@ if __name__ == "__main__":
 
 
 '''
+affichage du message d'erreur pour les runways 
+à mettre dans la partie notfi
+
 if airport.departureRunway == 0 and airport.arrivalRunway == 0 and airport.mixteRunway == 0:
     text = "\nVotre aéroport n'a aucune piste pour faire décoller ou atterrir des avions."\
            "\nVeuillez en ajouter."
