@@ -147,23 +147,23 @@ class PrincipalWindow:
             activebackground='grey',
             troughcolor=mainColor,
             orient=VERTICAL)
-        self.listBoxDeparture = Listbox(
+        self.listBoxDepartures = Listbox(
             listBoxArea,
             height=25,
             width=25,
             bd=2,
             yscrollcommand=scrollbar.set)
 
-        self.listBoxDeparture.bind("<<ListboxSelect>>", self.checkPlaneDelete) # active la sélection à la souris pour supprimer un avion
-        self.listBoxDeparture.bind("<Double-Button-1>", self.infoDeparturePlane) # active le double-clic pour obtenir les infos d'un avion
+        self.listBoxDepartures.bind("<<ListboxSelect>>", self.checkPlaneDelete) # active la sélection à la souris pour supprimer un avion
+        self.listBoxDepartures.bind("<Double-Button-1>", self.infoDeparturePlane) # active le double-clic pour obtenir les infos d'un avion
 
         for plane in airport.departureList: 
-            self.listBoxDeparture.insert(END, plane.getID())
+            self.listBoxDepartures.insert(END, plane.getID())
 
-        scrollbar.config(command=self.listBoxDeparture.yview)
+        scrollbar.config(command=self.listBoxDepartures.yview)
         scrollbar.pack(side=RIGHT, fill=Y)
         listBoxArea.pack()
-        self.listBoxDeparture.pack()
+        self.listBoxDepartures.pack()
 
         Button(
             column2,
@@ -452,6 +452,7 @@ class PrincipalWindow:
         valable pour les départs et les arrivées
         '''
         self.addPlaneWindow = Toplevel(bg=mainColor)
+        self.addPlaneWindowif.resizable(width=FALSE, height=FALSE)
         self.addPlaneWindow.title("Add Plane")
 
         addFrame = Frame(
@@ -606,33 +607,29 @@ class PrincipalWindow:
         if IDletter and model:
             if planeList == "departure":
                 plane = airport.randomPlane(IDletter, model, airport.departureList)
-                self.listBoxDeparture.insert(END, plane.getID())
+                self.listBoxDepartures.insert(END, plane.getID())
             else:
                 plane = airport.randomPlane(IDletter, model, airport.arrivalList)
                 self.listBoxArrivals.insert(END, plane.getID())
 
-            text = "L'avion {} a été ajouté".format(plane.getID())
-            message = messagebox.showinfo('Plane Added', text)
 
     def deletePlaneButton(self):
         '''
         Supprime l'avion choisi par un simple clic dans la liste des avions
         au départ
         '''
-        item = self.listBoxDeparture.curselection()
-        self.listBoxDeparture.delete(item)
+        item = self.listBoxDepartures.curselection()
+        self.listBoxDepartures.delete(item)
         numPlane = item[0]
         plane = airport.departureList[numPlane]
         airport.delPlane(plane)
-        text = "L'avion {} a été supprimé".format(plane.getID())
-        message = messagebox.showwarning("Plane deleted", text)
 
     def checkPlaneDelete(self, event=None):
         '''
         Vérifie si un avion est sélectionné dans la liste des avions
         au départ et rend le boutton 'del' actif si oui
         '''
-        if self.listBoxDeparture.curselection():
+        if self.listBoxDepartures.curselection():
             self.delPlaneButton.configure(state=NORMAL)
         else:
             self.delPlaneButton.configure(state=DISABLED)
@@ -654,7 +651,7 @@ class PrincipalWindow:
         Affiche les informations d'un avion se trouvant dans la liste
         "Departure"
         '''
-        item = self.listBoxDeparture.curselection()
+        item = self.listBoxDepartures.curselection()
         num = item[0]
         plane = airport.departureList[num]
         self.infoPlane(airport.departureList, plane)
@@ -694,6 +691,7 @@ class PrincipalWindow:
         fenêtre d'affichage des informations d'un avion
         '''
         self.infoPlaneWindow = Toplevel(bg=mainColor)
+        self.infoPlaneWindow.resizable(width=FALSE, height=FALSE)
         self.infoPlaneWindow.title("Plane Info")
 
         principal = Frame(
@@ -818,7 +816,7 @@ class PrincipalWindow:
             row=1,
             column=0)
 
-        if plane.getStatut():
+        if plane.getTime():
             timeFrame = Frame(principal,
                 bd=5,
                 bg='white')  # frame secondaire, contient l'heure
@@ -841,6 +839,7 @@ class PrincipalWindow:
                 row=1,
                 column=0)
 
+        if plane.getStatut():
             statusFrame = Frame(
                 principal,
                 bd=5,
@@ -860,7 +859,8 @@ class PrincipalWindow:
                 text=plane.getStatut()).grid(
                 row=1,
                 column=0)
-        else:
+
+        if not plane.getStatut():
             ratioFrame = Frame(principal,
                 bd=5,
                 bg='white')  # frame secondaire, contient le ration (nbr de tour)
@@ -906,6 +906,7 @@ class PrincipalWindow:
         le nom et l'id de la nouvelle compagnie
         '''
         self.addAirlineWindow = Toplevel(bg=mainColor)
+        self.addAirlineWindow.resizable(width=FALSE, height=FALSE)
         self.addAirlineWindow.title("Add Airlines")
         
         labelFrame = Frame(
@@ -1030,6 +1031,7 @@ class PrincipalWindow:
         Affiche les avions et informations d'une compagnie
         '''
         self.infoAirlineWindow = Toplevel(bg=mainColor)
+        self.infoAirlineWindow.resizable(width=FALSE, height=FALSE)
         self.infoAirlineWindow.title("Company Info")
 
         airline = airport.airlinesDico[airlineID]
@@ -1122,6 +1124,7 @@ class PrincipalWindow:
         du modèle qu'il veut ajouter
         '''
         self.addModelWindow = Toplevel(bg=mainColor)
+        self.addModelWindow.resizable(width=FALSE, height=FALSE)
         self.addModelWindow.title("Add Model")
 
         principalFrame = Frame(
@@ -1289,6 +1292,7 @@ class PrincipalWindow:
         Affiche les informations du modèle
         '''
         self.infoModelWindow = Toplevel(bg=mainColor)
+        self.infoModelWindow.resizable(width=FALSE, height=FALSE)
         self.infoModelWindow.title("Model Info")
 
         name = model.getName()
@@ -1453,6 +1457,98 @@ class PrincipalWindow:
         self.infoModelWindow.destroy()
 
 
+    # Fonctions d'avancement dans le temps/la simulation
+    def stepButton(self, nbrMin):
+        '''
+        Permet d'avancer le temps
+        Si l'aéroport n'a pas de pistes, un message est affiché
+        Effectue les évenement suivants en fonction du nombre de minutes
+        passées et du nombres de pistes présentes dans l'aéroport
+        Affiche un message si un avion est en retard
+        Mets à jour les informations des avions
+        '''
+        self.nbrMin.delete(0, last=END)
+
+        ok = False
+        if len(nbrMin) != 0 and nbrMin.isdigit():
+            nbrMin = int(nbrMin)
+            ok = True
+        elif nbrMin == '':
+            nbrMin = 1
+            ok = True
+
+        if ok:
+            plane = None
+            for i in range(int(nbrMin)):
+                self.eventRandom()
+
+                for j in range(airport.departureRunway):
+                    plane = airport.nextDeparture()
+                    self.executePlane(plane)
+
+                for k in range(airport.arrivalRunway):
+                    plane = airport.nextArrival()
+                    self.executePlane(plane)
+
+                for l in range(airport.mixteRunway):
+                    plane = airport.nextEvent()
+                    self.executePlane(plane)
+
+                crashedPlane, delayedPlane = airport.updateStatus()
+
+                for event in crashedPlane:
+                    plane = event[0]
+                    death = event[1]
+                    self.executePlane(plane)
+
+                if airport.tick == 1440:
+                    self.newDay()
+                    text = '{:^20}'.format('New Day')
+                    message = messagebox.showinfo('New Day', text)
+                self.clock.configure(text=self.time(airport.tick))
+
+        else:
+            text = "La valeur entrée n'est pas correcte. Veuillez la vérifier."
+            message = messagebox.showwarning("Valeur Incorecte", text) 
+
+    def executePlane(self, plane):
+        '''
+        Effectue l'évenement (atterrissage ou décollage)
+        '''
+        if plane is not None:
+            listPlane = self.listBoxDepartures.get(0, END)
+            if plane.getID() in listPlane:
+                item = listPlane.index(plane.getID())
+                self.listBoxDepartures.delete(item)
+            else:
+                listPlane = self.listBoxArrivals.get(0, END)
+                item = listPlane.index(plane.getID())
+                self.listBoxArrivals.delete(item)
+
+    def eventRandom(self):
+        '''
+        Permet de créer un avion de manière aléatoire
+        (évenement aléatoire)
+        '''
+        nbr = int(random.randint(0, 40))
+
+        if len(airport.modelList) > 0 and len(airport.airlinesDico) > 0:
+            if nbr == 8:
+                self.addRandomPlane("departure")
+            if nbr == 3:
+                self.addRandomPlane("arrival")
+
+    def newDay(self):
+        '''
+        Appelle la fonction newDay qui permet de "nettoyer" l'aéroport 
+        pour le nouveau jour
+        Vide les listBox contenant les avions au départ et à l'arrivée
+        '''
+        airport.newDay()
+
+        self.listBoxArrivals.delete(0, END)
+        self.listBoxDepartures.delete(0, END)
+
     # Fonctions de modifications des pistes (runways)
     def plusRunway(self, runway):
         '''
@@ -1511,6 +1607,7 @@ class PrincipalWindow:
         Affiche les statistiques de l'aéroport
         '''
         statWindow = Toplevel(bg=mainColor)
+        statWindow.resizable(width=FALSE, height=FALSE)
         statWindow.title("Statistics")
 
         planeFrame = LabelFrame(
@@ -1553,6 +1650,7 @@ class PrincipalWindow:
         Affiche la liste "history" dans une nouvelle fenêtre
         '''
         historyWindow = Toplevel(bg=mainColor)
+        historyWindow.resizable(width=FALSE, height=FALSE)
         historyWindow.title("History")
         column = Frame(
             historyWindow,
@@ -1585,7 +1683,7 @@ class PrincipalWindow:
             yscrollcommand=scrollbar.set)
         self.listBoxHistory.bind("<Double-Button-1>", self.infoHistoryPlane)
         for plane in airport.historyList:
-            text = (str(plane.getID()).ljust(12, ' ') + str(plane.getStatut()))
+            text = (str(plane.getID()).ljust(13, ' ') + str(plane.getStatut()))
             self.listBoxHistory.insert(END, text)
         scrollbar.config(command=self.listBoxHistory.yview)
         scrollbar.pack(side=RIGHT, fill=Y)
@@ -1599,6 +1697,7 @@ class PrincipalWindow:
         Permet d'afficher la fenêtre d'aide du programme
         ''' 
         help = Toplevel(root, bg=mainColor)
+        help.resizable(width=FALSE, height=FALSE)
         help.title("Help")
         Label(
             help,
@@ -1681,3 +1780,20 @@ if __name__ == "__main__":
     root.configure(background=mainColor)
     root.resizable(width=FALSE, height=FALSE)
     root.mainloop()
+
+
+
+'''
+if airport.departureRunway == 0 and airport.arrivalRunway == 0 and airport.mixteRunway == 0:
+    text = "\nVotre aéroport n'a aucune piste pour faire décoller ou atterrir des avions."\
+           "\nVeuillez en ajouter."
+    message = messagebox.showwarning('No runway', text)
+elif airport.departureRunway == 0 and airport.mixteRunway == 0:
+    text = "\nVotre aéroport n'a aucune piste pour faire décoller des avions."\
+           "\nVeuillez en ajouter."
+    message = messagebox.showwarning('No runway', text)
+elif airport.arrivalRunway == 0 and airport.mixteRunway == 0:
+    text = "\nVotre aéroport n'a aucune piste pour faire atterrir des avions."\
+           "\nVeuillez en ajouter."
+    message = messagebox.showwarning('No runway', text)
+'''

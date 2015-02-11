@@ -386,9 +386,7 @@ class Airport:
                 self.arrivalList.remove(plane)
                 self.historyList.append(plane)
                 self.statCrash += 1
-                death = random.randint(
-                    1,
-                    passengers)  # nombre de morts lors du crash
+                death = random.randint(1, passengers)  # nombre de morts lors du crash
                 self.statDeath += death
                 event = (plane, death)
                 crashedPlane.append(event)
