@@ -669,7 +669,6 @@ class PrincipalWindow:
             text = "Les données entrées ne sont pas correctes!\nVeuillez les vérifier"
             message = messagebox.showerror('Error', text)
 
-
     def addRandomPlane(self, planeList):
         '''
         Ajoute un avion aléatoire au départ
@@ -1665,20 +1664,17 @@ class PrincipalWindow:
         if runway == 'departure':
             airport.departureRunway += 1
             text = "Departure: {}".format(airport.departureRunway)
-            textLabel = text.ljust(15, ' ')
-            self.departureLabel.configure(text=textLabel)
+            self.departureLabel.configure(text=text)
 
         elif runway == 'arrival':
             airport.arrivalRunway += 1
-            text = "Arrival: {}".format(airport.arrivalRunway)
-            textLabel = text.ljust(15, ' ')
-            self.arrivalLabel.configure(text=textLabel)
+            text = "Arrival:      {}".format(airport.arrivalRunway)
+            self.arrivalLabel.configure(text=text)
 
         elif runway == 'mixte':
             airport.mixteRunway += 1
-            text = "Mixte: {}".format(airport.mixteRunway)
-            textLabel = text.ljust(15, ' ')
-            self.mixteLabel.configure(text=textLabel)
+            text = "Mixte:       {}".format(airport.mixteRunway)
+            self.mixteLabel.configure(text=text)
 
     def minusRunway(self, runway):
         '''
@@ -1689,24 +1685,21 @@ class PrincipalWindow:
             if airport.departureRunway < 0:
                 airport.departureRunway = 0
             text = "Departure: {}".format(airport.departureRunway)
-            textLabel = text.ljust(15, ' ')
-            self.departureLabel.configure(text=textLabel)
+            self.departureLabel.configure(text=text)
 
         elif runway == 'arrival':
             airport.arrivalRunway -= 1
             if airport.arrivalRunway < 0:
                 airport.arrivalRunway = 0
-            text = "Arrival: {}".format(airport.arrivalRunway)
-            textLabel = text.ljust(15, ' ')
-            self.arrivalLabel.configure(text=textLabel)
+            text = "Arrival:      {}".format(airport.arrivalRunway)
+            self.arrivalLabel.configure(text=text)
 
         elif runway == 'mixte':
             airport.mixteRunway -= 1
             if airport.mixteRunway < 0:
                 airport.mixteRunway = 0
-            text = "Mixte: {}".format(airport.mixteRunway)
-            textLabel = text.ljust(15, ' ')
-            self.mixteLabel.configure(text=textLabel)
+            text = "Mixte:       {}".format(airport.mixteRunway)
+            self.mixteLabel.configure(text=text)
 
 
     #Statistiques
