@@ -23,9 +23,9 @@ class Plane:
         self.company = company
         self.passengers = int(passengers)
         self.fuel = int(fuel)
-        self.model = model
         # modèle de l'avion, définit le fuel, la consommation et le nbr max de
         # passagers
+        self.model = model
         self.consumption = int(consumption)
         self.time = time
         # statut= Landed, Crashed, Take Off, Delayed, Deleted, In Time or None
