@@ -39,7 +39,7 @@ airport = airportFunctions.Airport()
    |                                                                            |
    V                                                                            V
 '''
-airport.loadSystem()
+#airport.loadSystem()
 
 # Variables globales
 mainColor = 'white'
@@ -97,7 +97,7 @@ class PrincipalWindow:
             orient=VERTICAL)
         self.listBoxArrivals = Listbox(
             listBoxArea,
-            height=25,
+            height=32,
             width=25,
             bd=2,
             yscrollcommand=scrollbar.set)
@@ -149,7 +149,7 @@ class PrincipalWindow:
             orient=VERTICAL)
         self.listBoxDepartures = Listbox(
             listBoxArea,
-            height=25,
+            height=32,
             width=25,
             bd=2,
             yscrollcommand=scrollbar.set)
@@ -216,7 +216,7 @@ class PrincipalWindow:
             orient=VERTICAL)
         self.listBoxAirlines = Listbox(
             listBoxArea,
-            height=10,
+            height=13,
             width=25,
             bd=2,
             yscrollcommand=scrollbar.set)
@@ -274,7 +274,7 @@ class PrincipalWindow:
             orient=VERTICAL)
         self.listBoxModel = Listbox(
             listBoxArea,
-            height=10,
+            height=13,
             width=25,
             bd=2,
             yscrollcommand=scrollbar.set)
@@ -348,17 +348,17 @@ class PrincipalWindow:
             bg=buttonColor,
             command=lambda: self.stepButton(self.nbrMin.get())).pack(side=RIGHT)
 
-        # partie centrale, permet l'espacement des parties haute et basse
-        column4Mid = Frame(column4, height=25, bg=mainColor)
-        column4Mid.pack(side=TOP)
+        # partie intermédiaire, permet l'espacement des parties haute et centrale
+        column4int = Frame(column4, height=25, bg=mainColor)
+        column4int.pack(side=TOP)
 
-        # partie basse de la quatrième colonne, contient les informations
+        # partie centrale de la quatrième colonne, contient les informations
         # des pistes
-        column4bottom = Frame(column4, bg=mainColor)
-        column4bottom.pack(side=BOTTOM)
+        column4mid = Frame(column4, bg=mainColor)
+        column4mid.pack(side=TOP)
 
         mainLabel = LabelFrame(
-            column4bottom,
+            column4mid,
             bd=4,
             relief=RIDGE,
             bg=mainColor,
@@ -443,6 +443,31 @@ class PrincipalWindow:
             width=1,
             bg=buttonColor,
             command=lambda: self.plusRunway("mixte")).pack(side=RIGHT)
+
+        # partie intermédiaire, permet l'espacement des parties haute et basse
+        column4int2 = Frame(column4, height=25, bg=mainColor)
+        column4int2.pack(side=TOP)
+
+        # Partie basse, affiche les notifiactions du programmes 
+        self.column4bottom = Frame(column4, bg=mainColor)
+        self.column4bottom.pack(side=BOTTOM)
+
+        self.notifFrame = LabelFrame(
+            self.column4bottom,
+            bd=4,
+            width=40,
+            relief=RIDGE,
+            bg=mainColor,
+            text='Notifications',
+            font=tkFont.Font(size=10))
+        self.notifFrame.pack()
+
+        self.notifList = ['', '' , '', '', '']
+        self.textColor = 'black'
+        self.textColorFirst = 'green'
+        self.listSize = 5
+
+        self.displayNotif()
 
 
 
@@ -611,63 +636,68 @@ class PrincipalWindow:
             if IDnumber.isdigit() and nbrPassengers.isdigit():
                 ID = (str(IDletter) + str(IDnumber))
 
-                if int(nbrPassengers) <= maxPassengers:
-                    if heure is not None and minute is not None:
-                        nbrHeure = heure.get()
-                        nbrMinute = minute.get()
-                        statut = 'In Time'
+                if airport.checkID(ID):
 
-                        if nbrHeure.isdigit() and nbrMinute.isdigit():
-                            if int(nbrHeure) >= 0 and int(nbrHeure) <= 23 and int(nbrMinute) >= 0 and int(nbrMinute) <= 59:
-                                time = (int(str(nbrHeure).rjust(2, '0')), int(str(nbrMinute).rjust(2, '0')))
-                                plane = airport.createPlane(
-                                    ID,
-                                    airlineName,
-                                    nbrPassengers,
-                                    fuel,
-                                    consumption,
-                                    modelName,
-                                    time,
-                                    statut)
-                                airport.addPlane(plane)
+                    if int(nbrPassengers) <= maxPassengers:
+                        if heure is not None and minute is not None:
+                            nbrHeure = heure.get()
+                            nbrMinute = minute.get()
+                            statut = 'In Time'
 
-                                text = "L'avion {} a été ajouté".format(
-                                    plane.getID())
-                                message = messagebox.showinfo('Plane Added', text)
-                                listBox.insert(END, plane.getID())
-                                self.addPlaneWindow.destroy()
+                            if nbrHeure.isdigit() and nbrMinute.isdigit():
+                                if int(nbrHeure) >= 0 and int(nbrHeure) <= 23 and int(nbrMinute) >= 0 and int(nbrMinute) <= 59:
+                                    time = (int(str(nbrHeure).rjust(2, '0')), int(str(nbrMinute).rjust(2, '0')))
+                                    plane = airport.createPlane(
+                                        ID,
+                                        airlineName,
+                                        nbrPassengers,
+                                        fuel,
+                                        consumption,
+                                        modelName,
+                                        time,
+                                        statut)
+                                    airport.addPlane(plane)
+
+                                    text = "-L'avion {} a été ajouté.".format(
+                                        plane.getID())
+                                    self.addNotif(text)
+                                    listBox.insert(END, plane.getID())
+                                    self.addPlaneWindow.destroy()
+                                else:
+                                    text = "Les données entrées ne sont pas correctes!\nVeuillez les vérifier."
+                                    messagebox.showerror('Error', text)
                             else:
-                                text = "Les données entrées ne sont pas correctes!\nVeuillez les vérifier"
-                                message = messagebox.showerror('Error', text)
+                                text = "Les données entrées ne sont pas correctes!\nVeuillez les vérifier."
+                                messagebox.showerror('Error', text)
                         else:
-                            text = "Les données entrées ne sont pas correctes!\nVeuillez les vérifier"
-                            message = messagebox.showerror('Error', text)
+                            time = None
+                            statut = None
+                            plane = airport.createPlane(
+                                ID,
+                                airlineName,
+                                nbrPassengers,
+                                fuel,
+                                consumption,
+                                modelName,
+                                time,
+                                statut)
+                            airport.addPlane(plane)
+                            text = "-L'avion {} a été ajouté.".format(plane.getID())
+                            self.addNotif(text)
+                            listBox.insert(END, plane.getID())
+                            self.addPlaneWindow.destroy()
                     else:
-                        time = None
-                        statut = None
-                        plane = airport.createPlane(
-                            ID,
-                            airlineName,
-                            nbrPassengers,
-                            fuel,
-                            consumption,
-                            modelName,
-                            time,
-                            statut)
-                        airport.addPlane(plane)
-                        text = "L'avion {} a été ajouté".format(plane.getID())
-                        message = messagebox.showinfo('Plane Added', text)
-                        listBox.insert(END, plane.getID())
-                        self.addPlaneWindow.destroy()
+                        text = "Le nombre de passagers dépasse la capacité maximale du modèle d'avion sélectionné.\nCapacité max= {}".format(maxPassengers)
+                        messagebox.showwarning('Error', text)
                 else:
-                    text = "Le nombre de passagers dépasse la capacité maximale du modèle d'avion sélectionné.\nCapacité max= {}".format(maxPassengers)
-                    message = messagebox.showwarning('Error', text)
+                    text = "Cet ID est déjà utilisé par un avion.\nVeuillez le changer."
+                    messagebox.showwarning('Error', text)
             else:
-                text = "Les données entrées ne sont pas correctes!\nVeuillez les vérifier"
-                message = messagebox.showerror('Error', text)
+                text = "Les données entrées ne sont pas correctes!\nVeuillez les vérifier."
+                messagebox.showerror('Error', text)
         else:
-            text = "Les données entrées ne sont pas correctes!\nVeuillez les vérifier"
-            message = messagebox.showerror('Error', text)
+            text = "Les données entrées ne sont pas correctes!\nVeuillez les vérifier."
+            messagebox.showerror('Error', text)
 
     def addRandomPlane(self, planeList):
         '''
@@ -676,27 +706,35 @@ class PrincipalWindow:
         IDletter = False
         model = False
 
-        if len(airport.airlinesDico) == 0:
-            text = "Il n'y a aucune compangie enregistrée, \nveuillez en ajouter une via le bouton 'Company'"
-            message = messagebox.showwarning('No airlines', text)
+        if len(airport.airlinesDico) == 0 and len(airport.modelList) == 0:
+            text = "Il n'y a ni compangie, ni modèle enregistrés.\nVeuillez en ajouter via la fenêtre principale"
+            messagebox.showwarning('No airline, no model', text)
         else:
-            listKeyAirlines = airport.airlinesDico.keys()
-            IDletter = random.choice(list(listKeyAirlines))
+            if len(airport.airlinesDico) == 0:
+                text = "Il n'y a aucune compangie enregistrée.\nVeuillez en ajouter via la fenêtre principale"
+                messagebox.showwarning('No airline', text)
+            else:
+                listKeyAirlines = airport.airlinesDico.keys()
+                IDletter = random.choice(list(listKeyAirlines))
 
-        if len(airport.modelList) == 0:
-            text = "Il n'y a aucun modèle enregistré, \nveuillez en ajouter un via le bouton 'Model'"
-            message = messagebox.showwarning('No model', text)
-        else:
-            indice = random.randint(0, len(airport.modelList) - 1)
-            model = airport.modelList[indice]
+            if len(airport.modelList) == 0:
+                text = "Il n'y a aucun modèle enregistré.\nVeuillez en ajouter via la fenêtre principale"
+                messagebox.showwarning('No model', text)
+            else:
+                indice = random.randint(0, len(airport.modelList) - 1)
+                model = airport.modelList[indice]
 
         if IDletter and model:
             if planeList == "departure":
                 plane = airport.randomPlane(IDletter, model, airport.departureList)
                 self.listBoxDepartures.insert(END, plane.getID())
+
             else:
                 plane = airport.randomPlane(IDletter, model, airport.arrivalList)
                 self.listBoxArrivals.insert(END, plane.getID())
+            
+            text = "-L'avion {} a été ajouté.".format(plane.getID())
+            self.addNotif(text)
 
     def deletePlaneButton(self):
         '''
@@ -704,10 +742,13 @@ class PrincipalWindow:
         au départ
         '''
         item = self.listBoxDepartures.curselection()
-        self.listBoxDepartures.delete(item)
-        numPlane = item[0]
-        plane = airport.departureList[numPlane]
-        airport.delPlane(plane)
+        if item:
+            self.listBoxDepartures.delete(item)
+            numPlane = item[0]
+            plane = airport.departureList[numPlane]
+            airport.delPlane(plane)
+            text = "-L'avion {} a été supprimé.".format(plane.getID())
+            self.addNotif(text)
 
     def checkPlaneDelete(self, event=None):
         '''
@@ -1060,35 +1101,40 @@ class PrincipalWindow:
         '''
         Ajoute la compagnie au dictionnaire des compagnies
         '''
-        if airlineID not in airport.airlinesDico:
-            objAirline = airport.addAirlines(airlineID, airline)
-            self.airlinesList.append(airlineID)
+        if len(airlineID) ==2 or len(airlineID) == 3:
+            if airlineID not in airport.airlinesDico:
+                objAirline = airport.addAirlines(airlineID, airline)
+                self.airlinesList.append(airlineID)
 
-            text = "La compagnie {} a été ajoutée".format(airline)
-            message = messagebox.showinfo('Company added', text)
-           
-            self.addAirlineWindow.destroy()
+                text = "-La compagnie {} a été ajoutée.".format(airline)
+                self.addNotif(text)
+               
+                self.addAirlineWindow.destroy()
 
-            self.listBoxAirlines.insert(END, airline)
+                self.listBoxAirlines.insert(END, airline)
 
+            else:
+                text = "La compagnie {} existe déjà.".format(company)
+                messagebox.showwarning('Company already exist', text)
         else:
-            text = "La compagnie {} existe déjà".format(company)
-            message = messagebox.showwarning('Company already exist', text)
+            text = "La taille de l'ID doit être de 2 ou 3 caractères."
+            messagebox.showwarning('ID length', text)
 
     def delAirline(self):
         '''
         Permet de supprimer une compagnie
         '''
         item = self.listBoxAirlines.curselection()
-        self.listBoxAirlines.delete(item)
+        if item:
+            self.listBoxAirlines.delete(item)
 
-        numAirline = item[0]
-        airlineID = self.airlinesList[numAirline]
-        airline = airport.airlinesDico[airlineID]
+            numAirline = item[0]
+            airlineID = self.airlinesList[numAirline]
+            airline = airport.airlinesDico[airlineID]
 
-        text = "La compagnie '{}' a été supprimé".format(airline.getName())
-        message = messagebox.showwarning("Company deleted", text)
-        airport.delAirlines(airlineID)
+            text = "-La compagnie {} a été supprimée.".format(airline.getName())
+            self.addNotif(text)
+            airport.delAirlines(airlineID)
 
     def checkAirlineDelete(self, event=None):
         '''
@@ -1340,29 +1386,29 @@ class PrincipalWindow:
 
             self.listBoxModel.insert(END, model)
             
-            txt = "Le modèle {} a été ajouté.".format(model)
-            messagebox.showinfo('Add', txt)
+            text = "-Le modèle {} a été ajouté.".format(model)
+            self.addNotif(text)
 
             
         else:
-            text = "Les données entrées ne sont pas correctes!\nVeuillez les vérifier"
-            message = messagebox.showerror('Error', text)
+            text = "Les données entrées ne sont pas correctes!\nVeuillez les vérifier."
+            messagebox.showerror('Error', text)
 
     def delModel(self):
         '''
         Supprime le modèle sélectionné
         '''
         item = self.listBoxModel.curselection()
-        
-        self.listBoxModel.delete(item)
+        if item:
+            self.listBoxModel.delete(item)
 
-        numModel = item[0]
-        model = airport.modelList[numModel]
-        airport.delModel(model)
+            numModel = item[0]
+            model = airport.modelList[numModel]
+            airport.delModel(model)
 
-        name = model.getName()
-        text = "Le modèle '{}' a été supprimé".format(name)
-        message = messagebox.showwarning("Model deleted", text)
+            name = model.getName()
+            text = "-Le modèle '{}' a été supprimé.".format(name)
+            self.addNotif(text)
         
     def checkModelDelete(self, event=None):
         '''
@@ -1565,6 +1611,23 @@ class PrincipalWindow:
 
 
     # Fonctions d'avancement dans le temps/la simulation
+    def checkRunways(self):
+        '''
+        Vérifie le nombre de pistes et affiche un message dans les notifications 
+        '''
+        if airport.departureRunway == 0 and airport.arrivalRunway == 0 and airport.mixteRunway == 0:
+            text = "-Votre aéroport n'a aucune piste pour faire décoller ou atterrir des avions."
+            self.addNotif(text)
+
+        elif airport.departureRunway == 0 and airport.mixteRunway == 0:
+            text = "-Votre aéroport n'a aucune piste pour faire décoller des avions."
+            self.addNotif(text)
+
+        elif airport.arrivalRunway == 0 and airport.mixteRunway == 0:
+            text = "-Votre aéroport n'a aucune piste pour faire atterrir des avions."
+            self.addNotif(text)
+
+
     def stepButton(self, nbrMin):
         '''
         Permet d'avancer le temps
@@ -1589,34 +1652,56 @@ class PrincipalWindow:
             for i in range(int(nbrMin)):
                 self.eventRandom()
 
+                self.checkRunways()
                 for j in range(airport.departureRunway):
                     plane = airport.nextDeparture()
-                    self.executePlane(plane)
+                    if plane:
+                        self.executePlane(plane)
+                        text = "-L'avion {} a décollé.".format(plane.getID())
+                        self.addNotif(text)
 
                 for k in range(airport.arrivalRunway):
                     plane = airport.nextArrival()
-                    self.executePlane(plane)
+                    if plane:
+                        self.executePlane(plane)
+                        text = "-L'avion {} a atterri.".format(plane.getID())
+                        self.addNotif(text)
 
                 for l in range(airport.mixteRunway):
                     plane = airport.nextEvent()
-                    self.executePlane(plane)
+                    if plane:
+                        self.executePlane(plane)
+                        if plane.getStatut() == "Landed":
+                            text = "-L'avion {} a atterri.".format(plane.getID())
+                            self.addNotif(text)
+                        else:
+                            text = "-L'avion {} a décollé.".format(plane.getID())
+                            self.addNotif(text)
 
                 crashedPlane, delayedPlane = airport.updateStatus()
+
 
                 for event in crashedPlane:
                     plane = event[0]
                     death = event[1]
                     self.executePlane(plane)
+                    text = "-L'avion {} s'est crashé.\n{} personnes sont mortes.".format(plane.getID(), death)
+                    self.addNotif(text)
+
+                for plane in delayedPlane:
+                    text = "-L'avion {} a du retard.".format(plane.getID())
+                    self.addNotif(text)
+
 
                 if airport.tick == 1440:
                     self.newDay()
-                    text = '{:^20}'.format('New Day')
-                    message = messagebox.showinfo('New Day', text)
+                    text = 'New Day!'
+                    self.addNotif(text)
                 self.clock.configure(text=self.time(airport.tick))
 
         else:
             text = "La valeur entrée n'est pas correcte. Veuillez la vérifier."
-            message = messagebox.showwarning("Valeur Incorecte", text) 
+            messagebox.showwarning("Valeur Incorecte", text) 
 
     def executePlane(self, plane):
         '''
@@ -1631,6 +1716,8 @@ class PrincipalWindow:
                 listPlane = self.listBoxArrivals.get(0, END)
                 item = listPlane.index(plane.getID())
                 self.listBoxArrivals.delete(item)
+
+    
 
     def eventRandom(self):
         '''
@@ -1804,7 +1891,7 @@ class PrincipalWindow:
             help,
             bd=6,
             bg=mainColor,
-            text="Bienvenue dans le simulateur de gestion d'aéroport",
+            text="Bienvenue dans le simulateur de gestion d'aéroport.",
             font=tkFont.Font(
                 size=9)).pack(
             side=TOP)
@@ -1837,11 +1924,10 @@ class PrincipalWindow:
             filetypes=[("Fichier txt", "*.txt"), ("Tous", "*")], initialfile="save.txt", parent=self.root)
         if fileName:
             if airport.saveSystem(fileName):
-                messagebox.showinfo("Sauvegarde", "Sauvegarde réussie.")
+                text = "-Sauvegarde réussie."
+                self.addNotif(text)
             else:
-                messagebox.showwarning(
-                    "Sauvegarde",
-                    "Problème pendant la sauvegarde.")
+                messagebox.showwarning("Sauvegarde", "Problème pendant la sauvegarde.")
 
     def loadSystem(self, event=None):
         '''
@@ -1851,7 +1937,8 @@ class PrincipalWindow:
             filetypes=[("Fichier txt", "*.txt"), ("Tous", "*")], initialfile="save.txt", parent=self.root)
         if fileName:
             if airport.loadSystem(fileName):
-                messagebox.showinfo("Chargement", "Chargement réussit.")
+                text = "-Chargement de la sauvegarde réussi."
+                self.addNotif(text)
                 self.root.destroy()
                 root = Tk()
                 root.title("Airport Simulator")
@@ -1859,9 +1946,7 @@ class PrincipalWindow:
                 root.resizable(width=FALSE, height=FALSE)
                 self.__init__(root)
             else:
-                messagebox.showwarning(
-                    "Chargement",
-                    "Problème pendant la chargement.")
+                messagebox.showwarning("Chargement", "Problème pendant la chargement.")
 
 
     # Fonctions de formatage d'affichage
@@ -1872,6 +1957,51 @@ class PrincipalWindow:
         return (str(tick // 60).rjust(2, '0') + "h" + str(tick % 60).rjust(2, '0'))
 
 
+    # Affichage des notifications
+    def addNotif(self, text):
+        '''
+        Ajoute la nouvelle notification à la liste des notifications
+        Appelle la fonction d'affichage des notifications 
+        '''
+        self.notifList.pop(0)
+        self.notifList.append(text)
+        self.displayNotif()
+
+    def displayNotif(self):
+        '''
+        Détruit l'ancienne frame de notifications pour la 
+        remplacer par la nouvelle
+        '''
+        self.notifFrame.destroy()
+
+        self.notifFrame = LabelFrame(
+            self.column4bottom,
+            bd=4,
+            width=40,
+            relief=RIDGE,
+            bg=mainColor,
+            text='Notifications',
+            font=tkFont.Font(size=10))
+        self.notifFrame.pack()
+
+        index = 1
+        for notif in self.notifList:
+            color = self.textColor
+            if index == self.listSize:
+                color = self.textColorFirst
+
+            self.notifText = StringVar()
+            notification = Message(self.notifFrame,
+                bd=4,
+                bg=mainColor,
+                fg=color,
+                anchor=W,
+                width=200,
+                textvariable=self.notifText,
+                justify=LEFT)
+            self.notifText.set(notif)
+            notification.pack(side=BOTTOM)
+            index += 1
 
 
 if __name__ == "__main__":
@@ -1881,23 +2011,3 @@ if __name__ == "__main__":
     root.configure(background=mainColor)
     root.resizable(width=FALSE, height=FALSE)
     root.mainloop()
-
-
-
-'''
-affichage du message d'erreur pour les runways 
-à mettre dans la partie notfi
-
-if airport.departureRunway == 0 and airport.arrivalRunway == 0 and airport.mixteRunway == 0:
-    text = "\nVotre aéroport n'a aucune piste pour faire décoller ou atterrir des avions."\
-           "\nVeuillez en ajouter."
-    message = messagebox.showwarning('No runway', text)
-elif airport.departureRunway == 0 and airport.mixteRunway == 0:
-    text = "\nVotre aéroport n'a aucune piste pour faire décoller des avions."\
-           "\nVeuillez en ajouter."
-    message = messagebox.showwarning('No runway', text)
-elif airport.arrivalRunway == 0 and airport.mixteRunway == 0:
-    text = "\nVotre aéroport n'a aucune piste pour faire atterrir des avions."\
-           "\nVeuillez en ajouter."
-    message = messagebox.showwarning('No runway', text)
-'''

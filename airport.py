@@ -22,7 +22,7 @@ def mainLoop():
     du nombre de pistes présentes
     Met à jour les informations des avions
     '''
-    airport = airportTerminal.airport
+    airport = airportFunctions.Airport()
     terminal = airportTerminal.Terminal()
     terminal.askNewGame("save.txt")
 
