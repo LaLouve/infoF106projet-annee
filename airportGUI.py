@@ -19,27 +19,19 @@ from tkinter import *
 # permet la mise en forme des textes des label, boutons, ect. par exemple
 # changer la taille et la police d'écriture
 import tkinter.font as tkFont
+
 # permet l'affichage de messages d'erreur
 from tkinter import messagebox 
+
 # permet de selectionner un fichier pour la sauvegarde/restauration
 import tkinter.filedialog as filedialog
+
 # Permet d'avoir des menus déroulants
 from tkinter import ttk
 
 import random
 
 airport = airportFunctions.Airport()
-'''
-   /\                                                                           /\     
-  /  \                                                                         /  \   
- /    \                                                                       /    \   
-/      \  Chargement des données sauvées dans save.txt pour faciliter les    /      \   
---------  test!!!!!                                                          --------
-   |               SUPPRIMER AVANT DE REMETTRE AU PROF!!!!!!!                   |
-   |                                                                            |
-   V                                                                            V
-'''
-#airport.loadSystem()
 
 # Variables globales
 mainColor = 'white'
@@ -188,7 +180,6 @@ class PrincipalWindow:
             command=self.deletePlaneButton)
         self.delPlaneButton.pack(side=LEFT)
 
-
         # colonne 3
         column3 = Frame(root, bd=6, bg=mainColor)
         column3.pack(side=LEFT)
@@ -308,7 +299,6 @@ class PrincipalWindow:
             state=DISABLED,
             command=self.delModel)
         self.delModelButton.pack(side=LEFT)
-
 
         # colonne 4 
         column4 = Frame(root, bd=6, bg=mainColor)
@@ -468,7 +458,6 @@ class PrincipalWindow:
         self.listSize = 5
 
         self.displayNotif()
-
 
 
     # FONCTIONS
@@ -1742,6 +1731,7 @@ class PrincipalWindow:
 
         self.listBoxArrivals.delete(0, END)
         self.listBoxDepartures.delete(0, END)
+
 
     # Fonctions de modifications des pistes (runways)
     def plusRunway(self, runway):
