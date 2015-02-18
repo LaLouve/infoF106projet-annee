@@ -483,6 +483,7 @@ class Airport:
         Converti le text du fichier de sauvegarde en données utilisables
         par le simulateur.
         '''
+        ok = False
         try:
             saveFile = open(filename, "r")
             save = json.load(saveFile)
@@ -530,9 +531,11 @@ class Airport:
             self.statDeath = loadStat["death"]
             self.statAirlines = loadStat["company"]
             self.statModel = loadStat["model"]
+
+            ok = True
         except:
-            print("Le fichier de sauvegarde est corrompu.")
+            ok = False
 
         saveFile.close
 
-        return True
+        return ok

@@ -573,10 +573,12 @@ class Terminal:
                         "\n(O)ui/(N)on: ")).lower()
 
             if answer == 'n':
-                os.remove(filename)
                 self.askRunway()
             else:
-                airport.loadSystem(filename)
+                if airport.loadSystem(filename):
+                    print("Chargement réussi!")
+                else:
+                    print('Le fichier de sauvegarde est corrompu.')
         else:
             self.askRunway()
 
