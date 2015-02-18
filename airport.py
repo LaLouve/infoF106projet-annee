@@ -9,6 +9,12 @@ fichier: airport.py
 
 import airportFunctions
 import airportTerminal
+import signal
+
+
+def sigint_handler(signal, frame):
+    print('\nFin de la simulation.')
+    exit(0)
 
 
 def mainLoop():
@@ -22,6 +28,7 @@ def mainLoop():
     du nombre de pistes présentes
     Met à jour les informations des avions
     '''
+    signal.signal(signal.SIGINT, sigint_handler)
     airport = airportFunctions.Airport()
     terminal = airportTerminal.Terminal()
     terminal.askNewGame("save.txt")

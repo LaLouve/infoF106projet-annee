@@ -150,7 +150,7 @@ class Terminal:
         while not ok:
             try:
                 numberID = int(input("les 4 chiffres de l'ID: "))
-                
+
                 if len(str(numberID)) != 4:
                     print("Vous n'avez pas un entré un nombre composé de 4 chiffres")
                 else:
@@ -268,11 +268,11 @@ class Terminal:
             for plane in liste:
                 if plane.getCompany() == airlines.getName():
                     empty = False
-        if empty:        
+        if empty:
             airport.delAirlines(letterID)
             print("\nLa compangie", airlines.getName(), "a été supprimée.")
         else:
-            print("\nLa compagnie", airlines.getName(), 
+            print("\nLa compagnie", airlines.getName(),
                   "contient encore des avions au décollage ou à l'attérissage. "
                   "Il est impossible de la supprimer.")
 
@@ -417,7 +417,7 @@ class Terminal:
             else:
                 print("\nDes avions utilisent le modèle", model.getName(),
                       ". Il est impossible de le supprimer")
-    
+
 
     # RANDOM PLANE
     def askRandomPlane(self, planeList):
@@ -489,7 +489,7 @@ class Terminal:
                 nbrMixteRunway = int(
                     input("Pistes pour l'atterisssage et le décollage:"))
                 ok = True
-            except:
+            except ValueError:
                 print("\nVous n'avez pas indiqué des valeurs correcte!")
         airport.modifRunways(nbrDepRunway, nbrArrRunway, nbrMixteRunway)
 
@@ -755,7 +755,7 @@ class Terminal:
             elif answer == 'q':
                 nbrTick = 0
                 print("\nFin de la simulation.")
-                
+
             elif answer != 't':
                 print("\nVous n'avez pas entré une lettre correcte, rééssayez")
 
