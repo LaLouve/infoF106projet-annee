@@ -56,7 +56,7 @@ class PrincipalWindow:
         saveMenu.add_command(label='Save', command=self.saveSystem)
         saveMenu.add_command(label='Load', command=self.loadSystem)
 
-        menuBar.add_cascade(label="Save", menu=saveMenu)
+        menuBar.add_cascade(label="Files", menu=saveMenu)
 
         menuBar.add_command(label="Statistics", command=self.showStat)
 
