@@ -273,10 +273,10 @@ class PrincipalWindow:
         self.listBoxModel.bind("<<ListboxSelect>>", self.checkModelDelete) # active la sélection à la souris pour supprimer un modèle
         self.listBoxModel.bind("<Double-Button-1>", self.showInfoModel) # active le double-clic pour obtenir les informations d'un modèle
 
-        self.modelNameList = []
+        self.listNameModel = []
         for model in airport.modelList:
             name = model.getName()
-            self.modelNameList.append(name)
+            self.listNameModel.append(name)
             self.listBoxModel.insert(END, model.getName())
 
         scrollbar.config(command=self.listBoxModel.yview)
@@ -507,7 +507,7 @@ class PrincipalWindow:
             bg=mainColor,
             text='Model ').pack(side=LEFT)
 
-        modelName = ttk.Combobox(modelFrame, values=self.modelNameList, width=11, state="readonly")
+        modelName = ttk.Combobox(modelFrame, values=self.listNameModel, width=11, state="readonly")
         modelName.configure(background=mainColor)
         modelName.pack(side=RIGHT)
 
@@ -1374,6 +1374,7 @@ class PrincipalWindow:
             self.addModelWindow.destroy()
 
             self.listBoxModel.insert(END, model)
+            self.listNameModel.append(model)
             
             text = "-Le modèle {} a été ajouté.".format(model)
             self.addNotif(text)
