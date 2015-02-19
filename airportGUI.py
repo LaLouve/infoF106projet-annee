@@ -56,13 +56,16 @@ class PrincipalWindow:
         saveMenu.add_command(label='Save', command=self.saveSystem)
         saveMenu.add_command(label='Load', command=self.loadSystem)
 
+        historyMenu = Menu(menuBar, tearoff=0)
+        historyMenu.add_command(label="History", command=self.showHistory)
+        historyMenu.add_command(label="Log", command=self.showLog)
+
         menuBar.add_cascade(label="Files", menu=saveMenu)
+        menuBar.add_cascade(label="History", menu=historyMenu)
 
         menuBar.add_command(label="Statistics", command=self.showStat)
-
-        menuBar.add_command(label="History", command=self.showHistory)
-
         menuBar.add_command(label="Help", command=self.showHelp)
+        
         root.config(menu=menuBar)
 
 
@@ -452,7 +455,8 @@ class PrincipalWindow:
             font=tkFont.Font(size=10))
         self.notifFrame.pack()
 
-        self.notifList = ['', '' , '', '', '']
+        self.notifList = [] # Liste de toutes les notifications
+        self.notifDisplayList = ['', '' , '', '', ''] # Liste des notif affichées
         self.textColor = 'black'
         self.textColorFirst = 'green'
         self.listSize = 5
@@ -587,8 +591,6 @@ class PrincipalWindow:
             listBox = self.listBoxDepartures
         
         else:
-            heure = None
-            minute = None
             listBox = self.listBoxArrivals
 
         Button(self.addPlaneWindow,
@@ -604,8 +606,8 @@ class PrincipalWindow:
                 minute,
                 listBox)).pack(side=BOTTOM)
 
-    def getPlane(self, IDnumber, airlineObject, passengers, modelObject, heure, minute, listBox):
-        IDnumber = IDnumber.get()
+    def getPlane(self, IDnumberObject, airlineObject, passengers, modelObject, heure, minute, listBox):
+        IDnumber = IDnumberObject.get()
         IDletter = airlineObject.get()
         nbrPassengers = passengers.get()
         modelName = modelObject.get()
@@ -1679,7 +1681,7 @@ class PrincipalWindow:
                     plane = event[0]
                     death = event[1]
                     self.executePlane(plane)
-                    text = "-L'avion {} s'est crashé.\n{} personnes sont mortes.".format(plane.getID(), death)
+                    text = "-L'avion {} s'est crashé.   {} personnes sont mortes dans l'accident.".format(plane.getID(), death)
                     self.addNotif(text)
 
                 for plane in delayedPlane:
@@ -1956,8 +1958,9 @@ class PrincipalWindow:
         Ajoute la nouvelle notification à la liste des notifications
         Appelle la fonction d'affichage des notifications 
         '''
-        self.notifList.pop(0)
-        self.notifList.append(text)
+        self.notifList.insert(0, text) #La dernière notif est en position 0 dans la liste
+        self.notifDisplayList.pop(0)
+        self.notifDisplayList.append(text)
         self.displayNotif()
 
     def displayNotif(self):
@@ -1978,7 +1981,7 @@ class PrincipalWindow:
         self.notifFrame.pack()
 
         index = 1
-        for notif in self.notifList:
+        for notif in self.notifDisplayList:
             color = self.textColor
             if index == self.listSize:
                 color = self.textColorFirst
@@ -1995,6 +1998,69 @@ class PrincipalWindow:
             self.notifText.set(notif)
             notification.pack(side=BOTTOM)
             index += 1
+
+    def showLog(self):
+        '''
+        Affiche toutes les notifications depuis le début du programme
+        '''
+        log = Toplevel(bg=mainColor)
+        log.resizable(width=FALSE, height=FALSE)
+        log.title("Log")
+        
+        notifFrame = LabelFrame(
+            log,
+            bd=4,
+            bg=mainColor,
+            height=150,
+            text="Log des notifications du programme:",
+            font=tkFont.Font(
+                size=10))
+        notifFrame.pack(
+            side=TOP)
+
+        text = "Les notifications les plus récentes sont en tête de liste."
+        Label(
+            notifFrame,
+            bd=7,
+            bg=mainColor,
+            text=text,
+            font=tkFont.Font(
+                size=8)).pack()
+
+        listBoxArea = Frame(
+            notifFrame,
+            bd=8,
+            bg=mainColor)  # création de listBox et de la scrollbar associée
+        scrollbarVER = Scrollbar(
+            listBoxArea,
+            bg=buttonColor,
+            activebackground='grey',
+            troughcolor=mainColor,
+            orient=VERTICAL)
+        scrollbarHOR = Scrollbar(
+            listBoxArea,
+            bg=buttonColor,
+            activebackground='grey',
+            troughcolor=mainColor,
+            orient=HORIZONTAL)
+        listBoxNotif = Listbox(
+            listBoxArea,
+            height=25,
+            width=40,
+            bd=2,
+            yscrollcommand=scrollbarVER.set,
+            xscrollcommand=scrollbarHOR.set)
+
+        for notif in self.notifList:
+            textNotif = notif.join('\n')
+            listBoxNotif.insert(END, notif)
+
+        scrollbarVER.config(command=listBoxNotif.yview)
+        scrollbarHOR.config(command=listBoxNotif.xview)
+        scrollbarVER.pack(side=RIGHT, fill=Y)
+        scrollbarHOR.pack(side=BOTTOM, fill=BOTH)
+        listBoxArea.pack()
+        listBoxNotif.pack()
 
 
 if __name__ == "__main__":
