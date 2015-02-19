@@ -13,6 +13,9 @@ import signal
 
 
 def sigint_handler(signal, frame):
+    '''
+    Coupe le programme lors d'un ^C
+    '''
     print('\nFin de la simulation.')
     exit(0)
 

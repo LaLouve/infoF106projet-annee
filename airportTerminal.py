@@ -100,7 +100,7 @@ class Terminal:
                     print("Vous avez entré un nombre négatif.")
                 else:
                     passOK = True
-            except:
+            except ValueError:
                 print("Vous avez entré une donnée incorrecte.")
 
         # Time
@@ -115,7 +115,7 @@ class Terminal:
                         timeOK = True
                     else:
                         print("Vous avez entré une heure incorrecte!")
-                except:
+                except ValueError:
                     print("Vous avez entré une donnée incorrecte.")
 
             statut = 'In Time'
@@ -155,7 +155,7 @@ class Terminal:
                     print("Vous n'avez pas un entré un nombre composé de 4 chiffres")
                 else:
                     ok = True
-            except:
+            except ValueError:
                 print("Vous n'avez pas entré un nombre.")
         return str(numberID)
 
@@ -382,7 +382,7 @@ class Terminal:
                 modConso = int(input("Consommation: "))
                 modPass = int(input("Nombre maximum de passagers: "))
                 ok = True
-            except:
+            except ValueError:
                 print(
                     "Vous avez entré une donnée incorrecte,"
                     " veuillez rééssayez.")
@@ -535,7 +535,6 @@ class Terminal:
             "durant la journée sont déplacés dans l'historique avec le statut "
             "\"Deleted\"")
 
-
     def askTime(self):
         correct = False
         while not correct:
@@ -544,7 +543,7 @@ class Terminal:
                     input('\nCombien de temps voules-vous passer? (heure):'))
                 minutes = int(input('minutes:'))
                 correct = True
-            except:
+            except ValueError:
                 print("\nVous n'avez pas entré un nombre correct!\n")
         print()
         return (heure * 60 + minutes)
@@ -560,7 +559,7 @@ class Terminal:
         try:
             saveFile = open(filename, "r")
 
-        except:
+        except IOError:
             print("\nIl n'y a pas de sauvegarde enregistrée.")
 
         if saveFile is not None:
@@ -621,7 +620,7 @@ class Terminal:
                     ok = False
                     print("\nVous n'avez pas entré"
                           " le numéro d'un", inputStr, ".")
-            except:
+            except ValueError:
                 ok = False
                 print("\nVous n'avez pas entré un nombre.")
         return indice
