@@ -117,7 +117,6 @@ class Airport:
                     ok = False
         return ok
 
-
     # AIRLINES
     def addAirlines(self, ID, company):
         '''
@@ -133,7 +132,6 @@ class Airport:
         '''
         self.airlinesDico.pop(companyID)
         self.statAirlines -= 1
-
 
     # MODEL
     def addModel(self, model, modFuel, modConso, modPass):
@@ -154,7 +152,6 @@ class Airport:
         '''
         self.modelList.remove(model)
         self.statModel -= 1
-
 
     # RANDOM PLANE
     def randomPlane(self, IDletter, model, planeList):
@@ -197,7 +194,6 @@ class Airport:
 
         return newPlane
 
-
     # RUNWAYS
     def modifRunways(self, nbrDepRunway, nbrArrRunway, nbrMixteRunway):
         '''
@@ -206,7 +202,6 @@ class Airport:
         self.departureRunway = nbrDepRunway
         self.arrivalRunway = nbrArrRunway
         self.mixteRunway = nbrMixteRunway
-
 
     # NEXT EVENT
     def priorityDeparture(self):
@@ -347,7 +342,6 @@ class Airport:
 
         return plane
 
-
     # DAY / UPDATE
     def newDay(self):
         '''
@@ -365,7 +359,7 @@ class Airport:
 
         self.departureList = []
         self.arrivalList = []
-        #return self.tick, self.day, self.departureList, self.arrivalList
+        # return self.tick, self.day, self.departureList, self.arrivalList
 
     def updateStatus(self):
         '''
@@ -386,7 +380,9 @@ class Airport:
                 self.arrivalList.remove(plane)
                 self.historyList.append(plane)
                 self.statCrash += 1
-                death = random.randint(1, passengers)  # nombre de morts lors du crash
+                death = random.randint(
+                    1,
+                    passengers)  # nombre de morts lors du crash
                 self.statDeath += death
                 event = (plane, death)
                 crashedPlane.append(event)
@@ -399,7 +395,6 @@ class Airport:
         self.tick += 1
 
         return crashedPlane, delayedPlane
-
 
     # TIME (conversion)
     def convTupleToTick(self, tupple):
@@ -414,7 +409,6 @@ class Airport:
         '''
         return ((str(time // 60)).rjust(2, '0'),
                 (str(time % 60)).rjust(2, '0'))
-
 
     # SAVE
     def saveSystem(self, filename="save.txt"):

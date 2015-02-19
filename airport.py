@@ -42,7 +42,7 @@ def mainLoop():
         nbrTick = terminal.userMenu()
         terminal.checkRunways()
 
-        if nbrTick != None:
+        if nbrTick is not None:
             for i in range(nbrTick):
                 plane = airport.eventRandom()
                 terminal.showEvent(plane)

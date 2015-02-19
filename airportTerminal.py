@@ -152,7 +152,8 @@ class Terminal:
                 numberID = int(input("les 4 chiffres de l'ID: "))
 
                 if len(str(numberID)) != 4:
-                    print("Vous n'avez pas un entré un nombre composé de 4 chiffres")
+                    print(
+                        "Vous n'avez pas un entré un nombre composé de 4 chiffres")
                 else:
                     ok = True
             except ValueError:
@@ -220,7 +221,6 @@ class Terminal:
         print(text, " Statut")
         self.showPlanesInfo(airport.historyList)
 
-
     # AIRLINES
     def askAddAirlines(self):
         '''
@@ -272,9 +272,11 @@ class Terminal:
             airport.delAirlines(letterID)
             print("\nLa compangie", airlines.getName(), "a été supprimée.")
         else:
-            print("\nLa compagnie", airlines.getName(),
-                  "contient encore des avions au décollage ou à l'attérissage. "
-                  "Il est impossible de la supprimer.")
+            print(
+                "\nLa compagnie",
+                airlines.getName(),
+                "contient encore des avions au décollage ou à l'attérissage. "
+                "Il est impossible de la supprimer.")
 
     def askAirlinesInfo(self):
         '''
@@ -344,7 +346,6 @@ class Terminal:
                         count += 1
         else:
             print('Cette compagnie n\'a aucun avion.')
-
 
     # MODEL
     def showModel(self):
@@ -418,7 +419,6 @@ class Terminal:
                 print("\nDes avions utilisent le modèle", model.getName(),
                       ". Il est impossible de le supprimer")
 
-
     # RANDOM PLANE
     def askRandomPlane(self, planeList):
         '''
@@ -442,7 +442,6 @@ class Terminal:
 
         newPlane = airport.randomPlane(IDletter, model, planeList)
         self.showEvent(newPlane)
-
 
     # RUNWAYS
     def checkRunways(self):
@@ -502,7 +501,6 @@ class Terminal:
         print("Pistes pour l'atterissage:", airport.arrivalRunway)
         print("Pistes mixtes:", airport.mixteRunway)
 
-
     # TIME
     def showTime(self, tick):
         '''
@@ -531,7 +529,8 @@ class Terminal:
         appelle la fonction nécéssaire pour initialisé un nouveau jour
         '''
         airport.newDay()
-        print("\nNouveau jour!\nLes avions n'ayant pas pu attérire ou décoller "
+        print(
+            "\nNouveau jour!\nLes avions n'ayant pas pu attérire ou décoller "
             "durant la journée sont déplacés dans l'historique avec le statut "
             "\"Deleted\"")
 
@@ -547,7 +546,6 @@ class Terminal:
                 print("\nVous n'avez pas entré un nombre correct!\n")
         print()
         return (heure * 60 + minutes)
-
 
     # SAVE
     def askNewGame(self, filename):
@@ -568,8 +566,9 @@ class Terminal:
                 answer = str(
                     input(
                         "\n"
-                        "Voulez-vous utiliser la sauvegarde? \n(Si non, une nouvelle simulation commencera)"
-                        "\n(O)ui/(N)on: ")).lower()
+                        "Voulez-vous utiliser la sauvegarde? \
+                        \n(Si non, une nouvelle simulation commencera)\
+                        \n(O)ui/(N)on: ")).lower()
 
             if answer == 'n':
                 self.askRunway()
@@ -580,7 +579,6 @@ class Terminal:
                     print('Le fichier de sauvegarde est corrompu.')
         else:
             self.askRunway()
-
 
     # STATISTICS
     def showStatistics(self):
@@ -652,9 +650,8 @@ class Terminal:
                       "a été ajouté à la liste des avions au décollage.")
 
             else:
-                print("-L'avion",plane.getID(),
+                print("-L'avion", plane.getID(),
                       "a été ajouté à la liste des avions à l'attérissage.")
-
 
     # USER MENU
     def userMenu(self):
