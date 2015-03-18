@@ -47,7 +47,7 @@ class PrincipalWindow:
         self.root = root
 
         # désactivation du bouton "del" dans la colone des départs
-        # /!\ root.bind("<Button-1>", self.checkPlaneDelete)
+        root.bind("<Button-1>", self.checkPlaneDelete)
 
         # Menu
         menuBar = Menu(root)
