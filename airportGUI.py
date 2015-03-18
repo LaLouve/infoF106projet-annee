@@ -46,9 +46,6 @@ class PrincipalWindow:
 
         self.root = root
 
-        # désactivation du bouton "del" dans la colone des départs
-        root.bind("<Button-1>", self.checkPlaneDelete)
-
         # Menu
         menuBar = Menu(root)
 
@@ -96,6 +93,8 @@ class PrincipalWindow:
             bd=2,
             yscrollcommand=scrollbar.set)
 
+        #désactive les boutons del des autres colones lorsqu'un élément est sélectionné dans celle-ci
+        self.listBoxArrivals.bind("<<ListboxSelect>>", self.listBoxSelected)
         # active le double-clic pour obtenir les infos d'un avion
         self.listBoxArrivals.bind("<Double-Button-1>", self.infoArrivalPlane)
 
@@ -806,8 +805,20 @@ class PrincipalWindow:
         '''
         if self.listBoxDepartures.curselection():
             self.delPlaneButton.configure(state=NORMAL)
+            self.delModelButton.configure(state=DISABLED)
+            self.delAirlineButton.configure(state=DISABLED)
         else:
+            self.delPlaneButton.curselection(state=DISABLED)
+
+    def listBoxSelected(self, envent=None):
+        '''
+        désactive tous les boutons del lorsqu'un avion de l liste des arrivées
+        est sélectionné
+        '''
+        if self.listBoxArrivals.curselection():
             self.delPlaneButton.configure(state=DISABLED)
+            self.delAirlineButton.configure(state=DISABLED)
+            self.delModelButton.configure(state=DISABLED)
 
     # Affichage des informations de avions
     def infoArrivalPlane(self, event=None):
@@ -1195,8 +1206,10 @@ class PrincipalWindow:
         '''
         if self.listBoxAirlines.curselection():
             self.delAirlineButton.configure(state=NORMAL)
+            self.delPlaneButton.configure(state=DISABLED)
+            self.delModelButton.configure(state=DISABLED)
         else:
-            self.delAirlineButton.configure(state=DISABLED)
+            self.delAirlineButton.curselection(state=DISABLED)
 
     def showInfoAddAirline(self, event=None):
         '''
@@ -1480,6 +1493,8 @@ class PrincipalWindow:
         '''
         if self.listBoxModel.curselection():
             self.delModelButton.configure(state=NORMAL)
+            self.delPlaneButton.configure(state=DISABLED)
+            self.delAirlineButton.configure(state=DISABLED)
         else:
             self.delModelButton.configure(state=DISABLED)
 
