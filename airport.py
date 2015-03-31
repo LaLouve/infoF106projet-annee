@@ -32,31 +32,40 @@ def mainLoop():
     Met à jour les informations des avions
     '''
     signal.signal(signal.SIGINT, sigint_handler)
-    airport = airportFunctions.Airport()
     terminal = airportTerminal.Terminal()
+    airport = airportFunctions.Airport()
+    
     terminal.askNewGame("save.txt")
 
     nbrTick = 1
 
     while nbrTick > 0:
         nbrTick = terminal.userMenu()
-        terminal.checkRunways()
+        print("tick", nbrTick)
+        ok = terminal.checkRunways()
+        print(ok)
 
         if nbrTick is not None:
             for i in range(nbrTick):
+                print("\nn", i)
                 plane = airport.eventRandom()
+                print('random', plane)
                 terminal.showEvent(plane)
+                print("piste", airport.departureRunway, airport.arrivalRunway, airport.mixteRunway)
 
                 for j in range(airport.departureRunway):
                     plane = airport.nextDeparture()
+                    print("departure", plane)
                     terminal.showEvent(plane)
 
                 for k in range(airport.arrivalRunway):
                     plane = airport.nextArrival()
+                    print("arrival", plane)
                     terminal.showEvent(plane)
 
                 for l in range(airport.mixteRunway):
                     plane = airport.nextEvent()
+                    print("mixte", plane)
                     terminal.showEvent(plane)
 
                 crashedPlane, delayedPlane = airport.updateStatus()

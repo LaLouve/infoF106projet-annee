@@ -54,6 +54,8 @@ class Airport:
         self.statAirlines = 0  # nbr de compagnies
         self.statModel = 0  # nbr de modèles
 
+        self.weatherClear = True # Booléen temps True = temps clair | False = aéroport fermé 
+
     # PLANE
     def createPlane(
             self,
@@ -325,6 +327,7 @@ class Airport:
         (évenement aléatoire)
         '''
         nbr = int(random.randint(0, 40))
+        print(nbr)
         plane = None
 
         if len(self.modelList) > 0 and len(self.airlinesDico) > 0:
@@ -335,10 +338,14 @@ class Airport:
             airlines = random.choice(list(listKeyAirlines))
 
             if nbr == 8:
+                print("pinky")
                 plane = self.randomPlane(airlines, model, self.departureList)
 
             if nbr == 3:
+                print("pinky")
                 plane = self.randomPlane(airlines, model, self.arrivalList)
+        else:
+            print("empty")
 
         return plane
 
@@ -351,10 +358,21 @@ class Airport:
         self.tick = 0
         self.day += 1
 
+        #meteo:
+        meteo = random.randint(0, 9)
+        indiceOK = [3, 7, 9]
+        if meteo in indiceOK:
+            self.weatherClear = False
+
+        if self.weatherClear:
+            statut = "Deleted"
+        else:
+            statut = "Weather Del"
+
         planeLists = [self.departureList, self.arrivalList]
         for liste in planeLists:
             for plane in liste:
-                plane.setStatut("Deleted")
+                plane.setStatut(statut)
                 self.historyList.append(plane)
 
         self.departureList = []
@@ -448,7 +466,7 @@ class Airport:
                        "arrivalRunway": self.arrivalRunway,
                        "mixteRunway": self.mixteRunway}
 
-        saveTime = {"time": self.tick, "day": self.day}
+        saveTime = {"time": self.tick, "day": self.day, "meteo": self.weatherClear}
 
         saveStat = {"plane global": self.statPlaneGlobal,
                     "plane dep": self.statPlaneDep,
@@ -516,6 +534,7 @@ class Airport:
             loadTime = save["time"]
             self.tick = loadTime["time"]
             self.day = loadTime["day"]
+            self.weatherClear = loadTime["meteo"]
 
             loadStat = save["stat"]
             self.statPlaneGlobal = loadStat["plane global"]
@@ -533,3 +552,6 @@ class Airport:
         saveFile.close
 
         return ok
+
+    def clearSystem(self):
+        self.__init__()

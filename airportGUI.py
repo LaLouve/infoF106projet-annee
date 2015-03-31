@@ -52,6 +52,7 @@ class PrincipalWindow:
         saveMenu = Menu(menuBar, tearoff=0)
         saveMenu.add_command(label='Save', command=self.saveSystem)
         saveMenu.add_command(label='Load', command=self.loadSystem)
+        saveMenu.add_command(label='Clear', command=self.clearSystem)
 
         historyMenu = Menu(menuBar, tearoff=0)
         historyMenu.add_command(label="History", command=self.showHistory)
@@ -88,7 +89,7 @@ class PrincipalWindow:
             orient=VERTICAL)
         self.listBoxArrivals = Listbox(
             listBoxArea,
-            height=32,
+            height=38,
             width=25,
             bd=2,
             yscrollcommand=scrollbar.set)
@@ -143,7 +144,7 @@ class PrincipalWindow:
             orient=VERTICAL)
         self.listBoxDepartures = Listbox(
             listBoxArea,
-            height=32,
+            height=38,
             width=25,
             bd=2,
             yscrollcommand=scrollbar.set)
@@ -213,7 +214,7 @@ class PrincipalWindow:
             orient=VERTICAL)
         self.listBoxAirlines = Listbox(
             listBoxArea,
-            height=13,
+            height=16,
             width=25,
             bd=2,
             yscrollcommand=scrollbar.set)
@@ -274,7 +275,7 @@ class PrincipalWindow:
             orient=VERTICAL)
         self.listBoxModel = Listbox(
             listBoxArea,
-            height=13,
+            height=16,
             width=25,
             bd=2,
             yscrollcommand=scrollbar.set)
@@ -319,12 +320,36 @@ class PrincipalWindow:
         # step
         column4top = Frame(column4, bg=mainColor)
         column4top.pack(side=TOP)
-        self.generalTime = self.time(airport.tick)
+        
+        generalDay = self.day(airport.day)
+        self.affDay = Label(
+            column4top,
+            bd=6,
+            bg=mainColor,
+            text=generalDay,
+            font=tkFont.Font(size=12))
+        self.affDay.pack(side=TOP)
+
+        if airport.weatherClear:
+            color = "green"
+        else:
+            color = "red"
+        generalMeteo = self.meteo(airport.weatherClear)
+        self.affMeteo = Label(
+            column4top,
+            bd=6,
+            bg=mainColor,
+            fg=color,
+            text=generalMeteo,
+            font=tkFont.Font(size=10))
+        self.affMeteo.pack(side=TOP)
+
+        generalTime = self.time(airport.tick)
         self.clock = Label(
             column4top,
             bd=6,
             bg=mainColor,
-            text=self.generalTime,
+            text=generalTime,
             font=tkFont.Font(size=16))
         self.clock.pack(side=TOP)
 
@@ -353,7 +378,7 @@ class PrincipalWindow:
 
         # partie intermédiaire, permet l'espacement des parties haute et
         # centrale
-        column4int = Frame(column4, height=25, bg=mainColor)
+        column4int = Frame(column4, height=10, bg=mainColor)
         column4int.pack(side=TOP)
 
         # partie centrale de la quatrième colonne, contient les informations
@@ -449,7 +474,7 @@ class PrincipalWindow:
             command=lambda: self.plusRunway("mixte")).pack(side=RIGHT)
 
         # partie intermédiaire, permet l'espacement des parties haute et basse
-        column4int2 = Frame(column4, height=25, bg=mainColor)
+        column4int2 = Frame(column4, height=10, bg=mainColor)
         column4int2.pack(side=TOP)
 
         # Partie basse, affiche les notifiactions du programmes
@@ -615,6 +640,8 @@ class PrincipalWindow:
 
         else:
             listBox = self.listBoxArrivals
+            heure = None
+            minute = None
 
         Button(self.addPlaneWindow,
                text="Add",
@@ -745,6 +772,7 @@ class PrincipalWindow:
         IDletter = False
         model = False
 
+        # Vérification de la présence de modelèle et de compagnie
         if len(airport.airlinesDico) == 0 and len(airport.modelList) == 0:
             text = "Il n'y a ni compangie, ni modèle enregistrés.\
                     \nVeuillez en ajouter via la fenêtre principale"
@@ -828,6 +856,9 @@ class PrincipalWindow:
         '''
         item = self.listBoxArrivals.curselection()
         num = item[0]
+        print(num)
+        for plane in airport.arrivalList:
+            print(plane)
         plane = airport.arrivalList[num]
         self.infoPlane(airport.arrivalList, plane)
 
@@ -838,6 +869,9 @@ class PrincipalWindow:
         '''
         item = self.listBoxDepartures.curselection()
         num = item[0]
+        print(num)
+        for plane in airport.departureList:
+            print(plane)
         plane = airport.departureList[num]
         self.infoPlane(airport.departureList, plane)
 
@@ -1740,34 +1774,35 @@ class PrincipalWindow:
             plane = None
             for i in range(int(nbrMin)):
                 self.eventRandom()
-
                 self.checkRunways()
-                for j in range(airport.departureRunway):
-                    plane = airport.nextDeparture()
-                    if plane:
-                        self.executePlane(plane)
-                        text = "-L'avion {} a décollé.".format(plane.getID())
-                        self.addNotif(text)
 
-                for k in range(airport.arrivalRunway):
-                    plane = airport.nextArrival()
-                    if plane:
-                        self.executePlane(plane)
-                        text = "-L'avion {} a atterri.".format(plane.getID())
-                        self.addNotif(text)
+                if airport.weatherClear:
+                    for j in range(airport.departureRunway):
+                        plane = airport.nextDeparture()
+                        if plane:
+                            self.executePlane(plane)
+                            text = "-L'avion {} a décollé.".format(plane.getID())
+                            self.addNotif(text)
 
-                for l in range(airport.mixteRunway):
-                    plane = airport.nextEvent()
-                    if plane:
-                        self.executePlane(plane)
-                        if plane.getStatut() == "Landed":
-                            text = "-L'avion {} a atterri.".format(
-                                plane.getID())
+                    for k in range(airport.arrivalRunway):
+                        plane = airport.nextArrival()
+                        if plane:
+                            self.executePlane(plane)
+                            text = "-L'avion {} a atterri.".format(plane.getID())
                             self.addNotif(text)
-                        else:
-                            text = "-L'avion {} a décollé.".format(
-                                plane.getID())
-                            self.addNotif(text)
+
+                    for l in range(airport.mixteRunway):
+                        plane = airport.nextEvent()
+                        if plane:
+                            self.executePlane(plane)
+                            if plane.getStatut() == "Landed":
+                                text = "-L'avion {} a atterri.".format(
+                                    plane.getID())
+                                self.addNotif(text)
+                            else:
+                                text = "-L'avion {} a décollé.".format(
+                                    plane.getID())
+                                self.addNotif(text)
 
                 crashedPlane, delayedPlane = airport.updateStatus()
 
@@ -1775,14 +1810,24 @@ class PrincipalWindow:
                     plane = event[0]
                     death = event[1]
                     self.executePlane(plane)
-                    text = "-L'avion {} s'est crashé.   {} personnes sont \
-                            mortes dans l'accident.".format(plane.getID(),
-                                                            death)
+
+                    if airport.weatherClear:
+                        text = "-L'avion {} s'est crashé.   {} personnes sont \
+                                mortes dans l'accident.".format(plane.getID(),
+                                                                death)
+                    else:
+                        text = "-L'avion {} s'est crashé à cause du mauvais temps.\
+                                {} personnes sont mortes dans l'accident.".format(plane.getID(),death)
                     self.addNotif(text)
 
                 for plane in delayedPlane:
-                    text = "-L'avion {} a du retard.".format(plane.getID())
+                    if airport.weatherClear:
+                        text = "-L'avion {} a du retard.".format(plane.getID())
+                    else:
+                        text = "-L'avion {} a du retard à cause du mauvais temps".format(plane.getID())
                     self.addNotif(text)
+
+
 
                 if airport.tick == 1440:
                     self.newDay()
@@ -1829,6 +1874,12 @@ class PrincipalWindow:
         '''
         airport.newDay()
 
+        if airport.weatherClear:
+            color = "green"
+        else:
+            color = "red"
+        self.affMeteo.configure(fg= color, text=self.meteo(airport.weatherClear))
+        self.affDay.configure(text=self.day(airport.day))
         self.listBoxArrivals.delete(0, END)
         self.listBoxDepartures.delete(0, END)
 
@@ -2037,18 +2088,33 @@ class PrincipalWindow:
             parent=self.root)
         if fileName:
             if airport.loadSystem(fileName):
-                text = "-Chargement de la sauvegarde réussi."
-                self.addNotif(text)
                 self.root.destroy()
                 root = Tk()
                 root.title("Airport Simulator")
                 root.configure(background=mainColor)
                 root.resizable(width=FALSE, height=FALSE)
                 self.__init__(root)
+                text = "-Chargement de la sauvegarde réussi."
+                self.addNotif(text)
             else:
                 messagebox.showwarning(
                     "Chargement",
                     "Problème pendant la chargement.")
+
+    def clearSystem(self, event=None):
+        text = "Clear the airport?"
+        result = messagebox.askyesno('Clear', text)
+
+        if result:
+            airport.clearSystem()
+            self.root.destroy()
+            root = Tk()
+            root.title("Airport Simulator")
+            root.configure(background=mainColor)
+            root.resizable(width=FALSE, height=FALSE)
+            self.__init__(root)
+            text = "-Rénitialisation de l'aéroport."
+            self.addNotif(text)
 
     # Fonctions de formatage d'affichage
     def time(self, tick):
@@ -2060,6 +2126,22 @@ class PrincipalWindow:
                 "h" +
                 str(tick %
                     60).rjust(2, '0'))
+
+    def meteo(self, weatherClear):
+        '''
+        Affiche la météo
+        '''
+        if weatherClear:
+            meteo = "Beau temps"
+        else:
+            meteo = "Mauvais temps. \nVotre aéroport est fermé."
+        return ("Météo: " + str(meteo))
+
+    def day(self, day):
+        '''
+        affiche le jour
+        '''
+        return("Day " + str(airport.day))
 
     # Affichage des notifications
     def addNotif(self, text):

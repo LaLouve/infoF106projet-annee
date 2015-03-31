@@ -446,7 +446,7 @@ class Terminal:
     # RUNWAYS
     def checkRunways(self):
         ok = True
-
+        print("check",airport.departureRunway, airport.arrivalRunway, airport.mixteRunway)
         if airport.departureRunway == 0 and\
            airport.arrivalRunway == 0 and\
            airport.mixteRunway == 0:
@@ -522,7 +522,12 @@ class Terminal:
         '''
         Affiche le numéro du jour
         '''
-        print('Jour numéro', airport.day)
+        if airport.weatherClear:
+            meteo = "Beau temps"
+        else:
+            meteo = "Mauvais temps. Votre aéroport est fermé."
+
+        print('Jour numéro', airport.day, "\nMétéo du jour:", meteo)
 
     def newDay(self):
         '''
@@ -574,9 +579,9 @@ class Terminal:
                 self.askRunway()
             else:
                 if airport.loadSystem(filename):
-                    print("Chargement réussi!")
+                    print("\nChargement réussi!")
                 else:
-                    print('Le fichier de sauvegarde est corrompu.')
+                    print('\nLe fichier de sauvegarde est corrompu.')
         else:
             self.askRunway()
 
@@ -663,7 +668,7 @@ class Terminal:
 
         ok = ['q', 't']
         while answer not in ok:
-            print("\nMenu des actions, que voulez-vous faire?")
+            print("\nMenu des actions, que voulez-vous faire?\n")
             self.showDay()
             print("Il est", end=' ')
             self.showTime(airport.tick)
