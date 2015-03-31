@@ -836,7 +836,7 @@ class PrincipalWindow:
             self.delModelButton.configure(state=DISABLED)
             self.delAirlineButton.configure(state=DISABLED)
         else:
-            self.delPlaneButton.curselection(state=DISABLED)
+            self.delPlaneButton.configure(state=DISABLED)
 
     def listBoxSelected(self, envent=None):
         '''
@@ -855,12 +855,14 @@ class PrincipalWindow:
         "Arrival"
         '''
         item = self.listBoxArrivals.curselection()
-        num = item[0]
-        print(num)
-        for plane in airport.arrivalList:
-            print(plane)
-        plane = airport.arrivalList[num]
-        self.infoPlane(airport.arrivalList, plane)
+        if item:
+            num = item[0]
+            print(num)
+            for plane in airport.arrivalList:
+                print(plane)
+
+            plane = airport.arrivalList[num]
+            self.infoPlane(airport.arrivalList, plane)
 
     def infoDeparturePlane(self, event=None):
         '''
@@ -868,12 +870,13 @@ class PrincipalWindow:
         "Departure"
         '''
         item = self.listBoxDepartures.curselection()
-        num = item[0]
-        print(num)
-        for plane in airport.departureList:
-            print(plane)
-        plane = airport.departureList[num]
-        self.infoPlane(airport.departureList, plane)
+        if item:
+            num = item[0]
+            print(num)
+            for plane in airport.departureList:
+                print(plane)
+            plane = airport.departureList[num]
+            self.infoPlane(airport.departureList, plane)
 
     def infoHistoryPlane(self, event=None):
         '''
@@ -881,9 +884,10 @@ class PrincipalWindow:
         "History"
         '''
         item = self.listBoxHistory.curselection()
-        num = item[0]
-        plane = airport.historyList[num]
-        self.infoPlane(airport.historyList, plane)
+        if item:
+            num = item[0]
+            plane = airport.historyList[num]
+            self.infoPlane(airport.historyList, plane)
 
     def infoAirlinePlane(self, event=None):
         '''
@@ -891,9 +895,10 @@ class PrincipalWindow:
         des avions d'une compagnie
         '''
         item = self.listBoxAirlinePlane.curselection()
-        num = item[0]
-        plane = self.listAirlinePlane[num]
-        self.infoPlane(self.listAirlinePlane, plane)
+        if item:
+            num = item[0]
+            plane = self.listAirlinePlane[num]
+            self.infoPlane(self.listAirlinePlane, plane)
 
     def infoModelPlane(self, event=None):
         '''
@@ -901,9 +906,10 @@ class PrincipalWindow:
         des avions d'une compagnie
         '''
         item = self.listBoxModelPlane.curselection()
-        num = item[0]
-        plane = self.listModelPlane[num]
-        self.infoPlane(self.listModelPlane, plane)
+        if item:
+            num = item[0]
+            plane = self.listModelPlane[num]
+            self.infoPlane(self.listModelPlane, plane)
 
     def infoPlane(self, planeList, plane):
         '''
@@ -1243,7 +1249,7 @@ class PrincipalWindow:
             self.delPlaneButton.configure(state=DISABLED)
             self.delModelButton.configure(state=DISABLED)
         else:
-            self.delAirlineButton.curselection(state=DISABLED)
+            self.delAirlineButton.configure(state=DISABLED)
 
     def showInfoAddAirline(self, event=None):
         '''
@@ -1251,10 +1257,11 @@ class PrincipalWindow:
         compangie sélectionnée dans la liste de la fenêtre d'ajout d'avion
         '''
         item = self.listBoxAddAirlines.curselection()
-        numAirline = item[0]
-        airlineID = self.airlinesList[numAirline]
+        if item:
+            numAirline = item[0]
+            airlineID = self.airlinesList[numAirline]
 
-        self.infoAirline(airlineID)
+            self.infoAirline(airlineID)
 
     def showInfoAirline(self, event=None):
         '''
@@ -1262,10 +1269,11 @@ class PrincipalWindow:
         compangie sélectionnée dans la liste de la fenêtre principale
         '''
         item = self.listBoxAirlines.curselection()
-        numAirline = item[0]
-        airlineID = self.airlinesList[numAirline]
+        if item:
+            numAirline = item[0]
+            airlineID = self.airlinesList[numAirline]
 
-        self.infoAirline(airlineID)
+            self.infoAirline(airlineID)
 
     def infoAirline(self, airlineID):
         '''
@@ -1538,20 +1546,22 @@ class PrincipalWindow:
         d'ajout d'avion
         '''
         item = self.listBoxAddModel.curselection()
-        numModel = item[0]
-        model = airport.modelList[numModel]
+        if item:
+            numModel = item[0]
+            model = airport.modelList[numModel]
 
-        self.infoModel(model)
+            self.infoModel(model)
 
     def showInfoModel(self, event=None):
         '''
         Appelle la fonction d'affichage du modèle sélectionné
         '''
         item = self.listBoxModel.curselection()
-        numModel = item[0]
-        model = airport.modelList[numModel]
+        if item:
+            numModel = item[0]
+            model = airport.modelList[numModel]
 
-        self.infoModel(model)
+            self.infoModel(model)
 
     def infoModel(self, model):
         '''
