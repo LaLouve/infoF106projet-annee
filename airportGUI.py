@@ -118,7 +118,7 @@ class PrincipalWindow:
             text="Add Random",
             relief=GROOVE,
             bg=buttonColor,
-            command=self.addRandomArrival).pack(
+            command=lambda: self.addRandomPlane("arrival")).pack(
             side=LEFT)
 
         # colonne 2
@@ -176,7 +176,7 @@ class PrincipalWindow:
             text="Add Random",
             relief=GROOVE,
             bg=buttonColor,
-            command=self.addRandomDeparture).pack(
+            command=lambda: self.addRandomPlane("departure")).pack(
             side=LEFT)
         self.delPlaneButton = Button(
             column2,
@@ -765,14 +765,6 @@ class PrincipalWindow:
                     \nVeuillez en sélectionner."
             messagebox.showerror('Error', text)
 
-    def addRandomArrival(self):
-        print('pinky')
-        self.addRandomPlane("arrival")
-
-    def addRandomDeparture(self):
-        print('Pinky pinky')
-        self.addRandomPlane("departure")
-
     def addRandomPlane(self, planeList):
         '''
         Ajoute un avion aléatoire au départ
@@ -809,7 +801,6 @@ class PrincipalWindow:
                     model,
                     airport.departureList)
                 self.listBoxDepartures.insert(END, plane.getID())
-                print('departure', plane)
 
             elif planeList == "arrival":
                 plane = airport.randomPlane(
@@ -817,7 +808,6 @@ class PrincipalWindow:
                     model,
                     airport.arrivalList)
                 self.listBoxArrivals.insert(END, plane.getID())
-                print('arrival', plane)
 
             text = "-L'avion {} a été ajouté.".format(plane.getID())
             self.addNotif(text)
@@ -867,10 +857,6 @@ class PrincipalWindow:
         item = self.listBoxArrivals.curselection()
         if item:
             num = item[0]
-            print(num)
-            for plane in airport.arrivalList:
-                print(plane)
-
             plane = airport.arrivalList[num]
             self.infoPlane(airport.arrivalList, plane)
 
@@ -882,9 +868,6 @@ class PrincipalWindow:
         item = self.listBoxDepartures.curselection()
         if item:
             num = item[0]
-            print(num)
-            for plane in airport.departureList:
-                print(plane)
             plane = airport.departureList[num]
             self.infoPlane(airport.departureList, plane)
 
