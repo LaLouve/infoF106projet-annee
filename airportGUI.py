@@ -118,7 +118,7 @@ class PrincipalWindow:
             text="Add Random",
             relief=GROOVE,
             bg=buttonColor,
-            command=lambda: self.addRandomPlane('arrival')).pack(
+            command=self.addRandomArrival).pack(
             side=LEFT)
 
         # colonne 2
@@ -176,7 +176,7 @@ class PrincipalWindow:
             text="Add Random",
             relief=GROOVE,
             bg=buttonColor,
-            command=lambda: self.addRandomPlane('departure')).pack(
+            command=self.addRandomDeparture).pack(
             side=LEFT)
         self.delPlaneButton = Button(
             column2,
@@ -765,6 +765,14 @@ class PrincipalWindow:
                     \nVeuillez en sélectionner."
             messagebox.showerror('Error', text)
 
+    def addRandomArrival(self):
+        print('pinky')
+        self.addRandomPlane("arrival")
+
+    def addRandomDeparture(self):
+        print('Pinky pinky')
+        self.addRandomPlane("departure")
+
     def addRandomPlane(self, planeList):
         '''
         Ajoute un avion aléatoire au départ
@@ -801,13 +809,15 @@ class PrincipalWindow:
                     model,
                     airport.departureList)
                 self.listBoxDepartures.insert(END, plane.getID())
+                print('departure', plane)
 
-            else:
+            elif planeList == "arrival":
                 plane = airport.randomPlane(
                     IDletter,
                     model,
                     airport.arrivalList)
                 self.listBoxArrivals.insert(END, plane.getID())
+                print('arrival', plane)
 
             text = "-L'avion {} a été ajouté.".format(plane.getID())
             self.addNotif(text)

@@ -176,10 +176,11 @@ class Airport:
             IDnumber = number.rjust(4, '0')
             ID = (IDletter + IDnumber)
 
-        if planeList == self.departureList:
+        if planeList is self.departureList:
             time = (random.randint(0, 23), random.randint(0, 59))
             statut = "In Time"
-        else:
+
+        elif planeList is self.arrivalList:
             time = None
             statut = None
 
