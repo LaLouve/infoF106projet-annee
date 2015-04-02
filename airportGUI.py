@@ -840,7 +840,7 @@ class PrincipalWindow:
         '''
         item = self.listBoxArrivals.curselection()
         if item:
-            num = item[0]
+            num = int(item[0])
             plane = airport.arrivalList[num]
             self.infoPlane(airport.arrivalList, plane)
 
@@ -851,7 +851,7 @@ class PrincipalWindow:
         '''
         item = self.listBoxDepartures.curselection()
         if item:
-            num = item[0]
+            num = int(item[0])
             plane = airport.departureList[num]
             self.infoPlane(airport.departureList, plane)
 
@@ -862,7 +862,7 @@ class PrincipalWindow:
         '''
         item = self.listBoxHistory.curselection()
         if item:
-            num = item[0]
+            num = int(item[0])
             plane = airport.historyList[num]
             self.infoPlane(airport.historyList, plane)
 
@@ -873,7 +873,7 @@ class PrincipalWindow:
         '''
         item = self.listBoxAirlinePlane.curselection()
         if item:
-            num = item[0]
+            num = int(item[0])
             plane = self.listAirlinePlane[num]
             self.infoPlane(self.listAirlinePlane, plane)
 
@@ -884,7 +884,7 @@ class PrincipalWindow:
         '''
         item = self.listBoxModelPlane.curselection()
         if item:
-            num = item[0]
+            num = int(item[0])
             plane = self.listModelPlane[num]
             self.infoPlane(self.listModelPlane, plane)
 
