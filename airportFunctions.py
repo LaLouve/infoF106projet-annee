@@ -329,7 +329,7 @@ class Airport:
         (évenement aléatoire)
         '''
         nbr = int(random.randint(0, 40))
-        print(nbr)
+
         plane = None
 
         if len(self.modelList) > 0 and len(self.airlinesDico) > 0:
@@ -340,14 +340,10 @@ class Airport:
             airlines = random.choice(list(listKeyAirlines))
 
             if nbr == 8:
-                print("pinky")
                 plane = self.randomPlane(airlines, model, self.departureList)
 
             if nbr == 3:
-                print("pinky")
                 plane = self.randomPlane(airlines, model, self.arrivalList)
-        else:
-            print("empty")
 
         return plane
 

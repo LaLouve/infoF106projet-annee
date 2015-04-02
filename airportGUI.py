@@ -42,8 +42,17 @@ buttonColor = "#C0C0C0"
 class PrincipalWindow:
 
     def __init__(self, root):
-        # Temps entre deux appels de self.step()
-        self.wait = 1000 
+        '''
+        self.wait = temps en milisecondes entre chaque appel de self.step()
+        60000 = 1minute
+
+        Pour accelerer la simulation il suffit de changer 60000 par 
+        10000 (= 1seconde). Dans ce cas l'heure et la date affichées dans 
+        l'interface ne changent pas, l'heure et le jour sont affichés dans
+        le terminal à la place
+        '''
+        self.wait = 1000
+        self.debugMode = True
 
         # FENÊTRE PRINCIPALE
 
@@ -1808,9 +1817,10 @@ class PrincipalWindow:
             text = 'New Day!'
             self.addNotif(text)
 
-        txt= self.affTime(airport.tick)
-        print("\nday:", airport.day)
-        print("Tick:", txt)
+        if self.debugMode:
+            txt= self.affTime(airport.tick-1)
+            print("\nday:", airport.day)
+            print("Tick:", txt)
         generalTime = self.time()
         self.clock.configure(text=generalTime)
 
@@ -1862,19 +1872,19 @@ class PrincipalWindow:
         '''
         fonction permetant d'avancer automatiquement le temps à la 
         minute suivante réelle
-        /60 pour avoir 1sec = 1min     
+        60000 = 1 minute     
         si le temps est d'une minute, vérifier le nombre de secondes déjà
         écoulées dans la minute en cours afin de correspondre aux minutes 
         réelles
         '''
-        if self.wait == 60000: 
+        if not self.debugMode: 
             second = datetime.now().second
 
             if second != 0:
                 self.wait = (60 - second) * 1000
     
         self.step()
-        self.root.after(self.wait, lambda: self.waitStep(window))
+        self.thread = self.root.after(self.wait, lambda: self.waitStep(window))
 
     # Fonctions de modifications des pistes (runways)
     def plusRunway(self, runway):
@@ -2081,6 +2091,7 @@ class PrincipalWindow:
             parent=self.root)
         if fileName:
             if airport.loadSystem(fileName):
+                self.root.after_cancel(self.thread)
                 self.root.destroy()
                 root = Tk()
                 root.title("Airport Simulator")
@@ -2100,6 +2111,7 @@ class PrincipalWindow:
 
         if result:
             airport.clearSystem()
+            self.root.after_cancel(self.thread)
             self.root.destroy()
             root = Tk()
             root.title("Airport Simulator")
