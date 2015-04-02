@@ -8,6 +8,7 @@ fichier: AirportGUI.py
 '''
 
 import airportFunctions
+from datetime import datetime
 from plane import Plane
 from airline import Airline
 from model import Model
@@ -41,6 +42,8 @@ buttonColor = "#C0C0C0"
 class PrincipalWindow:
 
     def __init__(self, root):
+        # Temps entre deux appels de self.step()
+        self.wait = 1000 
 
         # FENÊTRE PRINCIPALE
 
@@ -313,7 +316,7 @@ class PrincipalWindow:
         self.delModelButton.pack(side=LEFT)
 
         # colonne 4
-        column4 = Frame(root, bd=6, bg=mainColor)
+        column4 = Frame(root, bd=6, width=20, bg=mainColor)
         column4.pack()
 
         # partie haute de la quatrième colonne, contient l'heure et le bouton
@@ -321,14 +324,24 @@ class PrincipalWindow:
         column4top = Frame(column4, bg=mainColor)
         column4top.pack(side=TOP)
         
-        generalDay = self.day(airport.day)
+        generalDay = self.day()
         self.affDay = Label(
             column4top,
             bd=6,
             bg=mainColor,
             text=generalDay,
-            font=tkFont.Font(size=12))
+            font=tkFont.Font(size=16))
         self.affDay.pack(side=TOP)
+
+        generalTime = self.time()
+        airport.tick = self.timeToTick(generalTime)
+        self.clock = Label(
+            column4top,
+            bd=6,
+            bg=mainColor,
+            text=generalTime,
+            font=tkFont.Font(size=16))
+        self.clock.pack(side=TOP)
 
         if airport.weatherClear:
             color = "green"
@@ -341,40 +354,8 @@ class PrincipalWindow:
             bg=mainColor,
             fg=color,
             text=generalMeteo,
-            font=tkFont.Font(size=10))
+            font=tkFont.Font(size=12))
         self.affMeteo.pack(side=TOP)
-
-        generalTime = self.time(airport.tick)
-        self.clock = Label(
-            column4top,
-            bd=6,
-            bg=mainColor,
-            text=generalTime,
-            font=tkFont.Font(size=16))
-        self.clock.pack(side=TOP)
-
-        setTime = Frame(
-            column4top,
-            bd=4,
-            bg=mainColor)  # entrée du temps et bouton step
-        setTime.pack()
-        self.nbrMin = Entry(
-            setTime,
-            bg=mainColor,
-            justify=CENTER,
-            relief=SUNKEN,
-            bd=2,
-            width=6)
-        self.nbrMin.pack(side=LEFT)
-        Label(setTime, bg=mainColor, text='min').pack(side=LEFT)
-        Button(
-            setTime,
-            text='Step',
-            relief=GROOVE,
-            bg=buttonColor,
-            command=lambda: self.stepButton(
-                self.nbrMin.get())).pack(
-            side=RIGHT)
 
         # partie intermédiaire, permet l'espacement des parties haute et
         # centrale
@@ -389,6 +370,7 @@ class PrincipalWindow:
         mainLabel = LabelFrame(
             column4mid,
             bd=4,
+            width=20,
             relief=RIDGE,
             bg=mainColor,
             text='Runways',
@@ -484,7 +466,7 @@ class PrincipalWindow:
         self.notifFrame = LabelFrame(
             self.column4bottom,
             bd=4,
-            width=40,
+            width=20,
             relief=RIDGE,
             bg=mainColor,
             text='Notifications',
@@ -503,6 +485,8 @@ class PrincipalWindow:
         self.listSize = 5
 
         self.displayNotif()
+
+        self.waitStep(self.root)
 
     # FONCTIONS
     # Plane
@@ -572,7 +556,7 @@ class PrincipalWindow:
         Label(IDframe,
               bd=4,
               bg=mainColor,
-              text="ID (number)").pack(side=LEFT)
+              text="ID (4 digits)").pack(side=LEFT)
 
         IDnumber = Entry(IDframe,
                          bd=2,
@@ -1052,7 +1036,7 @@ class PrincipalWindow:
                 column=0)
 
             time = plane.getTime()
-            text = self.time(airport.convTupleToTick(time))
+            text = self.affTime(airport.convTupleToTick(time))
             Label(timeFrame,
                   bd=3,
                   bg='white',
@@ -1754,93 +1738,81 @@ class PrincipalWindow:
                     avions."
             self.addNotif(text)
 
-    def stepButton(self, nbrMin):
+    def step(self):
         '''
-        Permet d'avancer le temps
+        Permet d'avancer d'une minute le temps
         Si l'aéroport n'a pas de pistes, un message est affiché
-        Effectue les évenement suivants en fonction du nombre de minutes
-        passées et du nombres de pistes présentes dans l'aéroport
+        Effectue les évenement suivants en fonction du nombres 
+        de pistes présentes dans l'aéroport
         Affiche un message si un avion est en retard
         Mets à jour les informations des avions
         '''
-        self.nbrMin.delete(0, last=END)
+        self.checkRunways()
 
-        ok = False
-        if len(nbrMin) != 0 and nbrMin.isdigit():
-            nbrMin = int(nbrMin)
-            ok = True
-        elif nbrMin == '':
-            nbrMin = 1
-            ok = True
-
-        if ok:
-            plane = None
-            for i in range(int(nbrMin)):
-                self.eventRandom()
-                self.checkRunways()
-
-                if airport.weatherClear:
-                    for j in range(airport.departureRunway):
-                        plane = airport.nextDeparture()
-                        if plane:
-                            self.executePlane(plane)
-                            text = "-L'avion {} a décollé.".format(plane.getID())
-                            self.addNotif(text)
-
-                    for k in range(airport.arrivalRunway):
-                        plane = airport.nextArrival()
-                        if plane:
-                            self.executePlane(plane)
-                            text = "-L'avion {} a atterri.".format(plane.getID())
-                            self.addNotif(text)
-
-                    for l in range(airport.mixteRunway):
-                        plane = airport.nextEvent()
-                        if plane:
-                            self.executePlane(plane)
-                            if plane.getStatut() == "Landed":
-                                text = "-L'avion {} a atterri.".format(
-                                    plane.getID())
-                                self.addNotif(text)
-                            else:
-                                text = "-L'avion {} a décollé.".format(
-                                    plane.getID())
-                                self.addNotif(text)
-
-                crashedPlane, delayedPlane = airport.updateStatus()
-
-                for event in crashedPlane:
-                    plane = event[0]
-                    death = event[1]
+        if airport.weatherClear:
+            for j in range(airport.departureRunway):
+                plane = airport.nextDeparture()
+                if plane:
                     self.executePlane(plane)
+                    text = "-L'avion {} a décollé.".format(plane.getID())
+                    self.addNotif(text)
 
-                    if airport.weatherClear:
-                        text = "-L'avion {} s'est crashé.   {} personnes sont \
-                                mortes dans l'accident.".format(plane.getID(),
-                                                                death)
+            for k in range(airport.arrivalRunway):
+                plane = airport.nextArrival()
+                if plane:
+                    self.executePlane(plane)
+                    text = "-L'avion {} a atterri.".format(plane.getID())
+                    self.addNotif(text)
+
+            for l in range(airport.mixteRunway):
+                plane = airport.nextEvent()
+                if plane:
+                    self.executePlane(plane)
+                    if plane.getStatut() == "Landed":
+                        text = "-L'avion {} a atterri.".format(
+                            plane.getID())
+                        self.addNotif(text)
                     else:
-                        text = "-L'avion {} s'est crashé à cause du mauvais temps.\
-                                {} personnes sont mortes dans l'accident.".format(plane.getID(),death)
-                    self.addNotif(text)
+                        text = "-L'avion {} a décollé.".format(
+                            plane.getID())
+                        self.addNotif(text)
 
-                for plane in delayedPlane:
-                    if airport.weatherClear:
-                        text = "-L'avion {} a du retard.".format(plane.getID())
-                    else:
-                        text = "-L'avion {} a du retard à cause du mauvais temps".format(plane.getID())
-                    self.addNotif(text)
+        self.eventRandom()
+        crashedPlane, delayedPlane = airport.updateStatus()
+
+        for event in crashedPlane:
+            plane = event[0]
+            death = event[1]
+            self.executePlane(plane)
+
+            if airport.weatherClear:
+                text = "-L'avion {} s'est crashé.   {} personnes sont \
+                        mortes dans l'accident.".format(plane.getID(),
+                                                        death)
+            else:
+                text = "-L'avion {} s'est crashé à cause du mauvais temps.\
+                        {} personnes sont mortes dans l'accident.".format(plane.getID(),death)
+            self.addNotif(text)
+
+        for plane in delayedPlane:
+            if airport.weatherClear:
+                text = "-L'avion {} a du retard.".format(plane.getID())
+            else:
+                text = "-L'avion {} a du retard à cause du mauvais temps".format(plane.getID())
+            self.addNotif(text)
 
 
 
-                if airport.tick == 1440:
-                    self.newDay()
-                    text = 'New Day!'
-                    self.addNotif(text)
-                self.clock.configure(text=self.time(airport.tick))
+        if airport.tick == 1440:
+            self.newDay()
+            text = 'New Day!'
+            self.addNotif(text)
 
-        else:
-            text = "La valeur entrée n'est pas correcte. Veuillez la vérifier."
-            messagebox.showwarning("Valeur Incorecte", text)
+        txt= self.affTime(airport.tick)
+        print("\nday:", airport.day)
+        print("Tick:", txt)
+        generalTime = self.time()
+        self.clock.configure(text=generalTime)
 
     def executePlane(self, plane):
         '''
@@ -1875,16 +1847,34 @@ class PrincipalWindow:
         pour le nouveau jour
         Vide les listBox contenant les avions au départ et à l'arrivée
         '''
-        airport.newDay()
+        airport.newDay() 
 
         if airport.weatherClear:
             color = "green"
         else:
             color = "red"
         self.affMeteo.configure(fg= color, text=self.meteo(airport.weatherClear))
-        self.affDay.configure(text=self.day(airport.day))
+        self.affDay.configure(text=self.day())
         self.listBoxArrivals.delete(0, END)
         self.listBoxDepartures.delete(0, END)
+
+    def waitStep(self, window):
+        '''
+        fonction permetant d'avancer automatiquement le temps à la 
+        minute suivante réelle
+        /60 pour avoir 1sec = 1min     
+        si le temps est d'une minute, vérifier le nombre de secondes déjà
+        écoulées dans la minute en cours afin de correspondre aux minutes 
+        réelles
+        '''
+        if self.wait == 60000: 
+            second = datetime.now().second
+
+            if second != 0:
+                self.wait = (60 - second) * 1000
+    
+        self.step()
+        self.root.after(self.wait, lambda: self.waitStep(window))
 
     # Fonctions de modifications des pistes (runways)
     def plusRunway(self, runway):
@@ -2120,15 +2110,25 @@ class PrincipalWindow:
             self.addNotif(text)
 
     # Fonctions de formatage d'affichage
-    def time(self, tick):
+    def time(self):
+        '''
+        Afiche l'heure réelle 
+        '''
+        time = datetime.now()
+        return (time.strftime('%R'))
+
+    def affTime(self, tick):
         '''
         Afiche le nombre "tick" au format '00h00'
         '''
-        return (str(tick //
-                    60).rjust(2, '0') +
-                "h" +
-                str(tick %
-                    60).rjust(2, '0'))
+        return (str(tick // 60).rjust(2, '0') + "h" + str(tick % 60).rjust(2, '0'))
+
+    def timeToTick(self, time):
+        '''
+        transforme l'heure réelle en tick
+        '''
+        tmp = (int(time[:2]), int(time[3:]))
+        return (tmp[0]*60 + tmp[1])
 
     def meteo(self, weatherClear):
         '''
@@ -2140,11 +2140,12 @@ class PrincipalWindow:
             meteo = "Mauvais temps. \nVotre aéroport est fermé."
         return ("Météo: " + str(meteo))
 
-    def day(self, day):
+    def day(self):
         '''
-        affiche le jour
+        affiche le jour réel
         '''
-        return("Day " + str(airport.day))
+        day = datetime.now()
+        return(day.strftime('%d/%m/%Y'))
 
     # Affichage des notifications
     def addNotif(self, text):

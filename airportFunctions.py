@@ -12,6 +12,7 @@ permet fonctionnement en terminal et en GUI
 '''
 
 import random
+import threading
 from plane import Plane
 from model import Model
 from airline import Airline
@@ -28,8 +29,8 @@ class Airport:
         '''
         self.departureList = []  # avions en attente de décollage
         self.arrivalList = []  # avions en attente de d'atterissage
+        
         # autres avions (déjà atterri, décollé ou crashé)
-
         self.historyList = []
 
         # Dictionnaire des compagnies {ID : obj Airline}
@@ -37,7 +38,7 @@ class Airport:
 
         # entier représentant les minutes écoulées (min: 0, max: 1439)
         self.tick = 0
-        self.day = 1
+        self.day = 1 # entier représentant le nombre de jours écoulé
 
         self.departureRunway = 0  # nbr de pistes de décollage
         self.arrivalRunway = 0  # nbr de pistes d'atterrissage
