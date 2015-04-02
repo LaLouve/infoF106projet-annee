@@ -5,6 +5,8 @@ Projet d'année: Simulation de la gestion du trafic aérien d’un aéroport
 Partie 4
 
 fichier: aiportTerminal.py
+
+FONCTIONNEMENT EN TERMINAL PLUS SUPPORTÉ
 '''
 import airportFunctions
 import random
