@@ -119,6 +119,9 @@ class PrincipalWindow:
         # active le double-clic pour obtenir les infos d'un avion
         self.listBoxArrivals.bind("<Double-Button-1>", self.infoArrivalPlane)
 
+        for plane in airport.arrivalList:
+            self.listBoxArrivals.insert(END, plane.getID())
+
         scrollbar.config(command=self.listBoxArrivals.yview)
         scrollbar.pack(side=RIGHT, fill=Y)
         listBoxArea.pack()

@@ -81,11 +81,16 @@ class Plane:
         '''
         Vérifie si les avions au décollage sont en retard
         '''
+        res = False
+
+        if self.day.compare(currentDay) == -1:
+            res = True
+
         if self.day.compare(currentDay) == 0:
             if (int((self.time[0] * 60) + (self.time[1]))) <= tick:
-                return True
-            else:
-                return False
+                res = True
+                
+        return res
 
     def __str__(self):
 
