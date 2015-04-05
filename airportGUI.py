@@ -36,7 +36,7 @@ import random
 airport = airportFunctions.Airport()
 
 # Variables globales
-mainColor = 'white'
+mainColor = "white"
 buttonColor = "#C0C0C0"
 
 
@@ -52,8 +52,8 @@ class PrincipalWindow:
         l'interface ne changent pas, l'heure et le jour sont affichés dans
         le terminal à la place
         '''
-        self.wait = 1000
-        self.debugMode = True
+        self.wait = 60000
+        self.debugMode = False
 
         # Récupération des valeurs de temps réel
         date = self.currentDay()
@@ -536,7 +536,7 @@ class PrincipalWindow:
         airlineID = ttk.Combobox(
             airlineFrame,
             values=self.airlinesList,
-            width=11,
+            width=13,
             state="readonly")
         airlineID.configure(background=mainColor)
         airlineID.pack(side=RIGHT)
@@ -555,7 +555,7 @@ class PrincipalWindow:
         modelName = ttk.Combobox(
             modelFrame,
             values=self.listNameModel,
-            width=11,
+            width=13,
             state="readonly")
         modelName.configure(background=mainColor)
         modelName.pack(side=RIGHT)
@@ -577,7 +577,7 @@ class PrincipalWindow:
                          textvariable=int,
                          justify=CENTER,
                          relief=SUNKEN,
-                         width=8)
+                         width=10)
         IDnumber.pack(side=RIGHT)
 
         # Entrée du nombre de passagers
@@ -596,10 +596,53 @@ class PrincipalWindow:
                            textvariable=int,
                            justify=CENTER,
                            relief=SUNKEN,
-                           width=8)
+                           width=10)
         passengers.pack(side=RIGHT)
 
         if planeList == "departure":
+            dateFrame = Frame(self.addPlaneWindow,
+                                bd=4,
+                                bg=mainColor)
+            dateFrame.pack()
+
+            Label(dateFrame,
+                    bd=4,
+                    bg=mainColor,
+                    text='Date').pack(side=LEFT)
+            
+            dayList = []
+            for i in range(1, 32, 1):
+                dayList.append(i)
+            day = ttk.Combobox(
+                dateFrame,
+                values=dayList,
+                width=3,
+                state="readonly")
+            day.configure(background=mainColor)
+            day.pack(side=LEFT)
+            
+            monthList = []
+            for i in range(1, 13, 1):
+                monthList.append(i)
+            month = ttk.Combobox(
+                dateFrame,
+                values=monthList,
+                width=3,
+                state="readonly")
+            month.configure(background=mainColor)
+            month.pack(side=LEFT)
+
+            yearList = []
+            for i in range(2015, 2021, 1):
+                yearList.append(i)
+            year = ttk.Combobox(
+                dateFrame,
+                values=yearList,
+                width=5,
+                state="readonly")
+            year.configure(background=mainColor)
+            year.pack(side=LEFT)
+
             timeFrame = Frame(self.addPlaneWindow,
                               bd=4,
                               bg=mainColor)
@@ -621,7 +664,7 @@ class PrincipalWindow:
                           textvariable=int,
                           justify=CENTER,
                           relief=SUNKEN,
-                          width=6)
+                          width=7)
             heure.pack(side=LEFT)
             minute = Entry(
                 entryTimeFrame,
@@ -630,7 +673,7 @@ class PrincipalWindow:
                 textvariable=int,
                 justify=CENTER,
                 relief=SUNKEN,
-                width=6)
+                width=7)
             minute.pack(side=RIGHT)
 
             listBox = self.listBoxDepartures
@@ -639,6 +682,10 @@ class PrincipalWindow:
             listBox = self.listBoxArrivals
             heure = None
             minute = None
+            date = None
+            year = None
+            month = None
+            day = None
 
         Button(self.addPlaneWindow,
                text="Add",
@@ -651,116 +698,181 @@ class PrincipalWindow:
                    modelName,
                    heure,
                    minute,
+                   year,
+                   month,
+                   day,
                    listBox)).pack(side=BOTTOM)
 
     def getPlane(
             self,
             IDnumberObject,
-            airlineObject,
+            airlineIDobject,
             passengers,
             modelObject,
             heure,
             minute,
+            yearObject,
+            monthObject,
+            dayObject,
             listBox):
         IDnumber = IDnumberObject.get()
-        IDletter = airlineObject.get()
+        IDletter = airlineIDobject.get()
         nbrPassengers = passengers.get()
         modelName = modelObject.get()
+        
+        airlineOK = False
+        modelOK = False
+        IDok = False
+        passengerOK = False
+        timeOK = False
 
-        if IDletter != '' and modelName != '':
+        # Vérification de la compagnie
+
+        if IDletter != '':
 
             airline = airport.airlinesDico[IDletter]
             airlineName = airline.getName()
 
+            airlineOK = True
+
+        else:
+            text = "Vous n'avez pas sélectionné de compangie.\
+                    \nVeuillez en sélectionner."
+            messagebox.showerror('Error', text)
+
+        # Vérification du modèle
+
+        if modelName !='':
+
             for objet in airport.modelList:
                 if objet.getName() == modelName:
                     model = objet
+                    modelOK = True
 
-            maxPassengers = model.getPassenger()
-            fuel = model.getFuel()
-            consumption = model.getConso()
+                    maxPassengers = model.getPassenger()
+                    fuel = model.getFuel()
+                    consumption = model.getConso()
+
+        else:
+            text = "Vous n'avez pas sélectionné de modèle.\
+                    \nVeuillez en sélectionner."
+            messagebox.showerror('Error', text)
+
+        # Vérification de l'ID
+
+        if IDnumber.isdigit():
 
             if len(IDnumber) == 4:
-                if IDnumber.isdigit() and nbrPassengers.isdigit():
-                    ID = (str(IDletter) + str(IDnumber))
+            
+                ID = (str(IDletter) + str(IDnumber))
 
-                    if airport.checkID(ID):
+                if airport.checkID(ID):
+                    IDok = True
 
-                        if int(nbrPassengers) <= maxPassengers:
-                            if heure is not None and minute is not None:
-                                nbrHeure = heure.get()
-                                nbrMinute = minute.get()
-                                statut = 'In Time'
-
-                                if nbrHeure.isdigit() and nbrMinute.isdigit():
-                                    if int(nbrHeure) >= 0 and int(nbrHeure) <= 23 and int(
-                                            nbrMinute) >= 0 and int(nbrMinute) <= 59:
-                                        time = (
-                                            int(str(nbrHeure).rjust(2, '0')), int(str(nbrMinute).rjust(2, '0')))
-                                        plane = airport.createPlane(
-                                            ID,
-                                            airlineName,
-                                            nbrPassengers,
-                                            fuel,
-                                            consumption,
-                                            modelName,
-                                            time,
-                                            statut)
-                                        airport.addPlane(plane)
-
-                                        text = "-L'avion {} a été ajouté.".format(
-                                            plane.getID())
-                                        self.addNotif(text)
-                                        listBox.insert(END, plane.getID())
-                                        self.addPlaneWindow.destroy()
-                                    else:
-                                        text = "Les données entrées ne sont pas \
-                                            correctes!\nVeuillez les vérifier."
-                                        messagebox.showerror('Error', text)
-                                else:
-                                    text = "Les données entrées ne sont pas \
-                                        correctes!\nVeuillez les vérifier."
-                                    messagebox.showerror('Error', text)
-                            else:
-                                time = None
-                                statut = None
-                                plane = airport.createPlane(
-                                    ID,
-                                    airlineName,
-                                    nbrPassengers,
-                                    fuel,
-                                    consumption,
-                                    modelName,
-                                    time,
-                                    statut)
-                                airport.addPlane(plane)
-                                text = "-L'avion {} a été ajouté.".format(
-                                    plane.getID())
-                                self.addNotif(text)
-                                listBox.insert(END, plane.getID())
-                                self.addPlaneWindow.destroy()
-                        else:
-                            text = "Le nombre de passagers dépasse la capacité\
-                                    maximale du modèle d'avion sélectionné.\
-                                    \nCapacité max : {}".format(
-                                maxPassengers)
-                            messagebox.showwarning('Error', text)
-                    else:
-                        text = "Cet ID est déjà utilisé par un avion.\
-                                \nVeuillez le changer."
-                        messagebox.showwarning('Error', text)
                 else:
-                    text = "Les données entrées ne sont pas correctes!\
-                            \nVeuillez les vérifier."
+                    text = "Cet ID est déjà utilisé par un avion.\
+                            \nVeuillez le changer."
                     messagebox.showerror('Error', text)
+            
             else:
-                text = "Les données entrées ne sont pas correctes!\
+                text = "L'ID entré n'est pas composé d'exactement 4 chiffres!\
+                        \nVeuillez vérifier."
+                messagebox.showerror('Error', text)
+        else:
+            text = "L'ID entré n'est pas composé de chiffres!\
+                    \nVeuillez vérifier."
+            messagebox.showerror('Error', text)
+
+        # Vérification du nombre de passagers
+
+        if nbrPassengers.isdigit():
+
+            if int(nbrPassengers) <= maxPassengers:
+                passengerOK = True
+
+            else:
+                text = "Le nombre de passagers dépasse la capacité maximale du modèle d'avion sélectionné.\
+                        \nCapacité max : {}".format(maxPassengers)
+                messagebox.showerror('Error', text)
+        else:
+            text = "Le nombre de passagers entré n'est pas un nombre!\
+                    \nVeuillez vérifier."
+            messagebox.showerror('Error', text)
+
+        # Vérification de la date
+        if yearObject is not None and monthObject is not None and dayObject is not None:
+            year = yearObject.get()
+            month = monthObject.get()
+            day = dayObject.get()
+
+            if year != '' and month != '' and day != '':
+                date = Day(year, month, day)
+                dateOK = airport.dateOK(date)
+            
+            else:
+                date = None
+
+        # Vérification de l'heure
+
+        if heure is not None and minute is not None:
+            strHeure = str(heure.get())
+            strMinute = str(minute.get())
+            statut = 'In Time'
+
+            if strHeure.isdigit() and strMinute.isdigit():
+                nbrHeure = int(strHeure)
+                nbrMinute = int(strMinute)
+
+                time = (nbrHeure, nbrMinute)
+
+                if date != None:
+                    timeStatus = airport.timeOK(time, date)
+
+                    if timeStatus == -1:
+                        text = "L'heure est inférieure ou égale à la date courante!\
+                                \nVeuillez vérifier."
+                        messagebox.showerror('Error', text)
+                        
+                    elif timeStatus == 0:
+                        text = "L'heure entrée n'est pas valable!\
+                                \nVeuillez vérifier."
+                        messagebox.showerror('Error', text)
+
+                    elif timeStatus == 1:
+                        #time = timeTMP
+                        timeOK = True
+
+                    else:
+                        time = None
+   
+            else:
+                text = "L'heure et les minutes entrées ne sont pas des nombres!\
                         \nVeuillez les vérifier."
                 messagebox.showerror('Error', text)
         else:
-            text = "Vous n'avez pas sélectionné de compangie ou de modèle.\
-                    \nVeuillez en sélectionner."
-            messagebox.showerror('Error', text)
+            time = None
+            statut = None 
+            date = None  
+            timeOK = True # pour les avions à l'attérissage                          
+
+        if airlineOK and modelOK and IDok and passengerOK and timeOK:
+
+            plane = airport.createPlane(
+                        ID,
+                        airlineName,
+                        nbrPassengers,
+                        fuel,
+                        consumption,
+                        modelName,
+                        time,
+                        date,
+                        statut)
+
+            airport.addPlane(plane)
+            text = "-L'avion {} a été ajouté.".format(plane.getID())
+            self.addNotif(text)
+            listBox.insert(END, plane.getID())
+            self.addPlaneWindow.destroy()
 
     def addRandomPlane(self, planeList):
         '''
@@ -912,24 +1024,24 @@ class PrincipalWindow:
         principal = Frame(
             self.infoPlaneWindow,
             bd=3,
-            bg='white')  # création de la frame principale
+            bg=mainColor)  # création de la frame principale
         principal.grid(row=0, column=0)
 
         IDframe = Frame(principal,
                         bd=5,
-                        bg='white')  # frame secondaire, contient l'id
+                        bg=mainColor)  # frame secondaire, contient l'id
         IDframe.grid(row=0, column=0)
         Label(IDframe,
               bd=3,
-              bg='white',
-              text='ID',
+              bg=mainColor,
+              text='ID\n',
               font=tkFont.Font(
-                  size=9)).grid(
+                  size=11)).grid(
             row=0,
             column=0)
         Label(IDframe,
               bd=3,
-              bg='white',
+              bg=mainColor,
               text=plane.getID()).grid(
             row=1,
             column=0)
@@ -937,19 +1049,19 @@ class PrincipalWindow:
         airlineFrame = Frame(
             principal,
             bd=5,
-            bg='white')  # frame secondaire, contient la compagnie
+            bg=mainColor)  # frame secondaire, contient la compagnie
         airlineFrame.grid(row=0, column=1)
         Label(airlineFrame,
               bd=3,
-              bg='white',
-              text='Company',
+              bg=mainColor,
+              text='Company\n',
               font=tkFont.Font(
-                  size=9)).grid(
+                  size=11)).grid(
             row=0,
             column=0)
         Label(airlineFrame,
               bd=3,
-              bg='white',
+              bg=mainColor,
               text=plane.getCompany()).grid(
             row=1,
             column=0)
@@ -957,19 +1069,19 @@ class PrincipalWindow:
         passengerFrame = Frame(
             principal,
             bd=5,
-            bg='white')  # frame secondaire, contient le nombre de passagers
+            bg=mainColor)  # frame secondaire, contient le nombre de passagers
         passengerFrame.grid(row=0, column=2)
         Label(passengerFrame,
               bd=3,
-              bg='white',
-              text='Passengers',
+              bg=mainColor,
+              text='Passengers\n',
               font=tkFont.Font(
-                  size=9)).grid(
+                  size=11)).grid(
             row=0,
             column=0)
         Label(passengerFrame,
               bd=3,
-              bg='white',
+              bg=mainColor,
               text=plane.getPassengers()).grid(
             row=1,
             column=0)
@@ -977,19 +1089,19 @@ class PrincipalWindow:
         fuelFrame = Frame(
             principal,
             bd=5,
-            bg='white')  # frame secondaire, contient le fuel
+            bg=mainColor)  # frame secondaire, contient le fuel
         fuelFrame.grid(row=0, column=3)
         Label(fuelFrame,
               bd=3,
-              bg='white',
-              text='Fuel',
+              bg=mainColor,
+              text='Fuel\n',
               font=tkFont.Font(
-                  size=9)).grid(
+                  size=11)).grid(
             row=0,
             column=0)
         Label(fuelFrame,
               bd=3,
-              bg='white',
+              bg=mainColor,
               text=plane.getFuel()).grid(
             row=1,
             column=0)
@@ -997,19 +1109,19 @@ class PrincipalWindow:
         consumptionFrame = Frame(
             principal,
             bd=5,
-            bg='white')  # frame secondaire, contient la consommation
+            bg=mainColor)  # frame secondaire, contient la consommation
         consumptionFrame.grid(row=0, column=4)
         Label(consumptionFrame,
               bd=3,
-              bg='white',
-              text='Consumption',
+              bg=mainColor,
+              text='Consumption\n',
               font=tkFont.Font(
-                  size=10)).grid(
+                  size=11)).grid(
             row=0,
             column=0)
         Label(consumptionFrame,
               bd=3,
-              bg='white',
+              bg=mainColor,
               text=plane.getConsumption()).grid(
             row=1,
             column=0)
@@ -1017,19 +1129,19 @@ class PrincipalWindow:
         modelFrame = Frame(
             principal,
             bd=5,
-            bg='white')  # frame secondaire, contient la consommation
+            bg=mainColor)  # frame secondaire, contient la consommation
         modelFrame.grid(row=0, column=6)
         Label(modelFrame,
               bd=3,
-              bg='white',
-              text='Model',
+              bg=mainColor,
+              text='Model\n',
               font=tkFont.Font(
-                  size=10)).grid(
+                  size=11)).grid(
             row=0,
             column=0)
         Label(modelFrame,
               bd=3,
-              bg='white',
+              bg=mainColor,
               text=plane.getModel()).grid(
             row=1,
             column=0)
@@ -1037,14 +1149,14 @@ class PrincipalWindow:
         if plane.getTime():
             timeFrame = Frame(principal,
                               bd=5,
-                              bg='white')  # frame secondaire, contient l'heure
+                              bg=mainColor)  # frame secondaire, contient l'heure
             timeFrame.grid(row=0, column=7)
             Label(timeFrame,
                   bd=3,
-                  bg='white',
-                  text='time',
+                  bg=mainColor,
+                  text='Time',
                   font=tkFont.Font(
-                      size=9)).grid(
+                      size=11)).grid(
                 row=0,
                 column=0)
 
@@ -1055,7 +1167,7 @@ class PrincipalWindow:
             text = (str(tmp2) + "\n" + str(tmp))
             Label(timeFrame,
                   bd=3,
-                  bg='white',
+                  bg=mainColor,
                   text=text).grid(
                 row=1,
                 column=0)
@@ -1064,19 +1176,19 @@ class PrincipalWindow:
             statusFrame = Frame(
                 principal,
                 bd=5,
-                bg='white')  # frame secondaire, contient le statut
+                bg=mainColor)  # frame secondaire, contient le statut
             statusFrame.grid(row=0, column=8)
             Label(statusFrame,
                   bd=3,
-                  bg='white',
-                  text='statut',
+                  bg=mainColor,
+                  text='Statut\n',
                   font=tkFont.Font(
-                      size=9)).grid(
+                      size=11)).grid(
                 row=0,
                 column=0)
             Label(statusFrame,
                   bd=3,
-                  bg='white',
+                  bg=mainColor,
                   text=plane.getStatut()).grid(
                 row=1,
                 column=0)
@@ -1085,24 +1197,24 @@ class PrincipalWindow:
             ratioFrame = Frame(
                 principal,
                 bd=5,
-                bg='white')  # frame secondaire, contient le ration (nbr de tour)
+                bg=mainColor)  # frame secondaire, contient le ration (nbr de tour)
             ratioFrame.grid(row=0, column=5)
             Label(ratioFrame,
                   bd=3,
-                  bg='white',
-                  text='Ratio',
+                  bg=mainColor,
+                  text='Ratio\n',
                   font=tkFont.Font(
-                      size=9)).grid(
+                      size=11)).grid(
                 row=0,
                 column=0)
             Label(ratioFrame,
                   bd=3,
-                  bg='white',
+                  bg=mainColor,
                   text=plane.ratio()).grid(
                 row=1,
                 column=0)
 
-        buttonFrame = Frame(principal, bd=5, bg='white')
+        buttonFrame = Frame(principal, bd=5, bg=mainColor)
         buttonFrame.grid(row=1, column=3)
         Button(
             buttonFrame,
@@ -1881,7 +1993,8 @@ class PrincipalWindow:
         écoulées dans la minute en cours afin de correspondre aux minutes 
         réelles
         '''
-        if not self.debugMode: 
+        if not self.debugMode:
+            self.wait = 60000
             second = datetime.now().second
 
             if second != 0:

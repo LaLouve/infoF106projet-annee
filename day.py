@@ -92,7 +92,7 @@ class Day:
         '''
         Renvoie  1  si day supérieur à anotherDay
                  0  si day égale     à anotherDay
-                 -1 si day inférieur à anotherDay
+                -1  si day inférieur à anotherDay
         '''
         yearDay = self.year
         monthDay = self.month

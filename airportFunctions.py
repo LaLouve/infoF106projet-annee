@@ -209,43 +209,7 @@ class Airport:
         self.addPlane(newPlane)
 
         return newPlane
-
-    def randomDate(self):
-        '''
-        Définit une date random se trouvant à maximun 7 jours
-        de la date de la création de l'avion afin de ne pas avoir
-        avec des avions random devant décoller 2 ou 3 mois plus tard
-        '''
-        currentYear = self.currentDay.getYear()
-        currentMonth = self.currentDay.getMonth()
-        currentDay = self.currentDay.getDay()
-
-        nbrDay = random.randint(0, 7)
-
-        year = currentYear
-        month = currentMonth 
-        day = currentDay + nbrDay
-
-        if currentMonth == 2: # février
-            if day > 28: # tant pis pour les bissextiles, de toute façon c'est random
-                month = 3 #mars
-                day = day - 28
-
-        elif currentMonth == 12: # décembre
-            if day > 31: 
-                year += 1 #happy new year
-                month = 1 #janvier
-                day = day - 31
-
-        else:
-            if day > 30:
-                month = currentMonth + 1 #next month
-                day = day - 30
-
-        date = Day(year, month, day)
-
-        return date        
-
+   
     # RUNWAYS
     def modifRunways(self, nbrDepRunway, nbrArrRunway, nbrMixteRunway):
         '''
@@ -463,8 +427,135 @@ class Airport:
         self.tick += 1
 
         return crashedPlane, delayedPlane
+    
+    def randomDate(self):
+        '''
+        Définit une date random se trouvant à maximun 7 jours
+        de la date de la création de l'avion afin de ne pas avoir
+        avec des avions random devant décoller 2 ou 3 mois plus tard
+        '''
+        currentYear = self.currentDay.getYear()
+        currentMonth = self.currentDay.getMonth()
+        currentDay = self.currentDay.getDay()
+
+        nbrDay = random.randint(0, 7)
+
+        year = currentYear
+        month = currentMonth 
+        day = currentDay + nbrDay
+
+        if currentMonth == 2: # février
+            if day > 28: # tant pis pour les bissextiles, de toute façon c'est random
+                month = 3 #mars
+                day = day - 28
+
+        elif currentMonth == 12: # décembre
+            if day > 31: 
+                year += 1 #happy new year
+                month = 1 #janvier
+                day = day - 31
+
+        else:
+            if day > 30:
+                month = currentMonth + 1 #next month
+                day = day - 30
+
+        date = Day(year, month, day)
+
+        return date 
+
+    def dateOK(self, date):
+        '''
+        Vérifie si la date donnée existe et est supérieure ou 
+        égale à la date du jour
+        '''
+        dateOK = False
+        isegal = date.compare(self.currentDay)
+        longMonthList = [1, 3, 5, 7, 8, 10]
+        day = date.getDay()
+        month = date.getMonth()
+        year = date.getYear()
+
+        bissextile = False
+        if year % 4 == 0:
+            bissextile =  True
+
+        if isegal == 1 or isegal == 0: #date égale ou supérieur à la date courante
+            if month not in longMonthList and month != 2:
+                if day <= 30:
+                    dateOK = True
+
+            elif month == 2:
+                if bissextile:
+                    if day <= 29:
+                        dateOK = True
+                else:
+                    if day <= 28:
+                        dateOK = True
+            else:
+                if day <= 31:
+                    dateOK = True
+
+        return dateOK
 
     # TIME (conversion)
+    def timeOK(self, time, date):
+        '''
+        Vérifie si l'heure donnée par l'utilisateur existe et est bien
+        supérieure au temps actuel
+        Comparaison avec la date et l'heure actuels
+        Si la date est suppérieure, l'heure peut-être n'importe quelle heure
+        existante
+        Dans le cas contraire, l'heure doit être supérieure à l'heure actuelle
+        
+        Cette fonction renvoie 1 si l'heure est correcte
+                              -1 si l'heure est inférieure ou égale à l'heure actuelle
+                               0 si l'heure n'est pas une heure valable
+        '''
+        heure = time[0]
+        minute = time[1]
+
+        timeOK = None 
+
+        real = False
+
+        if heure >= 0 and heure <= 23 and minute >= 0 and minute <= 59:
+            real = True
+        
+        else:
+            timeOK = 0
+
+        if real:
+
+            if date.compare(self.currentDay) == 0:
+                timeActuel = self.convTickToTuple(self.tick)
+                heureActuel = timeActuel[0]
+                minuteActuel = timeActuel[1]
+
+                if heure == heureActuel:
+
+                    if minute >= minuteActuel and minute <= 59:
+                        timeOK = 1 # l'heure est supérieure au temps actuel
+                    
+                    else:
+                        timeOK = -1 # l'heure est inférieure au temps actuel
+
+                elif heure >= heureActuel:
+                    timeOK = 1 # l'heure est supérieure au temps actuel
+
+                else:
+                    timeOK = -1 # l'heure est inférieure au temps actuel
+
+            elif date.compare(self.currentDay) == -1:
+                timeOK = -1 # la date (et donc l'heure) est inférieur au temps actuel
+                
+            else:
+                timeOK = 1 # la date (et donc l'heure) est supérieure au temps actuel
+
+        return timeOK
+
+
+
     def convTupleToTick(self, tupple):
         '''
         converti un tuple en un entier
