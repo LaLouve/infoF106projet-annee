@@ -12,6 +12,7 @@ from datetime import datetime
 from plane import Plane
 from airline import Airline
 from model import Model
+from day import Day
 
 # outils d'interface graphique
 from tkinter import *
@@ -47,12 +48,19 @@ class PrincipalWindow:
         60000 = 1minute
 
         Pour accelerer la simulation il suffit de changer 60000 par 
-        10000 (= 1seconde). Dans ce cas l'heure et la date affichées dans 
+        1000 (= 1seconde). Dans ce cas l'heure et la date affichées dans 
         l'interface ne changent pas, l'heure et le jour sont affichés dans
         le terminal à la place
         '''
         self.wait = 1000
         self.debugMode = True
+
+        # Récupération des valeurs de temps réel
+        date = self.currentDay()
+        airport.currentDay = self.dayToObjetDay(date)
+
+        time = self.currentTime()
+        airport.tick = self.timeToTick(time)
 
         # FENÊTRE PRINCIPALE
 
@@ -110,9 +118,6 @@ class PrincipalWindow:
         self.listBoxArrivals.bind("<<ListboxSelect>>", self.listBoxSelected)
         # active le double-clic pour obtenir les infos d'un avion
         self.listBoxArrivals.bind("<Double-Button-1>", self.infoArrivalPlane)
-
-        for plane in airport.arrivalList:
-            self.listBoxArrivals.insert(END, plane.getID())
 
         scrollbar.config(command=self.listBoxArrivals.yview)
         scrollbar.pack(side=RIGHT, fill=Y)
@@ -333,17 +338,16 @@ class PrincipalWindow:
         column4top = Frame(column4, bg=mainColor)
         column4top.pack(side=TOP)
         
-        generalDay = self.day()
-        self.affDay = Label(
+        generalDay = self.affDay(airport.currentDay)
+        self.affichageDay = Label(
             column4top,
             bd=6,
             bg=mainColor,
             text=generalDay,
             font=tkFont.Font(size=16))
-        self.affDay.pack(side=TOP)
+        self.affichageDay.pack(side=TOP)
 
-        generalTime = self.time()
-        airport.tick = self.timeToTick(generalTime)
+        generalTime = self.affTime(airport.tick)
         self.clock = Label(
             column4top,
             bd=6,
@@ -356,15 +360,15 @@ class PrincipalWindow:
             color = "green"
         else:
             color = "red"
-        generalMeteo = self.meteo(airport.weatherClear)
-        self.affMeteo = Label(
+        generalMeteo = self.affMeteo(airport.weatherClear)
+        self.affichageMeteo = Label(
             column4top,
             bd=6,
             bg=mainColor,
             fg=color,
             text=generalMeteo,
             font=tkFont.Font(size=12))
-        self.affMeteo.pack(side=TOP)
+        self.affichageMeteo.pack(side=TOP)
 
         # partie intermédiaire, permet l'espacement des parties haute et
         # centrale
@@ -1045,7 +1049,10 @@ class PrincipalWindow:
                 column=0)
 
             time = plane.getTime()
-            text = self.affTime(airport.convTupleToTick(time))
+            tmp = self.affTime(airport.convTupleToTick(time))
+            date = plane.getDay()
+            tmp2 = self.affDay(date)
+            text = (str(tmp2) + "\n" + str(tmp))
             Label(timeFrame,
                   bd=3,
                   bg='white',
@@ -1810,18 +1817,12 @@ class PrincipalWindow:
                 text = "-L'avion {} a du retard à cause du mauvais temps".format(plane.getID())
             self.addNotif(text)
 
-
-
         if airport.tick == 1440:
             self.newDay()
             text = 'New Day!'
             self.addNotif(text)
 
-        if self.debugMode:
-            txt= self.affTime(airport.tick-1)
-            print("\nday:", airport.day)
-            print("Tick:", txt)
-        generalTime = self.time()
+        generalTime = self.affTime(airport.tick)
         self.clock.configure(text=generalTime)
 
     def executePlane(self, plane):
@@ -1863,8 +1864,11 @@ class PrincipalWindow:
             color = "green"
         else:
             color = "red"
-        self.affMeteo.configure(fg= color, text=self.meteo(airport.weatherClear))
-        self.affDay.configure(text=self.day())
+        self.affichageMeteo.configure(fg= color, text=self.affMeteo(airport.weatherClear))
+        
+        generalDay = self.affDay(airport.currentDay)
+        self.affichageDay.configure(text=generalDay)
+        
         self.listBoxArrivals.delete(0, END)
         self.listBoxDepartures.delete(0, END)
 
@@ -2091,7 +2095,7 @@ class PrincipalWindow:
             parent=self.root)
         if fileName:
             if airport.loadSystem(fileName):
-                self.root.after_cancel(self.thread)
+                self.root.after_cancel(self.thread) #arrête le thread en cours
                 self.root.destroy()
                 root = Tk()
                 root.title("Airport Simulator")
@@ -2111,7 +2115,7 @@ class PrincipalWindow:
 
         if result:
             airport.clearSystem()
-            self.root.after_cancel(self.thread)
+            self.root.after_cancel(self.thread) # arrête le thread en cours
             self.root.destroy()
             root = Tk()
             root.title("Airport Simulator")
@@ -2121,28 +2125,28 @@ class PrincipalWindow:
             text = "-Rénitialisation de l'aéroport."
             self.addNotif(text)
 
-    # Fonctions de formatage d'affichage
-    def time(self):
+    # Fonctions de formatage d'affichage et du temps
+    def currentTime(self):
         '''
-        Afiche l'heure réelle 
+        retourne l'heure réelle 
         '''
         time = datetime.now()
         return (time.strftime('%R'))
-
+   
+    def timeToTick(self, time):
+        '''
+        transforme l'heure réelle en tick
+        '''
+        tmp = (int(time[:2]), int(time[3:]))
+        return (tmp[0]*60 + tmp[1] - 1)
+    
     def affTime(self, tick):
         '''
         Afiche le nombre "tick" au format '00h00'
         '''
         return (str(tick // 60).rjust(2, '0') + "h" + str(tick % 60).rjust(2, '0'))
 
-    def timeToTick(self, time):
-        '''
-        transforme l'heure réelle en tick
-        '''
-        tmp = (int(time[:2]), int(time[3:]))
-        return (tmp[0]*60 + tmp[1])
-
-    def meteo(self, weatherClear):
+    def affMeteo(self, weatherClear):
         '''
         Affiche la météo
         '''
@@ -2152,12 +2156,37 @@ class PrincipalWindow:
             meteo = "Mauvais temps. \nVotre aéroport est fermé."
         return ("Météo: " + str(meteo))
 
-    def day(self):
+    def currentDay(self):
         '''
-        affiche le jour réel
+        retourne le jour réel
         '''
         day = datetime.now()
         return(day.strftime('%d/%m/%Y'))
+
+    def dayToObjetDay(sefl, date):
+        '''
+        transforme une date réelle (datetime.now) en 
+        un objet Day 
+        '''
+        day = int(date[:2])
+        month = int(date[3:5])
+        year = int(date[6:])
+
+        newDay = Day(year, month, day)
+        return newDay
+
+    def affDay(self, date):
+        '''
+        affiche le jour
+        '''
+        year = date.getYear()
+        month = date.getMonth()
+        day = date.getDay()
+
+        txt = ((str(day)).rjust(2, '0') + '/' +
+                (str(month)).rjust(2, '0') + '/' +
+                (str(year)))
+        return txt
 
     # Affichage des notifications
     def addNotif(self, text):

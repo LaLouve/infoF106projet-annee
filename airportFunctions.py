@@ -16,6 +16,7 @@ import threading
 from plane import Plane
 from model import Model
 from airline import Airline
+from day import Day
 import json  # pour le système de sauvegarde
 
 IDmax = 9999  # valeur maximun de l'ID
@@ -38,11 +39,11 @@ class Airport:
 
         # entier représentant les minutes écoulées (min: 0, max: 1439)
         self.tick = 0
-        self.day = 1 # entier représentant le nombre de jours écoulé
+        self.currentDay = None # Objet contenant la date du jour
 
         self.departureRunway = 0  # nbr de pistes de décollage
         self.arrivalRunway = 0  # nbr de pistes d'atterrissage
-        self.mixteRunway = 0  # nbr de piste d'atterrissage et de décollage
+        self.mixteRunway = 1  # nbr de piste d'atterrissage et de décollage
 
         self.modelList = []  # Liste des différents modèles d'avions
 
@@ -67,6 +68,7 @@ class Airport:
             consumption,
             model,
             time,
+            day,
             statut):
         '''
         creation d'un avion
@@ -79,6 +81,7 @@ class Airport:
             consumption,
             model,
             time,
+            day,
             statut)
         IDletter = ID[:-4]
         # ajouter la compagnie à la liste si elle n'y est pas déjà
@@ -178,10 +181,18 @@ class Airport:
             ID = (IDletter + IDnumber)
 
         if planeList is self.departureList:
-            time = (random.randint(0, 23), random.randint(0, 59))
+            day = self.randomDate()
+
+            if day.compare(self.currentDay) == 0:
+                currentTime = self.convTickToTuple(self.tick)
+                time = (random.randint(currentTime[0], 23), random.randint(currentTime[1], 59))
+            else:
+                time = (random.randint(0, 23), random.randint(0, 59))
+            
             statut = "In Time"
 
         elif planeList is self.arrivalList:
+            day = None
             time = None
             statut = None
 
@@ -193,10 +204,47 @@ class Airport:
             consumption,
             nameModel,
             time,
+            day,
             statut)
         self.addPlane(newPlane)
 
         return newPlane
+
+    def randomDate(self):
+        '''
+        Définit une date random se trouvant à maximun 7 jours
+        de la date de la création de l'avion afin de ne pas avoir
+        avec des avions random devant décoller 2 ou 3 mois plus tard
+        '''
+        currentYear = self.currentDay.getYear()
+        currentMonth = self.currentDay.getMonth()
+        currentDay = self.currentDay.getDay()
+
+        nbrDay = random.randint(0, 7)
+
+        year = currentYear
+        month = currentMonth 
+        day = currentDay + nbrDay
+
+        if currentMonth == 2: # février
+            if day > 28: # tant pis pour les bissextiles, de toute façon c'est random
+                month = 3 #mars
+                day = day - 28
+
+        elif currentMonth == 12: # décembre
+            if day > 31: 
+                year += 1 #happy new year
+                month = 1 #janvier
+                day = day - 31
+
+        else:
+            if day > 30:
+                month = currentMonth + 1 #next month
+                day = day - 30
+
+        date = Day(year, month, day)
+
+        return date        
 
     # RUNWAYS
     def modifRunways(self, nbrDepRunway, nbrArrRunway, nbrMixteRunway):
@@ -221,15 +269,19 @@ class Airport:
         else:
             mostPrior = self.departureList[0]
             for plane in self.departureList[1:]:
-                if self.convTupleToTick(plane.getTime()) <\
-                   self.convTupleToTick(mostPrior.getTime()):
-                    mostPrior = plane
-
-                if self.convTupleToTick(plane.getTime()) ==\
-                   self.convTupleToTick(mostPrior.getTime()):
-                    if int(plane.getPassengers()) >\
-                       mostPrior.getPassengers():
+                
+                day = plane.getDay()
+                if day.compare(self.currentDay) == 0:
+                    
+                    if self.convTupleToTick(plane.getTime()) <\
+                        self.convTupleToTick(mostPrior.getTime()):
                         mostPrior = plane
+
+                    if self.convTupleToTick(plane.getTime()) ==\
+                       self.convTupleToTick(mostPrior.getTime()):
+                        if int(plane.getPassengers()) >\
+                           mostPrior.getPassengers():
+                            mostPrior = plane
 
         return mostPrior
 
@@ -354,7 +406,7 @@ class Airport:
         variable du temps, tick
         '''
         self.tick = 0
-        self.day += 1
+        self.currentDay = self.currentDay.increment()
 
         #meteo:
         meteo = random.randint(0, 9)
@@ -375,7 +427,7 @@ class Airport:
 
         self.departureList = []
         self.arrivalList = []
-        # return self.tick, self.day, self.departureList, self.arrivalList
+        # return self.tick, self.currentDay, self.departureList, self.arrivalList
 
     def updateStatus(self):
         '''
@@ -404,7 +456,7 @@ class Airport:
                 crashedPlane.append(event)
 
         for plane in self.departureList:
-            if plane.isDelayed(self.tick):
+            if plane.isDelayed(self.currentDay, self.tick):
                 if plane.getStatut() != 'Delayed':
                     plane.setStatut('Delayed')
                     delayedPlane.append(plane)
@@ -423,8 +475,7 @@ class Airport:
         '''
         converti l'entier "tick" en un tuple
         '''
-        return ((str(time // 60)).rjust(2, '0'),
-                (str(time % 60)).rjust(2, '0'))
+        return ( int(time // 60), int(time % 60) )
 
     # SAVE
     def saveSystem(self, filename="save.txt"):
@@ -464,7 +515,9 @@ class Airport:
                        "arrivalRunway": self.arrivalRunway,
                        "mixteRunway": self.mixteRunway}
 
-        saveTime = {"time": self.tick, "day": self.day, "meteo": self.weatherClear}
+        saveTime = {"time": self.tick, "meteo": self.weatherClear}
+
+        saveDay = self.currentDay.__dict__
 
         saveStat = {"plane global": self.statPlaneGlobal,
                     "plane dep": self.statPlaneDep,
@@ -481,6 +534,7 @@ class Airport:
                            "arrivalPlanes": saveArrivalPlane,
                            "history_planes": saveHistoryPlane,
                            "time": saveTime,
+                           "day": saveDay,
                            "stat": saveStat})
 
         saveFile = open(filename, "w")
@@ -531,8 +585,10 @@ class Airport:
 
             loadTime = save["time"]
             self.tick = loadTime["time"]
-            self.day = loadTime["day"]
             self.weatherClear = loadTime["meteo"]
+
+            loadDay = save["day"]
+            self.currentDay = Day.fromjson(loadDay)
 
             loadStat = save["stat"]
             self.statPlaneGlobal = loadStat["plane global"]
@@ -552,4 +608,7 @@ class Airport:
         return ok
 
     def clearSystem(self):
+        '''
+        Permet de réinitialiser l'aéroport
+        '''
         self.__init__()

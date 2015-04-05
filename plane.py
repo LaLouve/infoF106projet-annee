@@ -6,6 +6,7 @@ Partie 4
 
 fichier: plane.py
 '''
+from day import Day
 
 class Plane:
 
@@ -18,6 +19,7 @@ class Plane:
             consumption,
             model,
             time,
+            day,
             statut):
         self.ID = ID
         self.company = company
@@ -25,9 +27,10 @@ class Plane:
         self.fuel = int(fuel)
         # modèle de l'avion, définit le fuel, la consommation et le nbr max de
         # passagers
-        self.model = model
+        self.model = model #objet model
         self.consumption = int(consumption)
-        self.time = time
+        self.time = time # tuple (heure, minute)
+        self.day = day #Objet Day 
         # statut= Landed, Crashed, Take Off, Delayed, Deleted, In Time or None
         self.statut = statut
 
@@ -52,6 +55,9 @@ class Plane:
     def getTime(self):
         return self.time
 
+    def getDay(self):
+        return self.day
+
     def getStatut(self):
         return self.statut
 
@@ -71,11 +77,15 @@ class Plane:
         # retourne True si l'avion s'est crashé
         return self.fuel <= 0
 
-    def isDelayed(self, tick):  # L'avion est-il retardé?
-        if (int((self.time[0] * 60) + (self.time[1]))) <= tick:
-            return True
-        else:
-            return False
+    def isDelayed(self, currentDay, tick):  
+        '''
+        Vérifie si les avions au décollage sont en retard
+        '''
+        if self.day.compare(currentDay) == 0:
+            if (int((self.time[0] * 60) + (self.time[1]))) <= tick:
+                return True
+            else:
+                return False
 
     def __str__(self):
 
@@ -90,7 +100,10 @@ class Plane:
                (str(self.passengers).ljust(5, ' ')) + '| ' +
                (str(self.fuel).ljust(5, ' ')) + '| ' +
                (str(self.consumption).ljust(4, ' ')) + '| ' +
-               (str(self.model).ljust(5, ' '))
+               (str(self.model).ljust(5, ' ')) + '| ' +
+               (str(self.time[0]) + 'h' + str(self.time[1])) + '| ' +
+               (str(self.day[0]) + '/' + str(self.day[1]) + '/' + 
+                str(self.day[2])) 
                )
         return res
 
@@ -103,6 +116,7 @@ class Plane:
         consumption = json["consumption"]
         model = json["model"]
         time = json["time"]
+        day = json["day"]
         statut = json["statut"]
 
         return Plane(
@@ -113,4 +127,5 @@ class Plane:
             consumption,
             model,
             time,
+            day,
             statut)
