@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 '''
 Dervaux Florence, N° de matricule : 000396246, groupe 1
 
