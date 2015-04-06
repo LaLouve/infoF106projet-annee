@@ -940,7 +940,7 @@ class PrincipalWindow:
         item = self.listBoxDepartures.curselection()
         if item:
             self.listBoxDepartures.delete(item)
-            numPlane = item[0]
+            numPlane = int(item[0])
             plane = airport.departureList[numPlane]
             airport.delPlane(plane)
             text = "-L'avion {} a été supprimé.".format(plane.getID())
@@ -1016,7 +1016,7 @@ class PrincipalWindow:
     def infoModelPlane(self, event=None):
         '''
         Affiche les informations d'un avion se trouvant dans la liste
-        des avions d'une compagnie
+        des avions d'un modèle
         '''
         item = self.listBoxModelPlane.curselection()
         if item:
@@ -1348,7 +1348,7 @@ class PrincipalWindow:
         if item:
             self.listBoxAirlines.delete(item)
 
-            numAirline = item[0]
+            numAirline = int(item[0])
             airlineID = self.airlinesList[numAirline]
             airline = airport.airlinesDico[airlineID]
 
@@ -1369,18 +1369,6 @@ class PrincipalWindow:
         else:
             self.delAirlineButton.configure(state=DISABLED)
 
-    def showInfoAddAirline(self, event=None):
-        '''
-        Appelle la fonction d'affichage des informations et avions de la
-        compangie sélectionnée dans la liste de la fenêtre d'ajout d'avion
-        '''
-        item = self.listBoxAddAirlines.curselection()
-        if item:
-            numAirline = item[0]
-            airlineID = self.airlinesList[numAirline]
-
-            self.infoAirline(airlineID)
-
     def showInfoAirline(self, event=None):
         '''
         Appelle la fonction d'affichage des informations et avions de la
@@ -1388,7 +1376,7 @@ class PrincipalWindow:
         '''
         item = self.listBoxAirlines.curselection()
         if item:
-            numAirline = item[0]
+            numAirline = int(item[0])
             airlineID = self.airlinesList[numAirline]
 
             self.infoAirline(airlineID)
@@ -1643,7 +1631,7 @@ class PrincipalWindow:
         if item:
             self.listBoxModel.delete(item)
 
-            numModel = item[0]
+            numModel = int(item[0])
             model = airport.modelList[numModel]
             airport.delModel(model)
 
@@ -1662,25 +1650,13 @@ class PrincipalWindow:
         else:
             self.delModelButton.configure(state=DISABLED)
 
-    def showInfoAddModel(self, event=None):
-        '''
-        Appelle la fonction d'affichage du modèle sélectionné dans la fenêtre
-        d'ajout d'avion
-        '''
-        item = self.listBoxAddModel.curselection()
-        if item:
-            numModel = item[0]
-            model = airport.modelList[numModel]
-
-            self.infoModel(model)
-
     def showInfoModel(self, event=None):
         '''
         Appelle la fonction d'affichage du modèle sélectionné
         '''
         item = self.listBoxModel.curselection()
         if item:
-            numModel = item[0]
+            numModel = int(item[0])
             model = airport.modelList[numModel]
 
             self.infoModel(model)
