@@ -12,12 +12,13 @@ permet fonctionnement en terminal et en GUI
 '''
 
 import random
-import threading
+import json  # pour le système de sauvegarde
+from datetime import datetime
 from plane import Plane
 from model import Model
 from airline import Airline
 from day import Day
-import json  # pour le système de sauvegarde
+
 
 IDmax = 9999  # valeur maximun de l'ID
 
@@ -182,6 +183,7 @@ class Airport:
 
         if planeList is self.departureList:
             day = self.randomDate()
+            date = (day.getYear(), day.getMonth(), day.getDay())
 
             if day.compare(self.currentDay) == 0:
                 currentTime = self.convTickToTuple(self.tick)
@@ -192,7 +194,7 @@ class Airport:
             statut = "In Time"
 
         elif planeList is self.arrivalList:
-            day = None
+            date = None
             time = None
             statut = None
 
@@ -204,7 +206,7 @@ class Airport:
             consumption,
             nameModel,
             time,
-            day,
+            date,
             statut)
         self.addPlane(newPlane)
 
@@ -273,7 +275,7 @@ class Airport:
                         mostPrior = plane
         return mostPrior
 
-    def nextEvent(self):
+    def nextMixte(self):
         '''
         Permet d'effectuer l'action la plus prioritaire. Si il n'y a pas
         d'avion devant décoller, c'est l'avion avec le ratio carburant/
@@ -295,9 +297,6 @@ class Airport:
         elif arrivalPlane is not None:
             mostPrior = self.nextArrival()
 
-        if mostPrior is not None:
-            self.historyList.append(mostPrior)
-
         return (mostPrior)
 
     def nextDeparture(self):
@@ -312,9 +311,6 @@ class Airport:
             mostPrior = departurePlane
             mostPrior.setStatut('Take Off')
             self.departureList.remove(mostPrior)
-
-        if mostPrior is not None:
-            self.historyList.append(mostPrior)
 
         return (mostPrior)
 
@@ -335,9 +331,26 @@ class Airport:
         if mostPrior is not None:
             mostPrior.setStatut('Landed')
             self.arrivalList.remove(mostPrior)
-            self.historyList.append(mostPrior)
 
         return (mostPrior)
+
+    def nextEvent(self, runway):
+        '''
+        Effectue l'event suivant
+        '''
+        if runway == "departure":
+            event = self.nextDeparture()
+
+        elif runway == "arrival":
+            event = self.nextArrival()
+
+        elif runway == "mixte":
+            event = self.nextMixte()
+
+        if event is not None:
+            self.historyList.append(event)
+
+        return event
 
     def eventRandom(self):
         '''
@@ -498,7 +511,7 @@ class Airport:
 
         return dateOK
 
-    # TIME (conversion)
+    # TIME (conversion, affichage, ect)
     def timeOK(self, time, date):
         '''
         Vérifie si l'heure donnée par l'utilisateur existe et est bien
@@ -548,13 +561,11 @@ class Airport:
 
             elif date.compare(self.currentDay) == -1:
                 timeOK = -1 # la date (et donc l'heure) est inférieur au temps actuel
-                
+
             else:
                 timeOK = 1 # la date (et donc l'heure) est supérieure au temps actuel
 
         return timeOK
-
-
 
     def convTupleToTick(self, tupple):
         '''
@@ -567,6 +578,68 @@ class Airport:
         converti l'entier "tick" en un tuple
         '''
         return ( int(time // 60), int(time % 60) )
+
+    def realTime(self):
+        '''
+        retourne l'heure réelle 
+        '''
+        time = datetime.now()
+        return (time.strftime('%R'))
+   
+    def timeToTick(self, time):
+        '''
+        transforme l'heure réelle en tick
+        '''
+        tmp = (int(time[:2]), int(time[3:]))
+        return (tmp[0]*60 + tmp[1] - 1)
+    
+    def affTime(self, tick):
+        '''
+        Afiche le nombre "tick" au format '00h00'
+        '''
+        return (str(tick // 60).rjust(2, '0') + "h" + str(tick % 60).rjust(2, '0'))
+
+    def affMeteo(self, weatherClear):
+        '''
+        Affiche la météo
+        '''
+        if weatherClear:
+            meteo = "Beau temps"
+        else:
+            meteo = "Mauvais temps. \nVotre aéroport est fermé."
+        return ("Météo: " + str(meteo))
+
+    def realDay(self):
+        '''
+        retourne le jour réel
+        '''
+        day = datetime.now()
+        return(day.strftime('%d/%m/%Y'))
+
+    def dayToObjetDay(sefl, date):
+        '''
+        transforme une date réelle (datetime.now) en 
+        un objet Day 
+        '''
+        day = int(date[:2])
+        month = int(date[3:5])
+        year = int(date[6:])
+
+        newDay = Day(year, month, day)
+        return newDay
+
+    def affDay(self, date):
+        '''
+        affiche le jour
+        '''
+        year = date.getYear()
+        month = date.getMonth()
+        day = date.getDay()
+
+        txt = ((str(day)).rjust(2, '0') + '/' +
+                (str(month)).rjust(2, '0') + '/' +
+                (str(year)))
+        return txt
 
     # SAVE
     def saveSystem(self, filename="save.txt"):

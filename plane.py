@@ -30,7 +30,7 @@ class Plane:
         self.model = model #objet model
         self.consumption = int(consumption)
         self.time = time # tuple (heure, minute)
-        self.day = day #Objet Day 
+        self.day = day #tuple (year, month, day)
         # statut= Landed, Crashed, Take Off, Delayed, Deleted, In Time or None
         self.statut = statut
 
@@ -56,7 +56,14 @@ class Plane:
         return self.time
 
     def getDay(self):
-        return self.day
+        if self.day is not None:
+            year = self.day[0]
+            month = self.day[1]
+            day = self.day[2]
+            date = Day(year, month, day)
+        else:
+            date = None
+        return date
 
     def getStatut(self):
         return self.statut
@@ -81,15 +88,20 @@ class Plane:
         '''
         Vérifie si les avions au décollage sont en retard
         '''
+        year = self.day[0]
+        month = self.day[1]
+        day = self.day[2]
+        date = Day(year, month, day)
+
         res = False
 
-        if self.day.compare(currentDay) == -1:
+        if date.compare(currentDay) == -1:
             res = True
 
-        if self.day.compare(currentDay) == 0:
+        if date.compare(currentDay) == 0:
             if (int((self.time[0] * 60) + (self.time[1]))) <= tick:
                 res = True
-                
+
         return res
 
     def __str__(self):

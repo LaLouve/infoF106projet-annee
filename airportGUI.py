@@ -56,11 +56,11 @@ class PrincipalWindow:
         self.debugMode = False
 
         # Récupération des valeurs de temps réel
-        date = self.currentDay()
-        airport.currentDay = self.dayToObjetDay(date)
+        date = airport.realDay()
+        airport.currentDay = airport.dayToObjetDay(date)
 
-        time = self.currentTime()
-        airport.tick = self.timeToTick(time)
+        time = airport.realTime()
+        airport.tick = airport.timeToTick(time)
 
         # FENÊTRE PRINCIPALE
 
@@ -341,7 +341,7 @@ class PrincipalWindow:
         column4top = Frame(column4, bg=mainColor)
         column4top.pack(side=TOP)
         
-        generalDay = self.affDay(airport.currentDay)
+        generalDay = airport.affDay(airport.currentDay)
         self.affichageDay = Label(
             column4top,
             bd=6,
@@ -350,7 +350,7 @@ class PrincipalWindow:
             font=tkFont.Font(size=16))
         self.affichageDay.pack(side=TOP)
 
-        generalTime = self.affTime(airport.tick)
+        generalTime = airport.affTime(airport.tick)
         self.clock = Label(
             column4top,
             bd=6,
@@ -363,7 +363,7 @@ class PrincipalWindow:
             color = "green"
         else:
             color = "red"
-        generalMeteo = self.affMeteo(airport.weatherClear)
+        generalMeteo = airport.affMeteo(airport.weatherClear)
         self.affichageMeteo = Label(
             column4top,
             bd=6,
@@ -810,6 +810,8 @@ class PrincipalWindow:
 
             if year != '' and month != '' and day != '':
                 date = Day(year, month, day)
+                dateTuple = (year, month, day)
+
                 dateOK = airport.dateOK(date)
             
             else:
@@ -855,7 +857,8 @@ class PrincipalWindow:
         else:
             time = None
             statut = None 
-            date = None  
+            date = None 
+            dateTuple = None 
             timeOK = True # pour les avions à l'attérissage                          
 
         if airlineOK and modelOK and IDok and passengerOK and timeOK:
@@ -868,7 +871,7 @@ class PrincipalWindow:
                         consumption,
                         modelName,
                         time,
-                        date,
+                        dateTuple,
                         statut)
 
             airport.addPlane(plane)
@@ -952,7 +955,7 @@ class PrincipalWindow:
 
     def listBoxSelected(self, envent=None):
         '''
-        désactive tous les boutons del lorsqu'un avion de l liste des arrivées
+        désactive tous les boutons del lorsqu'un avion de la liste des arrivées
         est sélectionné
         '''
         if self.listBoxArrivals.curselection():
@@ -1164,9 +1167,9 @@ class PrincipalWindow:
                 column=0)
 
             time = plane.getTime()
-            tmp = self.affTime(airport.convTupleToTick(time))
+            tmp = airport.affTime(airport.convTupleToTick(time))
             date = plane.getDay()
-            tmp2 = self.affDay(date)
+            tmp2 = airport.affDay(date)
             text = (str(tmp2) + "\n" + str(tmp))
             Label(timeFrame,
                   bd=3,
@@ -1882,21 +1885,21 @@ class PrincipalWindow:
 
         if airport.weatherClear:
             for j in range(airport.departureRunway):
-                plane = airport.nextDeparture()
+                plane = airport.nextEvent("departure")
                 if plane:
                     self.executePlane(plane)
                     text = "-L'avion {} a décollé.".format(plane.getID())
                     self.addNotif(text)
 
             for k in range(airport.arrivalRunway):
-                plane = airport.nextArrival()
+                plane = airport.nextEvent("arrival")
                 if plane:
                     self.executePlane(plane)
                     text = "-L'avion {} a atterri.".format(plane.getID())
                     self.addNotif(text)
 
             for l in range(airport.mixteRunway):
-                plane = airport.nextEvent()
+                plane = airport.nextEvent("mixte")
                 if plane:
                     self.executePlane(plane)
                     if plane.getStatut() == "Landed":
@@ -1937,12 +1940,12 @@ class PrincipalWindow:
             text = 'New Day!'
             self.addNotif(text)
 
-        generalTime = self.affTime(airport.tick)
+        generalTime = airport.affTime(airport.tick)
         self.clock.configure(text=generalTime)
 
     def executePlane(self, plane):
         '''
-        Effectue l'évenement (atterrissage ou décollage)
+        Éfface l'avion de l'évenement de sa listeBox
         '''
         if plane is not None:
             listPlane = self.listBoxDepartures.get(0, END)
@@ -1979,9 +1982,9 @@ class PrincipalWindow:
             color = "green"
         else:
             color = "red"
-        self.affichageMeteo.configure(fg= color, text=self.affMeteo(airport.weatherClear))
+        self.affichageMeteo.configure(fg= color, text=airport.affMeteo(airport.weatherClear))
         
-        generalDay = self.affDay(airport.currentDay)
+        generalDay = airport.affDay(airport.currentDay)
         self.affichageDay.configure(text=generalDay)
         
         self.listBoxArrivals.delete(0, END)
@@ -2241,68 +2244,6 @@ class PrincipalWindow:
             text = "-Rénitialisation de l'aéroport."
             self.addNotif(text)
 
-    # Fonctions de formatage d'affichage et du temps
-    def currentTime(self):
-        '''
-        retourne l'heure réelle 
-        '''
-        time = datetime.now()
-        return (time.strftime('%R'))
-   
-    def timeToTick(self, time):
-        '''
-        transforme l'heure réelle en tick
-        '''
-        tmp = (int(time[:2]), int(time[3:]))
-        return (tmp[0]*60 + tmp[1] - 1)
-    
-    def affTime(self, tick):
-        '''
-        Afiche le nombre "tick" au format '00h00'
-        '''
-        return (str(tick // 60).rjust(2, '0') + "h" + str(tick % 60).rjust(2, '0'))
-
-    def affMeteo(self, weatherClear):
-        '''
-        Affiche la météo
-        '''
-        if weatherClear:
-            meteo = "Beau temps"
-        else:
-            meteo = "Mauvais temps. \nVotre aéroport est fermé."
-        return ("Météo: " + str(meteo))
-
-    def currentDay(self):
-        '''
-        retourne le jour réel
-        '''
-        day = datetime.now()
-        return(day.strftime('%d/%m/%Y'))
-
-    def dayToObjetDay(sefl, date):
-        '''
-        transforme une date réelle (datetime.now) en 
-        un objet Day 
-        '''
-        day = int(date[:2])
-        month = int(date[3:5])
-        year = int(date[6:])
-
-        newDay = Day(year, month, day)
-        return newDay
-
-    def affDay(self, date):
-        '''
-        affiche le jour
-        '''
-        year = date.getYear()
-        month = date.getMonth()
-        day = date.getDay()
-
-        txt = ((str(day)).rjust(2, '0') + '/' +
-                (str(month)).rjust(2, '0') + '/' +
-                (str(year)))
-        return txt
 
     # Affichage des notifications
     def addNotif(self, text):

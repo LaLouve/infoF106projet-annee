@@ -136,8 +136,8 @@ class Day:
 
     @staticmethod
     def fromjson(json):
-        year = json["year"]
-        month = json["month"]
-        day = json["day"]
+        year = json['year']
+        month = json['month']
+        day = json['day']
 
         return Day(year, month, day)
