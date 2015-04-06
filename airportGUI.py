@@ -581,6 +581,7 @@ class PrincipalWindow:
                          justify=CENTER,
                          relief=SUNKEN,
                          width=10)
+        IDnumber.delete(0, 100)
         IDnumber.pack(side=RIGHT)
 
         # Entrée du nombre de passagers
@@ -600,6 +601,7 @@ class PrincipalWindow:
                            justify=CENTER,
                            relief=SUNKEN,
                            width=10)
+        passengers.delete(0, 100)
         passengers.pack(side=RIGHT)
 
         if planeList == "departure":
@@ -668,6 +670,7 @@ class PrincipalWindow:
                           justify=CENTER,
                           relief=SUNKEN,
                           width=7)
+            heure.delete(0, 100)
             heure.pack(side=LEFT)
             minute = Entry(
                 entryTimeFrame,
@@ -677,6 +680,7 @@ class PrincipalWindow:
                 justify=CENTER,
                 relief=SUNKEN,
                 width=7)
+            minute.delete(0, 100)
             minute.pack(side=RIGHT)
 
             listBox = self.listBoxDepartures
@@ -1285,6 +1289,7 @@ class PrincipalWindow:
             justify=CENTER,
             relief=SUNKEN,
             width=12)
+        airline.delete(0, 100)
         airline.grid(row=0, column=1)
 
         Label(entryFrame, bd=4, bg=mainColor, text='ID').grid(row=1, column=0)
@@ -1296,6 +1301,7 @@ class PrincipalWindow:
             justify=CENTER,
             relief=SUNKEN,
             width=12)
+        airlineID.delete(0, 100)
         airlineID.grid(row=1, column=1)
 
         Button(
@@ -1529,6 +1535,7 @@ class PrincipalWindow:
             justify=CENTER,
             relief=SUNKEN,
             width=12)
+        model.delete(0, 100)
         model.grid(row=0, column=1)
 
         labelFuel = Label(
@@ -1545,6 +1552,7 @@ class PrincipalWindow:
             justify=CENTER,
             relief=SUNKEN,
             width=12)
+        fuel.delete(0, 100)
         fuel.grid(row=1, column=1)
 
         labelCons = Label(
@@ -1561,6 +1569,7 @@ class PrincipalWindow:
             justify=CENTER,
             relief=SUNKEN,
             width=12)
+        consumption.delete(0, 100)
         consumption.grid(row=2, column=1)
 
         labelPassengers = Label(
@@ -1577,6 +1586,7 @@ class PrincipalWindow:
             justify=CENTER,
             relief=SUNKEN,
             width=12)
+        passengers.delete(0, 100)
         passengers.grid(row=3, column=1)
 
         buttonFrame = Frame(self.addModelWindow, bd=5, bg=mainColor)
