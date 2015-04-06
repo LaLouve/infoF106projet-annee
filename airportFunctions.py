@@ -32,7 +32,7 @@ class Airport:
         '''
         self.departureList = []  # avions en attente de décollage
         self.arrivalList = []  # avions en attente de d'atterissage
-        
+
         # autres avions (déjà atterri, décollé ou crashé)
         self.historyList = []
 
@@ -41,7 +41,7 @@ class Airport:
 
         # entier représentant les minutes écoulées (min: 0, max: 1439)
         self.tick = 0
-        self.currentDay = None # Objet contenant la date du jour
+        self.currentDay = None  # Objet contenant la date du jour
 
         self.departureRunway = 0  # nbr de pistes de décollage
         self.arrivalRunway = 0  # nbr de pistes d'atterrissage
@@ -58,7 +58,8 @@ class Airport:
         self.statAirlines = 0  # nbr de compagnies
         self.statModel = 0  # nbr de modèles
 
-        self.weatherClear = True # Booléen temps True = temps clair | False = aéroport fermé 
+        # Booléen temps True = temps clair | False = aéroport fermé
+        self.weatherClear = True
 
     # PLANE
     def createPlane(
@@ -188,10 +189,13 @@ class Airport:
 
             if day.compare(self.currentDay) == 0:
                 currentTime = self.convTickToTuple(self.tick)
-                time = (random.randint(currentTime[0], 23), random.randint(currentTime[1], 59))
+                time = (
+                    random.randint(
+                        currentTime[0], 23), random.randint(
+                        currentTime[1], 59))
             else:
                 time = (random.randint(0, 23), random.randint(0, 59))
-            
+
             statut = "In Time"
 
         elif planeList is self.arrivalList:
@@ -212,7 +216,7 @@ class Airport:
         self.addPlane(newPlane)
 
         return newPlane
-   
+
     # RUNWAYS
     def modifRunways(self, nbrDepRunway, nbrArrRunway, nbrMixteRunway):
         '''
@@ -236,12 +240,12 @@ class Airport:
         else:
             mostPrior = self.departureList[0]
             for plane in self.departureList[1:]:
-                
+
                 day = plane.getDay()
                 if day.compare(self.currentDay) == 0:
-                    
+
                     if self.convTupleToTick(plane.getTime()) <\
-                        self.convTupleToTick(mostPrior.getTime()):
+                            self.convTupleToTick(mostPrior.getTime()):
                         mostPrior = plane
 
                     if self.convTupleToTick(plane.getTime()) ==\
@@ -383,10 +387,7 @@ class Airport:
         réinitialise les listes departureList et arrivalList ainsi que la
         variable du temps, tick
         '''
-        self.tick = 0
-        self.currentDay = self.currentDay.increment()
-
-        #meteo:
+        # meteo:
         meteo = random.randint(0, 9)
         indiceOK = [3, 7, 9]
         if meteo in indiceOK:
@@ -397,15 +398,19 @@ class Airport:
         else:
             statut = "Weather Del"
 
-        planeLists = [self.departureList, self.arrivalList]
-        for liste in planeLists:
-            for plane in liste:
+        for plane in self.departureList:
+            if plane.getDay().compare(self.currentDay) == 0:
                 plane.setStatut(statut)
+                self.departureList.remove(plane)
                 self.historyList.append(plane)
 
-        self.departureList = []
+        for plane in self.arrivalList:
+            plane.setStatut(statut)
+            self.historyList.append(plane)
         self.arrivalList = []
-        # return self.tick, self.currentDay, self.departureList, self.arrivalList
+
+        self.tick = 0
+        self.currentDay = self.currentDay.increment()
 
     def updateStatus(self):
         '''
@@ -441,7 +446,7 @@ class Airport:
         self.tick += 1
 
         return crashedPlane, delayedPlane
-    
+
     def randomDate(self):
         '''
         Définit une date random se trouvant à maximun 7 jours
@@ -455,32 +460,33 @@ class Airport:
         nbrDay = random.randint(0, 7)
 
         year = currentYear
-        month = currentMonth 
+        month = currentMonth
         day = currentDay + nbrDay
 
-        if currentMonth == 2: # février
-            if day > 28: # tant pis pour les bissextiles, de toute façon c'est random
-                month = 3 #mars
+        if currentMonth == 2:  # février
+            # tant pis pour les bissextiles, de toute façon c'est random
+            if day > 28:
+                month = 3  # mars
                 day = day - 28
 
-        elif currentMonth == 12: # décembre
-            if day > 31: 
-                year += 1 #happy new year
-                month = 1 #janvier
+        elif currentMonth == 12:  # décembre
+            if day > 31:
+                year += 1  # happy new year
+                month = 1  # janvier
                 day = day - 31
 
         else:
             if day > 30:
-                month = currentMonth + 1 #next month
+                month = currentMonth + 1  # next month
                 day = day - 30
 
         date = Day(year, month, day)
 
-        return date 
+        return date
 
     def dateOK(self, date):
         '''
-        Vérifie si la date donnée existe et est supérieure ou 
+        Vérifie si la date donnée existe et est supérieure ou
         égale à la date du jour
         '''
         dateOK = False
@@ -492,9 +498,10 @@ class Airport:
 
         bissextile = False
         if year % 4 == 0:
-            bissextile =  True
+            bissextile = True
 
-        if isegal == 1 or isegal == 0: #date égale ou supérieur à la date courante
+        # date égale ou supérieur à la date courante
+        if isegal == 1 or isegal == 0:
             if month not in longMonthList and month != 2:
                 if day <= 30:
                     dateOK = True
@@ -521,7 +528,7 @@ class Airport:
         Si la date est suppérieure, l'heure peut-être n'importe quelle heure
         existante
         Dans le cas contraire, l'heure doit être supérieure à l'heure actuelle
-        
+
         Cette fonction renvoie 1 si l'heure est correcte
                               -1 si l'heure est inférieure ou égale à l'heure actuelle
                                0 si l'heure n'est pas une heure valable
@@ -529,13 +536,13 @@ class Airport:
         heure = time[0]
         minute = time[1]
 
-        timeOK = None 
+        timeOK = None
 
         real = False
 
         if heure >= 0 and heure <= 23 and minute >= 0 and minute <= 59:
             real = True
-        
+
         else:
             timeOK = 0
 
@@ -549,22 +556,24 @@ class Airport:
                 if heure == heureActuel:
 
                     if minute >= minuteActuel and minute <= 59:
-                        timeOK = 1 # l'heure est supérieure au temps actuel
-                    
+                        timeOK = 1  # l'heure est supérieure au temps actuel
+
                     else:
-                        timeOK = -1 # l'heure est inférieure au temps actuel
+                        timeOK = -1  # l'heure est inférieure au temps actuel
 
                 elif heure >= heureActuel:
-                    timeOK = 1 # l'heure est supérieure au temps actuel
+                    timeOK = 1  # l'heure est supérieure au temps actuel
 
                 else:
-                    timeOK = -1 # l'heure est inférieure au temps actuel
+                    timeOK = -1  # l'heure est inférieure au temps actuel
 
             elif date.compare(self.currentDay) == -1:
-                timeOK = -1 # la date (et donc l'heure) est inférieur au temps actuel
+                # la date (et donc l'heure) est inférieur au temps actuel
+                timeOK = -1
 
             else:
-                timeOK = 1 # la date (et donc l'heure) est supérieure au temps actuel
+                # la date (et donc l'heure) est supérieure au temps actuel
+                timeOK = 1
 
         return timeOK
 
@@ -578,27 +587,31 @@ class Airport:
         '''
         converti l'entier "tick" en un tuple
         '''
-        return ( int(time // 60), int(time % 60) )
+        return (int(time // 60), int(time % 60))
 
     def realTime(self):
         '''
-        retourne l'heure réelle 
+        retourne l'heure réelle
         '''
         time = datetime.now()
         return (time.strftime('%R'))
-   
+
     def timeToTick(self, time):
         '''
         transforme l'heure réelle en tick
         '''
         tmp = (int(time[:2]), int(time[3:]))
-        return (tmp[0]*60 + tmp[1] - 1)
-    
+        return (tmp[0] * 60 + tmp[1] - 1)
+
     def affTime(self, tick):
         '''
         Afiche le nombre "tick" au format '00h00'
         '''
-        return (str(tick // 60).rjust(2, '0') + "h" + str(tick % 60).rjust(2, '0'))
+        return (str(tick //
+                    60).rjust(2, '0') +
+                "h" +
+                str(tick %
+                    60).rjust(2, '0'))
 
     def affMeteo(self, weatherClear):
         '''
@@ -619,8 +632,8 @@ class Airport:
 
     def dayToObjetDay(sefl, date):
         '''
-        transforme une date réelle (datetime.now) en 
-        un objet Day 
+        transforme une date réelle (datetime.now) en
+        un objet Day
         '''
         day = int(date[:2])
         month = int(date[3:5])
@@ -638,8 +651,8 @@ class Airport:
         day = date.getDay()
 
         txt = ((str(day)).rjust(2, '0') + '/' +
-                (str(month)).rjust(2, '0') + '/' +
-                (str(year)))
+               (str(month)).rjust(2, '0') + '/' +
+               (str(year)))
         return txt
 
     # SAVE

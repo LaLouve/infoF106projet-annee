@@ -9,8 +9,9 @@ fichier: day.py
 '''
 
 class Day:
+
     def __init__(self, year, month, day):
-        self.year = int(year) 
+        self.year = int(year)
         self.month = int(month)
         self.day = int(day)
 
@@ -24,10 +25,10 @@ class Day:
         return self.year
 
     def increment(self):
-        # Information sur le jour 
+        # Information sur le jour
         bissextile = False
         if self.year % 4 == 0:
-            bissextile =  True
+            bissextile = True
 
         longMonth = False
         february = False
@@ -43,7 +44,7 @@ class Day:
         if self.month == 12:
             december = True
 
-        #construction de la nouvelle date:
+        # construction de la nouvelle date:
         day = self.day
         month = self.month
         year = self.year
@@ -61,7 +62,7 @@ class Day:
                 if self.day == 29:
                     day = 1
                     month = self.month + 1
-                
+
                 else:
                     day = self.day + 1
             else:
@@ -82,13 +83,13 @@ class Day:
         else:
             if self.day == 30:
                 day = 1
-                month =  self.month + 1
+                month = self.month + 1
             else:
                 day = self.day + 1
 
         newDate = Day(year, month, day)
         return newDate
-    
+
     def compare(self, anotherDay):
         '''
         Renvoie  1  si day supérieur à anotherDay
@@ -127,12 +128,12 @@ class Day:
         elif dayDay > dayAnother and monthDay >= monthAnother and yearDay >= yearAnother:
             res = 1
 
-        return res 
+        return res
 
     def __str__(self):
         txt = ((str(self.day)).rjust(2, '0') + '/' +
-                (str(self.month)).rjust(2, '0') + '/' +
-                (str(self.year)))
+               (str(self.month)).rjust(2, '0') + '/' +
+               (str(self.year)))
         return txt
 
     @staticmethod

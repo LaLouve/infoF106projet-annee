@@ -28,10 +28,10 @@ class Plane:
         self.fuel = int(fuel)
         # modèle de l'avion, définit le fuel, la consommation et le nbr max de
         # passagers
-        self.model = model #objet model
+        self.model = model  # objet model
         self.consumption = int(consumption)
-        self.time = time # tuple (heure, minute)
-        self.day = day #tuple (year, month, day)
+        self.time = time  # tuple (heure, minute)
+        self.day = day  # tuple (year, month, day)
         # statut= Landed, Crashed, Take Off, Delayed, Deleted, In Time or None
         self.statut = statut
 
@@ -85,7 +85,7 @@ class Plane:
         # retourne True si l'avion s'est crashé
         return self.fuel <= 0
 
-    def isDelayed(self, currentDay, tick):  
+    def isDelayed(self, currentDay, tick):
         '''
         Vérifie si les avions au décollage sont en retard
         '''
@@ -120,8 +120,8 @@ class Plane:
                (str(self.consumption).ljust(4, ' ')) + '| ' +
                (str(self.model).ljust(5, ' ')) + '| ' +
                (str(self.time[0]) + 'h' + str(self.time[1])) + '| ' +
-               (str(self.day[0]) + '/' + str(self.day[1]) + '/' + 
-                str(self.day[2])) 
+               (str(self.day[0]) + '/' + str(self.day[1]) + '/' +
+                str(self.day[2]))
                )
         return res
 

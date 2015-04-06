@@ -48,8 +48,8 @@ class PrincipalWindow:
         self.wait = temps en milisecondes entre chaque appel de self.step()
         60000 = 1minute
 
-        Pour accelerer la simulation il suffit de changer 60000 par 
-        1000 (= 1seconde). Dans ce cas l'heure et la date affichées dans 
+        Pour accelerer la simulation il suffit de changer 60000 par
+        1000 (= 1seconde). Dans ce cas l'heure et la date affichées dans
         l'interface ne changent pas, l'heure et le jour sont affichés dans
         le terminal à la place
         '''
@@ -115,7 +115,8 @@ class PrincipalWindow:
             bd=2,
             yscrollcommand=scrollbar.set)
 
-        #désactive les boutons del des autres colones lorsqu'un élément est sélectionné dans celle-ci
+        # désactive les boutons del des autres colones lorsqu'un élément est
+        # sélectionné dans celle-ci
         self.listBoxArrivals.bind("<<ListboxSelect>>", self.listBoxSelected)
         # active le double-clic pour obtenir les infos d'un avion
         self.listBoxArrivals.bind("<Double-Button-1>", self.infoArrivalPlane)
@@ -341,7 +342,7 @@ class PrincipalWindow:
         # step
         column4top = Frame(column4, bg=mainColor)
         column4top.pack(side=TOP)
-        
+
         generalDay = airport.affDay(airport.currentDay)
         self.affichageDay = Label(
             column4top,
@@ -607,15 +608,15 @@ class PrincipalWindow:
 
         if planeList == "departure":
             dateFrame = Frame(self.addPlaneWindow,
-                                bd=4,
-                                bg=mainColor)
+                              bd=4,
+                              bg=mainColor)
             dateFrame.pack()
 
             Label(dateFrame,
-                    bd=4,
-                    bg=mainColor,
-                    text='Date').pack(side=LEFT)
-            
+                  bd=4,
+                  bg=mainColor,
+                  text='Date').pack(side=LEFT)
+
             dayList = []
             for i in range(1, 32, 1):
                 dayList.append(i)
@@ -626,7 +627,7 @@ class PrincipalWindow:
                 state="readonly")
             day.configure(background=mainColor)
             day.pack(side=LEFT)
-            
+
             monthList = []
             for i in range(1, 13, 1):
                 monthList.append(i)
@@ -727,7 +728,7 @@ class PrincipalWindow:
         IDletter = airlineIDobject.get()
         nbrPassengers = passengers.get()
         modelName = modelObject.get()
-        
+
         airlineOK = False
         modelOK = False
         IDok = False
@@ -750,7 +751,7 @@ class PrincipalWindow:
 
         # Vérification du modèle
 
-        if modelName !='':
+        if modelName != '':
 
             for objet in airport.modelList:
                 if objet.getName() == modelName:
@@ -771,7 +772,7 @@ class PrincipalWindow:
         if IDnumber.isdigit():
 
             if len(IDnumber) == 4:
-            
+
                 ID = (str(IDletter) + str(IDnumber))
 
                 if airport.checkID(ID):
@@ -781,7 +782,7 @@ class PrincipalWindow:
                     text = "Cet ID est déjà utilisé par un avion.\
                             \nVeuillez le changer."
                     messagebox.showerror('Error', text)
-            
+
             else:
                 text = "L'ID entré n'est pas composé d'exactement 4 chiffres!\
                         \nVeuillez vérifier."
@@ -800,7 +801,8 @@ class PrincipalWindow:
 
             else:
                 text = "Le nombre de passagers dépasse la capacité maximale du modèle d'avion sélectionné.\
-                        \nCapacité max : {}".format(maxPassengers)
+                        \nCapacité max : {}".format(
+                    maxPassengers)
                 messagebox.showerror('Error', text)
         else:
             text = "Le nombre de passagers entré n'est pas un nombre!\
@@ -818,7 +820,7 @@ class PrincipalWindow:
                 dateTuple = (year, month, day)
 
                 dateOK = airport.dateOK(date)
-            
+
             else:
                 date = None
 
@@ -835,14 +837,14 @@ class PrincipalWindow:
 
                 time = (nbrHeure, nbrMinute)
 
-                if date != None:
+                if date is not None:
                     timeStatus = airport.timeOK(time, date)
 
                     if timeStatus == -1:
                         text = "L'heure est inférieure ou égale à la date courante!\
                                 \nVeuillez vérifier."
                         messagebox.showerror('Error', text)
-                        
+
                     elif timeStatus == 0:
                         text = "L'heure entrée n'est pas valable!\
                                 \nVeuillez vérifier."
@@ -854,30 +856,30 @@ class PrincipalWindow:
 
                     else:
                         time = None
-   
+
             else:
                 text = "L'heure et les minutes entrées ne sont pas des nombres!\
                         \nVeuillez les vérifier."
                 messagebox.showerror('Error', text)
         else:
             time = None
-            statut = None 
-            date = None 
-            dateTuple = None 
-            timeOK = True # pour les avions à l'attérissage                          
+            statut = None
+            date = None
+            dateTuple = None
+            timeOK = True  # pour les avions à l'attérissage
 
         if airlineOK and modelOK and IDok and passengerOK and timeOK:
 
             plane = airport.createPlane(
-                        ID,
-                        airlineName,
-                        nbrPassengers,
-                        fuel,
-                        consumption,
-                        modelName,
-                        time,
-                        dateTuple,
-                        statut)
+                ID,
+                airlineName,
+                nbrPassengers,
+                fuel,
+                consumption,
+                modelName,
+                time,
+                dateTuple,
+                statut)
 
             airport.addPlane(plane)
             text = "-L'avion {} a été ajouté.".format(plane.getID())
@@ -1158,9 +1160,10 @@ class PrincipalWindow:
             column=0)
 
         if plane.getTime():
-            timeFrame = Frame(principal,
-                              bd=5,
-                              bg=mainColor)  # frame secondaire, contient l'heure
+            timeFrame = Frame(
+                principal,
+                bd=5,
+                bg=mainColor)  # frame secondaire, contient l'heure
             timeFrame.grid(row=0, column=7)
             Label(timeFrame,
                   bd=3,
@@ -1863,7 +1866,7 @@ class PrincipalWindow:
         '''
         Permet d'avancer d'une minute le temps
         Si l'aéroport n'a pas de pistes, un message est affiché
-        Effectue les évenement suivants en fonction du nombres 
+        Effectue les évenement suivants en fonction du nombres
         de pistes présentes dans l'aéroport
         Affiche un message si un avion est en retard
         Mets à jour les informations des avions
@@ -1912,14 +1915,15 @@ class PrincipalWindow:
                                                         death)
             else:
                 text = "-L'avion {} s'est crashé à cause du mauvais temps.\
-                        {} personnes sont mortes dans l'accident.".format(plane.getID(),death)
+                        {} personnes sont mortes dans l'accident.".format(plane.getID(), death)
             self.addNotif(text)
 
         for plane in delayedPlane:
             if airport.weatherClear:
                 text = "-L'avion {} a du retard.".format(plane.getID())
             else:
-                text = "-L'avion {} a du retard à cause du mauvais temps".format(plane.getID())
+                text = "-L'avion {} a du retard à cause du mauvais temps".format(
+                    plane.getID())
             self.addNotif(text)
 
         if airport.tick == 1440:
@@ -1963,27 +1967,34 @@ class PrincipalWindow:
         pour le nouveau jour
         Vide les listBox contenant les avions au départ et à l'arrivée
         '''
-        airport.newDay() 
+        airport.newDay()
 
         if airport.weatherClear:
             color = "green"
         else:
             color = "red"
-        self.affichageMeteo.configure(fg= color, text=airport.affMeteo(airport.weatherClear))
-        
+        self.affichageMeteo.configure(
+            fg=color,
+            text=airport.affMeteo(
+                airport.weatherClear))
+
         generalDay = airport.affDay(airport.currentDay)
         self.affichageDay.configure(text=generalDay)
-        
+
         self.listBoxArrivals.delete(0, END)
         self.listBoxDepartures.delete(0, END)
 
+        for plane in airport.departureList:
+            self.listBoxDepartures.insert(END, plane.getID())
+
+
     def waitStep(self, window):
         '''
-        fonction permetant d'avancer automatiquement le temps à la 
+        fonction permetant d'avancer automatiquement le temps à la
         minute suivante réelle
-        60000 = 1 minute     
+        60000 = 1 minute
         si le temps est d'une minute, vérifier le nombre de secondes déjà
-        écoulées dans la minute en cours afin de correspondre aux minutes 
+        écoulées dans la minute en cours afin de correspondre aux minutes
         réelles
         '''
         if not self.debugMode:
@@ -1992,7 +2003,7 @@ class PrincipalWindow:
 
             if second != 0:
                 self.wait = (60 - second) * 1000
-    
+
         self.step()
         self.thread = self.root.after(self.wait, lambda: self.waitStep(window))
 
@@ -2201,7 +2212,8 @@ class PrincipalWindow:
             parent=self.root)
         if fileName:
             if airport.loadSystem(fileName):
-                self.root.after_cancel(self.thread) #arrête le thread en cours
+                self.root.after_cancel(
+                    self.thread)  # arrête le thread en cours
                 self.root.destroy()
                 root = Tk()
                 root.title("Airport Simulator")
@@ -2221,7 +2233,7 @@ class PrincipalWindow:
 
         if result:
             airport.clearSystem()
-            self.root.after_cancel(self.thread) # arrête le thread en cours
+            self.root.after_cancel(self.thread)  # arrête le thread en cours
             self.root.destroy()
             root = Tk()
             root.title("Airport Simulator")
@@ -2230,7 +2242,6 @@ class PrincipalWindow:
             self.__init__(root)
             text = "-Rénitialisation de l'aéroport."
             self.addNotif(text)
-
 
     # Affichage des notifications
     def addNotif(self, text):
